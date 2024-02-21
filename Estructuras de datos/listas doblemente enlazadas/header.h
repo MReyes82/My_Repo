@@ -19,3 +19,4 @@ typedef struct ListaDobEnlace
 void recorrerNodos(ListaDobEnlace *lista);
 void inicializarNodo(Nodo **nodo, int dato);
 void insertarNodoPosicion(ListaDobEnlace *lista, int dato, int posicion);
+void liberarMemoriaLista(ListaDobEnlace *lista);

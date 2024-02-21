@@ -16,18 +16,18 @@ void recorrerNodos(ListaDobEnlace *lista)
         printf("\n");
         if (actual->anterior != NULL)
         {
-            printf("%08x <- Anterior || ", actual->anterior);
+            printf("%p <- Anterior || ", actual->anterior);
         }
         else{
             printf("null <- Anterior || ");
         }
 
-        printf("Direccion: %08x - ", actual);
+        printf("Direccion: %p - ", actual);
         printf("Dato: %d || ", actual->dato);
 
         if (actual->siguiente != NULL)
         {
-            printf("Siguiente -> %08x", actual->siguiente);
+            printf("Siguiente -> %p", actual->siguiente);
         }
         else{
             printf("Siguiente -> null");
@@ -106,4 +106,23 @@ void insertarNodoPosicion(ListaDobEnlace *lista, int dato, int posicion)
     }
 
     lista->numeroNodos++;
+}
+
+void liberarMemoriaLista(ListaDobEnlace *lista)
+{
+    Nodo *actual = lista->inicio;
+    Nodo *siguiente = NULL;
+
+    while (actual != NULL)
+    {
+        siguiente = actual->siguiente;
+        free(actual);
+        actual = siguiente;
+    }
+
+    lista->inicio = NULL;
+    lista->fin = NULL;
+    lista->numeroNodos = 0;
+
+    return;
 }

@@ -37,6 +37,7 @@ int main(void)
 
         case 3:
             printf("Terminando programa...\n");
+            liberarMemoriaLista(&lista);
             exit(EXIT_SUCCESS);
 
         default:
