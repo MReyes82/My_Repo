@@ -1,0 +1,61 @@
+package figurasClases;
+
+public class Circulo extends Figura
+{
+	private float radio, diametro;
+	
+	public Circulo(float diamtroInput)
+	{
+		super(0, "rojo");
+		this.radio = radioInput;
+	}
+	
+	public float getRadio()
+	{
+		return radio;
+	}
+	
+	public void setRadio(float radioInput)
+	{
+		this.radio = radioInput;
+	}
+	
+	public float getDiametro()
+	{
+		return diametro;
+	}
+	
+	public void setDiametro(float diametro)
+	{
+		this.diametro = diametro;
+	}
+	
+	public float getArea()
+	{
+		return area;
+	}
+	
+	public float getPerimetro()
+	{
+		return perimetro;
+	}
+	
+	public void compArea()
+	{
+		area = (float) (Math.pow(radio, 2) * Math.PI);
+	}
+	
+	public void compPerimetro()
+	{
+		perimetro = (float) (2 * Math.PI * radio);
+	}
+	
+	public String toString()
+	{
+		String cadena = "El area del circulo es: " + area + 
+						" y su perimeteo es: " + perimetro;
+		
+		return cadena;
+	}
+	
+}

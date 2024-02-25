@@ -1,0 +1,58 @@
+package figurasClases;
+
+public class Figura 
+{
+	
+	private int numeroLados;
+	private String color;
+	protected float area; // protected quiere decir que solo dentro de la herencia se puede acceder
+	protected float perimetro;
+	
+	public Figura(int numeroLados, String color) 
+	{
+		super();
+		this.numeroLados = numeroLados;
+		this.color = color;
+	}
+
+	public int getNumeroLados() 
+	{
+		return numeroLados;
+	}
+	
+	public void setNumeroLados(int numeroLados) 
+	{
+		this.numeroLados = numeroLados;
+	}
+	
+	public String getColor() 
+	{
+		return color;
+	}
+	
+	public void setColor(String color) 
+	{
+		this.color = color;
+	}
+	
+	public float getArea() 
+	{
+		return area;
+	}
+	
+	public void setArea(float area) 
+	{
+		this.area = area;
+	}
+	public float getPrerimetro() 
+	{
+		return perimetro;
+	}
+	
+	public void setPrerimetro(float perimetro) 
+	{
+		this.perimetro = perimetro;
+	}
+	
+	
+}
