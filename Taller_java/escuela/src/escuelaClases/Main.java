@@ -22,7 +22,7 @@ public class Main
 		menu();
 	}
 	
-	public void menu() // TODO: agregar una expresion LAMBDA
+	public void menu() // TODO: agregar una expresion LAMBDA y ciclo for mejorado
 	{
 		Boolean correPrograma = true;
 		String opcion;
@@ -177,10 +177,10 @@ public class Main
 		edadBuffer = scanUnsignedInteger("Edad: ");
 		matriculaBuffer = scanUnsignedInteger("Matricula: ");
 		facultadBuffer = scanString("Facultad: ");
-		int cantidadMaterias = scanUnsignedInteger("Cuantas materias llevara el estudiante? ");
 		String carrera = scanString("Carrera: ");
 		float promedio = scanUnsignedFloat("Promedio: ");
 		int semestre = scanUnsignedInteger("Semestre: ");
+		int cantidadMaterias = scanUnsignedInteger("Cuantas materias llevara el estudiante? ");
 		
 		if (nombreBuffer == null || edadBuffer < 0 || 
 			matriculaBuffer < 0 || facultadBuffer == null || promedio < 0
@@ -305,27 +305,28 @@ public class Main
 			return;
 		}
 		
-		for (int i = 0 ; i < personas.length ; i++)
+		int i = 0;
+		/*
+		 	mientras que el elemento actual no sea nulo, para evitar obtener
+			un NullPointerException, ya que antes tenia un ciclo For que llegaba hazta "personas.length",
+			pero como length es un numero fijo, podia iterar sobre elementos nulos.
+		 */
+		while (personas[i] != NULL) // --> ^^^^^
 		{
-			try
-			{
-				JOptionPane.showMessageDialog(null, personas[i].getClass().getSimpleName() + " " + (i + 1) + "\n");
-				personas[i].imprimirDatos();
+			JOptionPane.showMessageDialog(null, personas[i].getClass().getSimpleName() + " " + (i + 1) + "\n");
+			personas[i].imprimirDatos();
 			
-				if (personas[i] instanceof Alumno) // si el elemento "i" es una instancia de alumno, llama al metood 
-				{								   // llama al metodo para imprimir las materias del alumno
-					personas[i].imprimirMaterias();
-				}
-			// este try catch es porque, cuando termina de iterar los elementos, genera una NullPointerException que 
-			// crashea el programa
-			} catch (NullPointerException e){ 
-				return;
+			if (personas[i] instanceof Alumno) // si el elemento actual es una instancia de alumno,
+			{								   // llama al metodo para imprimir las materias del alumno
+				personas[i].imprimirMaterias();
 			}
+
+			i++;
 		}
-		// el metodo getClass retorna un objeto que en este caso representaria la clase que queremos acceder
-		// despues, el metodo getSimpleName retornaria el nombre de la clase a la que queremos acceder
-		// hice esto ya que en mi metodo de mostrarAlumno o mostrarMaestro incluyo un mensaje que 
-		// menciona el nombre del objeto y el numero de iteracion, ejemplo: "alumno" + (i+1)
+		/* el metodo getClass retorna un objeto que en este caso representaria la clase que queremos acceder
+		   despues, el metodo getSimpleName retornaria el nombre de la clase a la que queremos acceder
+		   hice esto ya que en mi metodo de mostrarAlumno o mostrarMaestro incluyo un mensaje que 
+		  menciona el nombre del objeto y el numero de iteracion, ejemplo: "alumno" + (i+1) */
 		
 	}
 }
