@@ -1,8 +1,0 @@
-package escuelaClases;
-
-public class Alumno 
-{
-	private int matricula;
-	private String carrera;
-	private 
-}

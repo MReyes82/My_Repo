@@ -1,7 +1,0 @@
-INDEX VERSION 1.134+/home/marcuchi/Desktop/Taller_java/.metadata/.plugins/org.eclipse.jdt.core
-786338339.index
-2772675874.index
-746970834.index
-1865797976.index
-831229709.index
-3627584751.index
