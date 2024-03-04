@@ -15,13 +15,13 @@ int main (void)
     for (i = 0 ; i < 2 ; i++)
     {
         pilaLibros[i].stackLibros = malloc(sizeof(Pila));
-        //pilaLibros[i].numStacks = 0;
-        inicializarPila(pilaLibros[i].stackLibros, 0); // sin limite
+        pilaLibros[i].numStacks = 0;
+        inicializarPila(pilaLibros[i].stackLibros, -1); // sin limite
     }
 
     while (runs)
     {
-        system("clear");
+        
         printf("\n[1] Mostrar contenido de la caja.");
         printf("\n[2] Apilar por genero.");
         printf("\n[3] Apilar por fecha.");
@@ -38,23 +38,19 @@ int main (void)
         
         case 2:
             printf("\n");
-            char *genero = submenuApilarPorGenero();
+            char *generoInput = submenuApilarPorGenero();
 
-            if (genero == NULL) { break; }
+
+            if (generoInput == NULL) { break; } // si el genero seleccionado
+                                                // no es valido
             
-            while(!vacia(caja))
+            while(!vacia(*caja))
             {
-                apilarPorGenero(&pilaLibros[0], pop(caja), genero);
+                apilarPorGenero(pilaLibros, pop(caja), generoInput);
             }
 
-            free(genero);
+            free(generoInput);
             imprimirPila(pilaLibros[0].stackLibros);
-
-            while(!vacia(pilaLibros[0].stackLibros))
-            {
-                push(caja, pop(pilaLibros[0].stackLibros));
-
-            }
             
             break;
 
@@ -62,20 +58,15 @@ int main (void)
             printf("\n");
             int year = submenuApilarPorFecha();
 
+            // si el año seleccionado no es valido
             if (year < 0) { break; }
             
-            while(!vacia(caja))
+            while(!vacia(*caja))
             {
-                apilarPorFecha(&pilaLibros[1], pop(caja), year);
+                apilarPorFecha(pilaLibros, pop(caja), year);
             }
 
             imprimirPila(pilaLibros[1].stackLibros);
-
-            while(!vacia(&pilaLibros[1].stackLibros))
-            {
-                push(&caja, pop(&pilaLibros[1].stackLibros));
-
-            }
 
             break;
         
@@ -90,7 +81,13 @@ int main (void)
         }
 
     }
+    
+    for (i = 0 ; i < 2 ; i++)
+    {
+        free(pilaLibros[i].stackLibros);
+    }
 
+    vaciarPila(caja);
     free(caja);
 
     return 0;

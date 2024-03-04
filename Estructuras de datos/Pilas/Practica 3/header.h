@@ -2,8 +2,8 @@
 
 typedef struct Libro
 {
-    char *nombre;
-    char *genero;
+    char nombre[50];
+    char genero[50];
     int releaseDate;
 
 } Libro;
@@ -26,17 +26,17 @@ typedef struct Pila
 typedef struct StackArray
 {
     Pila *stackLibros;
-    //int numStacks;
+    int numStacks;
 
 } StackArray;
 
-Elemento *alojarElemento(void *input);
+Elemento *alojarElemento(Libro *input);
 Pila* inicializarCaja(void);
 void inicializarPila(Pila *stackLibro,int longitud);
 void imprimirPila(Pila *stackLibro);
-int llena(Pila *stackLibro);
-int vacia(Pila *stackLibro);
-void push(Pila *stackLibro,Libro *nuevo);
+int llena(Pila stackLibro);
+int vacia(Pila stackLibro);
+void push(Pila *stackLibro, Libro *nuevo);
 Libro *pop(Pila *stackLibro);
 void vaciarPila(Pila *stackLibro);
 void apilarPorGenero(StackArray *elementoArray, Libro *elementoLibro, char *genero);

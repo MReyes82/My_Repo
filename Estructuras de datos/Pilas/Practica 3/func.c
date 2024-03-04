@@ -54,13 +54,19 @@ Pila *inicializarCaja(void)
         {"A Feast for Crows","Fantasy",2005}
     };
 
-    caja = malloc(sizeof(Pila));
+    caja = (Pila *)malloc(sizeof(Pila));
     inicializarPila(caja, 44);
     
     for (int i = 0 ; i < 44 ; i++)
     {
-        push(caja, &libros[i]);
+        Libro *nuevoLibro = (Libro*)malloc(sizeof(Libro));
+        nuevoLibro->releaseDate = libros[i].releaseDate;
+        strcpy(nuevoLibro->nombre, libros[i].nombre);
+        strcpy(nuevoLibro->genero, libros[i].genero);
+        push(caja, nuevoLibro);
+        //push(caja, &libros[i]);
     }
+    
 
     return caja;
 }
@@ -76,7 +82,7 @@ void inicializarPila(Pila *stackLibro,int longitud)
 
 void imprimirPila(Pila *stackLibro)
 {
-    if (vacia(stackLibro))
+    if (vacia(*stackLibro))
     {
         printf("La pila esta vacia.\n");
         return;
@@ -86,15 +92,21 @@ void imprimirPila(Pila *stackLibro)
     inicializarPila(&auxiliar, stackLibro->longitud);
 
     printf("Lista:\n");
-
-    while (!vacia(stackLibro)) // sacamos todos los libros para mostrarlos
+    
+    int n = 0;
+    while (!vacia(*stackLibro)) // sacamos todos los libros para mostrarlos
     {
-        Libro *temp = pop(stackLibro);
-        printf("%d | %s, %s", temp->releaseDate, temp->nombre, temp->genero);
+        //printf("Entra a primer while\n");
+        Libro *temp = NULL;
+        temp = pop(stackLibro);
+        //printf("asigna memoria\n");
+        printf("%d | %s, %s, index = %d\n", temp->releaseDate, temp->nombre, temp->genero, n);
+        //printf("%p\n", (void*) temp);
         push(&auxiliar, temp);
+        n++;
     }
     // regresamos los libros al stack original
-    while (!vacia(stackLibro))
+    while (!vacia(*stackLibro))
     {
         push(stackLibro, pop(&auxiliar));
     }
@@ -102,21 +114,21 @@ void imprimirPila(Pila *stackLibro)
     return;
 }
 
-int llena(Pila *stackLibro)
+int llena(Pila stackLibro)
 {   // retorna 1 si esta lleno y 0 si no
-    return (stackLibro->longitud == stackLibro->numElementos); 
+    return (stackLibro.longitud == stackLibro.numElementos); 
 }
 
-int vacia(Pila *stackLibro)
+int vacia(Pila stackLibro)
 {   // retorna 1 si esta vacio y 0 si no
-    return (stackLibro->numElementos == 0);
+    return (stackLibro.numElementos == 0);
 }
 
 void push(Pila *stackLibro, Libro *nuevo)
 {
-    if (llena(stackLibro))
+    if (llena(*stackLibro))
     {
-        printf("Stack overflow.\n");
+        printf("--Stack overflow.\n");
         return;
     }
 
@@ -128,7 +140,7 @@ void push(Pila *stackLibro, Libro *nuevo)
     return;
 }
 
-Elemento *alojarElemento(void *input)
+Elemento *alojarElemento(Libro *input)
 {
     Elemento *nuevo = malloc(sizeof(Elemento));
     nuevo->elementoLibro = input;
@@ -139,16 +151,16 @@ Elemento *alojarElemento(void *input)
 
 Libro *pop(Pila *stackLibro)
 {
-    if (vacia(stackLibro))
+    if (vacia(*stackLibro))
     {
-        printf("Stack underflow.\n");
+        printf("--Stack underflow.\n");
         return NULL;
     }
 
     Elemento *actual = stackLibro->cima; 
     Libro *popBuffer = actual->elementoLibro; 
     stackLibro->cima = actual->sig;
-    free(actual->elementoLibro);
+    //free(actual->elementoLibro);
     free(actual); 
     stackLibro->numElementos--; 
 
@@ -157,7 +169,7 @@ Libro *pop(Pila *stackLibro)
 
 void vaciarPila(Pila *stackLibro)
 {
-    while (!vacia(stackLibro))
+    while (!vacia(*stackLibro))
     {
         pop(stackLibro);
     }
@@ -167,24 +179,41 @@ void vaciarPila(Pila *stackLibro)
 
 void apilarPorGenero(StackArray *elementoArray, Libro *elementoLibro, char *genero)
 {
-    if (llena(elementoArray->stackLibros)) { return ;}
-    // si el genero del parametro elementoLibro 
-    //(el resultado de hacer pop al elemento actual de "caja" en main)
-    // coincide con el genero deseado, pusheamos a la pila
-    if (strcmp(elementoLibro->genero, genero) == 0)
-    {
-        push(elementoArray->stackLibros, elementoLibro);
+    for (int i = 0 ; i < elementoArray[0].numStacks ; i++)
+    {   
+        char *temp = elementoArray[0].stackLibros[i].cima->elementoLibro->genero; // para mas legibilidad
+        if (strcmp(temp, genero) == 0)
+        {
+            push(&elementoArray[0].stackLibros[i], elementoLibro);
+            return;
+        }
     }
+
+    // si no existe una pila para el genero seleccionado, se crea
+    int indice = elementoArray[0].numStacks;          // sin limite
+    inicializarPila(&elementoArray[0].stackLibros[indice], 0);
+    push(&elementoArray[0].stackLibros[indice], elementoLibro);
+    elementoArray[0].numStacks++;
 
     return;
 }
 
 void apilarPorFecha(StackArray *elementoArray, Libro *elementoLibro, int releaseDate)
 {
-    if (elementoLibro->releaseDate == releaseDate)
+    for (int i = 0 ; i < elementoArray[1].numStacks ; i++)
     {
-        push(elementoArray->stackLibros, elementoLibro);
+        int temp = elementoArray[1].stackLibros[i].cima->elementoLibro->releaseDate;
+        if (temp == releaseDate)
+        {
+            push(&elementoArray[1].stackLibros[i], elementoLibro);
+            return;
+        }
     }
+
+    int indice = elementoArray[1].numStacks;          // sin limite
+    inicializarPila(&elementoArray[1].stackLibros[indice], 0);
+    push(&elementoArray[1].stackLibros[indice], elementoLibro);
+    elementoArray[1].numStacks++;
 
      return;
 }
