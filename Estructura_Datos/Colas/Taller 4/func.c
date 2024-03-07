@@ -1,7 +1,6 @@
 #include "header.h"
 #include <stdio.h>
 #include <stdlib.h>
-#define NOLIMIT 0
 
 int llena(Queue cola)
 {   
@@ -52,6 +51,8 @@ void enqueue(Queue* cola, int datoAInsertar)
     }
 
     cola->numeroElementos++;
+
+    return;
 }
 
 Elemento* dequeue(Queue* cola)
@@ -89,7 +90,7 @@ void insertarPosicion(Queue* cola, int datoAInsertar, int posicion)
         printf("ERROR:posNoValidaa\n");
         return;
 
-    }else if(!llena(*cola)){
+    }else if(llena(*cola)){
         printf("Queue overflow\n");
         return;
     }
@@ -183,12 +184,13 @@ void printQueue(Queue *cola)
 */
 void printQueue(Queue* cola)
 {
+    
     if (vacia(*cola))
     {
-        printf("Queue underflow\n");
+        printf("Cola vacia.\n");
         return;
     }
-
+    /*
     Elemento *actual = cola->inicio;
 
     while (actual != NULL)
@@ -196,6 +198,14 @@ void printQueue(Queue* cola)
         printf("| %d |\n", actual->dato);
         actual = actual->siguiente;
     }
+    */
+   Elemento *actual = cola->final;
+
+   while (actual != NULL)
+   {
+        printf("| %d |\n", actual->dato);
+        actual = actual->anterior;
+   }
     printf("\n");
 
     return;
