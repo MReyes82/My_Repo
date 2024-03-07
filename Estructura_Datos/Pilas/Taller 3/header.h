@@ -20,3 +20,4 @@ Nodo *alojarNodo(int dato);
 void liberarMemoriaPila(Stack *fullStack);
 bool vacia(Stack *fullStack);
 bool llena(Stack *fullStack, int numeroNodos);
+int cantidadDeNodos(Stack *fullStack);

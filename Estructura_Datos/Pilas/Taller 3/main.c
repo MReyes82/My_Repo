@@ -63,6 +63,9 @@ int main(void)
                 push(&pila, datoBuffer, pilaTam);
             }
 
+            int n = cantidadDeNodos(&pila);
+            printf("Cantidad de nodos: [%d]\n", n);
+
             printf("---------\n");
             break;
         

@@ -80,3 +80,22 @@ bool llena(Stack *fullStack, int numeroNodos)
 {   // regresa verdadero si la pila esta llena
     return ((fullStack->length == numeroNodos));
 }
+
+int cantidadDeNodos(Stack *fullStack)
+{
+    int num = 0;
+    if (vacia(fullStack))
+    {
+        printf("Stack underflow\n");
+        return num;
+    }
+
+    Nodo* actual = fullStack->top;
+    while (actual != NULL)
+    {
+        num++;
+        actual = actual->sig;
+    }
+
+    return num;
+}
