@@ -63,41 +63,50 @@ void insertarNodoPosicion(ListaDobEnlace *lista, int dato, int posicion)
     // insertar al inicio 
     if (posicion == 0)
     {
+        // Establece el siguiente del nuevo nodo como el inicio de la lista
         nuevo->siguiente = lista->inicio;
         
+        // Si la lista no está vacía, establece el anterior del inicio como el nuevo nodo
         if (lista->inicio != NULL)
         {
             lista->inicio->anterior = nuevo;
 
         }
         
+        // Establece el inicio de la lista como el nuevo nodo
         lista->inicio = nuevo;
 
+        // Si la lista estaba vacía, también establece el fin como el nuevo nodo
         if (lista->numeroNodos == 0)
         {
             lista->fin = nuevo;
         }
 
     }
-
+    // Insertar en una posición específica
     else
     {
+        // Inicializa un puntero actual que apunta al inicio de la lista
         Nodo *actual = lista->inicio;
 
+        // Avanza hasta la posición anterior a la posición deseada
         for (int i = 0 ; i < posicion - 1 ; i++)
         {
             actual = actual->siguiente;
         }
 
+        // Establece los punteros del nuevo nodo y del nodo actual para insertar el nuevo nodo
         nuevo->siguiente = actual->siguiente;
         nuevo->anterior = actual;
         actual->siguiente = nuevo;
 
+        // Si el nuevo nodo tiene un siguiente, establece el anterior de ese siguiente como el nuevo nodo
         if (nuevo->siguiente != NULL)
         {
             nuevo->siguiente->anterior = nuevo;
         }
 
+        // Si la posición es la última, actualiza el fin de la lista al nuevo nodo
         if (posicion == lista->numeroNodos)
         {
             lista->fin = nuevo;
@@ -106,6 +115,7 @@ void insertarNodoPosicion(ListaDobEnlace *lista, int dato, int posicion)
     }
 
     lista->numeroNodos++;
+    return;
 }
 
 void liberarMemoriaLista(ListaDobEnlace *lista)

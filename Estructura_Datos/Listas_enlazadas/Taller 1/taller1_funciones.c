@@ -109,3 +109,41 @@ void ordenarListaAscendente(Nodo **inicio_lista)
     
     return;
 }
+
+void eliminarNodoEnLista(Nodo **inicioDeLista, int datoAEliminar)
+{
+    if (*inicioDeLista == NULL)
+    {
+        printf("La lista esta vacia, no hay nodos para eliminar.");
+        return;
+    }
+
+    Nodo *actual = *inicioDeLista;
+    Nodo *anterior = NULL;
+
+    while (actual != NULL && actual->dato != datoAEliminar)
+    {
+        // variable para verificar si el nodo a eliminar es el primero de la lista
+        anterior = actual; 
+        actual = actual->siguiente;
+    }
+
+    // si se llevo al final de la lista y no se encontro el dato
+    if (actual == NULL)
+    {
+        printf("No se encontro el dato a eliminar/\n");
+        return;
+    }
+
+    // si el nodo a eliminar es el primero de la lista=
+    if (anterior == NULL)
+    {
+        *inicioDeLista = actual->siguiente;
+
+    }else{
+        anterior->siguiente = actual->siguiente;
+        free(actual);
+    }
+
+    return;
+}

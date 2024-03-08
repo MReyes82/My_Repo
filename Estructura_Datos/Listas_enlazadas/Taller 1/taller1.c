@@ -30,6 +30,14 @@ int main (void)
     ordenarListaAscendente(&inicio_lista);
     printf("\nLista ordenada: \n");
     imprimirNodos(inicio_lista);
+    printf("\nIntento 1 de eliminar: \n");
+    eliminarNodoEnLista(&inicio_lista, 20);
+    printf("\nIntento 2 de eliminar: \n");
+    eliminarNodoEnLista(&inicio_lista, 13);
+    imprimirNodos(inicio_lista);
+    printf("\nIntento 3 de eliminar: \n");
+    eliminarNodoEnLista(&inicio_lista, 7);
+    imprimirNodos(inicio_lista);
 
     liberarMemoriaNodos(&inicio_lista);
 
