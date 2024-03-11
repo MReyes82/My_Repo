@@ -4,29 +4,23 @@ import javax.swing.JOptionPane;
 
 public class Grupo 
 {
-	private int numeroDeGrupo;
+	private int numeroDeGrupo; // clave
 	private int cantidadAlumnos;
-	private Maestro profesor;
-	private String carrera;
+	private int cantidadMaxAlumnos;
 	
-	public Grupo(int numeroDeGrupo, int cantidadAlumnos, Maestro profesor, String carrera)
+	private Maestro profesor;
+	private Alumno alumnos[];
+	
+	public Grupo(int numeroDeGrupo, int cantidadMaxAlumnos, Maestro profesor)
 	{
 		this.numeroDeGrupo = numeroDeGrupo;
-		this.cantidadAlumnos = cantidadAlumnos;
+		this.cantidadMaxAlumnos = cantidadMaxAlumnos;
 		this.profesor = profesor;
-		this.carrera = carrera;
+		
+		cantidadAlumnos = 0;
+		alumnos = new Alumno[cantidadMaxAlumnos];
 	}
-	
-	public void setCarrera(String carrera)
-	{
-		this.carrera = carrera;
-	}
-	
-	public String getCarrera()
-	{
-		return carrera;
-	}
-	
+
 	public int getCantidadAlumnnos() 
 	{
 		return cantidadAlumnos;
@@ -56,8 +50,27 @@ public class Grupo
 	{
 		JOptionPane.showMessageDialog(null, "Numero del grupo: " + this.getNumeroDeGrupo() + 
 		"\nCantidad de alumnos: " + this.getCantidadAlumnnos() + "\nProfesor: "
-		 + this.getProfesor().getNombre() + "\nCarrera del grupo: " + this.getCarrera());
+		 + this.getProfesor().getNombre());
 		
+	}
+	
+	public void mostrarListaAlumnos()
+	{
+		for (int i = 0 ; i < cantidadAlumnos ; i++)
+		{
+			JOptionPane.showMessageDialog(null, "Alumno " + (i+1) + ":");
+			alumnos[i].imprimirDatos();
+		}
+	}
+	
+	public int getCantidadMaxAlumnos()
+	{
+		return cantidadMaxAlumnos;
+	}
+	
+	public void agregarAlumno(Alumno nuevo)
+	{
+		alumnos[cantidadAlumnos++] = nuevo;
 	}
 	
 }

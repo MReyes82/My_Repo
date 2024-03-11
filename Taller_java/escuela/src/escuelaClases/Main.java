@@ -1,14 +1,21 @@
 package escuelaClases;
 
 import javax.swing.JOptionPane;
+import java.util.ArrayList;
 
 public class Main 
 {
-	// arreglos para las instancias, con un maximo de 15 elementos cada uno
-	Alumno estudiantes[] = new Alumno[15]; 
-	Maestro profesores[] = new Maestro[15];
-	Grupo grupos[] = new Grupo[15];
-	int contadorEstudiantes = 0, contadorProfesores = 0, contadorGrupos = 0, edadBuffer = 0, matriculaBuffer = 0;
+	/* 
+	 * TODO: Arreglar Excepcion IndexOutOfBounds en 
+	 * seleccionar maestro y alumno, agregar try-catch
+	 * 
+	
+	*/
+	//Alumno estudiantes[] = new Alumno[15]; 
+	//Maestro profesores[] = new Maestro[15];
+	//Grupo grupos[] = new Grupo[15];
+	//int contadorEstudiantes = 0, contadorProfesores = 0, contadorGrupos = 0, 
+	int edadBuffer = 0, matriculaBuffer = 0;
 	String facultadBuffer = null, nombreBuffer = null;
 	
 	public static void main(String[] args) 
@@ -24,6 +31,7 @@ public class Main
 	
 	public void menu() // TODO: agregar una expresion LAMBDA y ciclo for mejorado
 	{
+		Control.inicializarArreglos();
 		Boolean correPrograma = true;
 		String opcion;
 		
@@ -55,13 +63,13 @@ public class Main
 				break;
 				
 			case "Mostrar datos de maestros":
-				mostrarInstancias(profesores);
-				//mostrarMaestros();
+				//mostrarInstancias(Control.getProfesores());
+				mostrarMaestros();
 				break;
 				
 			case "Mostrar datos de alumnos":
-				mostrarInstancias(estudiantes);
-				//mostrarAlumnos();
+				//mostrarInstancias(Control.getEstudiantes());
+				mostrarAlumnos();
 				break;
 			
 			case "Mostrar datos de grupos":
@@ -164,10 +172,11 @@ public class Main
 			return;
 		}
 		
-		Persona nuevoProf = new Maestro(nombreBuffer, edadBuffer, matriculaBuffer, facultadBuffer, 
+		Maestro nuevoProf = new Maestro(nombreBuffer, edadBuffer, matriculaBuffer, facultadBuffer, 
 										titulo, esp);
 		
-		profesores[contadorProfesores++] = (Maestro) nuevoProf;
+		Control.agregarMaestro(nuevoProf);
+		//profesores[contadorProfesores++] = (Maestro) nuevoProf;
 		JOptionPane.showMessageDialog(null, "Docente agreado exitosamente.");
 	}
 
@@ -194,35 +203,53 @@ public class Main
 		
 		for (int i = 0 ; i < cantidadMaterias ; i++)
 		{
-			materias[i] = scanString("Materia" + (i+1) + ": ");
+			materias[i] = scanString("Materia " + (i+1) + ": ");
 		}
 		
-		Persona nuevoAlu = new Alumno(nombreBuffer, edadBuffer, matriculaBuffer, facultadBuffer,
+		Alumno nuevoAlu = new Alumno(nombreBuffer, edadBuffer, matriculaBuffer, facultadBuffer,
 										promedio, carrera, materias, semestre);
-		estudiantes[contadorEstudiantes++] = (Alumno) nuevoAlu;
+		
+		Control.agregarAlumnos(nuevoAlu);
+		//estudiantes[contadorEstudiantes++] = (Alumno) nuevoAlu;
 		JOptionPane.showMessageDialog(null, "Alumno agreado exitosamente.");
 	}
 	
 	public void altaGrupo() 
 	{
-		int cant = contadorEstudiantes;	
-		int num = scanUnsignedInteger("Ingrese el numero del grupo: ");
-		Boolean seEncontro = false;
-		String profesor = scanString("Ingrese el nombre del profesor para el grupo: ");
-		Maestro profesorDelGrupo = null; 
-		String carreraDelGrupo = scanString("Ingrese la carrera del grupo: ");
+		//hacemos las copias de los arraylist	
+		ArrayList<Maestro> profesores = Control.getProfesores();
+		ArrayList<Alumno> alumnos = Control.getEstudiantes();
+		String listaMaestros = generarListaMaestros(profesores);
+		String listaAlumnos = generarListaAlumnos(alumnos);
 		
+		int num = scanUnsignedInteger("Ingrese el numero del grupo: ");
+		int cantidad = scanUnsignedInteger("Ingrese la cantidad maxima de alumnos del grupo: ");
+		Maestro profesorDelGrupo = seleccionarMaestro(profesores, listaMaestros);
+		
+		Grupo nuevoGrupo = new Grupo(num, cantidad, profesorDelGrupo);
+		Alumno nuevo = null;
+		
+		for (int i = 0 ; i < cantidad ; i++)
+		{
+			nuevo = seleccionarAlumno(alumnos, listaAlumnos);
+			nuevoGrupo.agregarAlumno(nuevo);
+		}
+		
+		Control.agregarGrupo(nuevoGrupo);
+		/*
 		for (int i = 0 ; i < contadorProfesores ; i++)
 		{
+			
 			if (profesores[i].getNombre().equals(profesor)) // si el nombre de la iteracion 'i' del arreglo profesores
 			{												// es igual al nombre pedido previamente
 				profesorDelGrupo = new Maestro(profesores[i].getNombre(),
 									profesores[i].getEdad(), profesores[i].getMatricula(),
 									profesores[i].getFacultad(), profesores[i].getTituloAcademico(),
-									profesores[i].getEspecializacion()) ;
+									profesores[i].getEspecializacion() );
 				seEncontro = true;
 				break; 
 			}
+			
 		}
 		
 		if (!seEncontro || profesorDelGrupo == null)
@@ -231,20 +258,18 @@ public class Main
 			return;
 		}
 		
-		Grupo nuevoGrupo = new Grupo(num, cant, profesorDelGrupo, carreraDelGrupo);
-		grupos[contadorGrupos++] = nuevoGrupo;
+		
+		//grupos[contadorGrupos++] = nuevoGrupo;
+		*/
 	}
-	/*
+	
 	public void mostrarAlumnos()
-	{	// si no hay alumnos pero si hay grupos
-		if (contadorEstudiantes == 0 && contadorGrupos > 0)
-		{
-			JOptionPane.showMessageDialog(null, "No hay alumnos para mostrar en el arreglo,"
-					                      + ", seleccione la opcion 'mostrar datos de grupos'");
-			return;
-		}
-		// si no hay alumnos pero tampoco grupos
-		else if (contadorEstudiantes == 0 && contadorGrupos == 0)
+	{
+		// hacemos una copia del arraylist original 
+		ArrayList<Alumno> alumnosAux = Control.getEstudiantes();
+		
+		// si no hay elementos en el arreglo
+		if (alumnosAux.isEmpty())
 		{
 			JOptionPane.showMessageDialog(null, "No hay alumnos para mostrar");
 			return;
@@ -252,17 +277,19 @@ public class Main
 		
 		JOptionPane.showMessageDialog(null, "Mostrando alumnos.");
 		
-		for (int i = 0 ; i < contadorEstudiantes ; i++)
+		for (Alumno estudiante : alumnosAux)
 		{
-			JOptionPane.showMessageDialog(null, "Alumno " + (i+1) + "\n");
-			estudiantes[i].imprimirDatos();
+			estudiante.imprimirDatos();
 		}
-		
 	}
 	
 	public void mostrarMaestros()
 	{
-		if (contadorProfesores == 0)
+		// hacemos una copia del arraylist original
+		ArrayList<Maestro> maestrosAux = Control.getProfesores();
+		
+		// si no hay elementos en el arreglo
+		if (maestrosAux.isEmpty())
 		{
 			JOptionPane.showMessageDialog(null, "No hay profesores para mostrar");
 			return;
@@ -270,17 +297,19 @@ public class Main
 		
 		JOptionPane.showMessageDialog(null, "Mostrando profesores.");
 		
-		for (int i = 0 ; i < contadorProfesores ; i++)
+		for (Maestro profesor : maestrosAux)
 		{
-			JOptionPane.showMessageDialog(null, "Profesor " + (i+1) + "\n");
-			profesores[i].imprimirDatos();
-		}	
+			profesor.imprimirDatos();
+		}
 		
 	}
-	 */
+	 
 	public void mostrarGrupos()
 	{
-		if (contadorGrupos == 0)
+		// hacemos una copia del arraylist original
+		ArrayList<Grupo> gruposAux = Control.getGrupos();
+		// si no hay elementos en el arreglo
+		if (gruposAux.isEmpty())
 		{
 			JOptionPane.showMessageDialog(null, "No hay grupos para mostrar");
 			return;
@@ -288,13 +317,79 @@ public class Main
 		
 		JOptionPane.showMessageDialog(null, "Mostrando grupos.");
 		
-		for (int i = 0 ; i < contadorGrupos ; i++)
+		int i = 1;
+		for (Grupo grupo: gruposAux)
 		{
-			grupos[i].mostrarDatos();
+			JOptionPane.showMessageDialog(null, "Grupo " + i + ":");
+			grupo.mostrarDatos();
+			grupo.mostrarListaAlumnos();
 		}
 		
 	}
 	
+	public Maestro seleccionarMaestro(ArrayList<Maestro> maestros, String listado)
+	{
+		int indice = 0;
+		do
+		{
+			indice = scanUnsignedInteger("Maestros\n" + listado + "\nSeleccione un maestro para el grupo: ");
+		
+			if (indice == -1)
+			{
+				JOptionPane.showMessageDialog(null, "Maestro elegido no valido");
+			}
+			
+		} while(indice == -1);
+			
+		return maestros.get(indice);
+	}
+	
+	public Alumno seleccionarAlumno(ArrayList<Alumno> estudiantes, String listado)
+	{
+		int indice = 0;
+		do
+		{
+			 indice = scanUnsignedInteger("Alumnos\n" + listado + "\nSeleccione un alumno para añadr a el grupo: ");
+			 
+			 if (indice == -1)
+			 {
+				 JOptionPane.showMessageDialog(null, "Alumno elegido no valido");
+			 }
+			 
+		} while(indice == -1);
+		
+		
+		return estudiantes.get(indice);
+	}
+	
+	// hice esta funcion para facilitar la generacion del listado que se mostrara al seleccionar un maestro o alumno
+	public String generarListaMaestros(ArrayList<Maestro> maestros)
+	{
+		String lista = "";
+		int i = 0;
+		for (Maestro profesor: maestros)
+		{
+			lista += " " + i + ") " + profesor.getNombre() + "";
+			i++;
+		}
+		
+		return lista;
+	}
+	
+	public String generarListaAlumnos(ArrayList<Alumno> estudiantes)
+	{
+		String lista = "";
+		int i = 0;
+		for (Alumno alumno : estudiantes)
+		{
+			lista += " " + i + ") " + alumno.getNombre() + "";
+			i++;
+		}
+		
+		return lista;
+	}
+	
+	/*
 	public static <T extends Persona> void mostrarInstancias(T[] personas)
 	{
 		// pregunta si la primera posicion del arreglo es nulo, lo que significaria que no hay elementos para mostrar
@@ -306,12 +401,12 @@ public class Main
 		}
 		
 		int i = 0;
-		/*
-		 	mientras que el elemento actual no sea nulo, para evitar obtener
-			un NullPointerException, ya que antes tenia un ciclo For que llegaba hazta "personas.length",
-			pero como length es un numero fijo, podia iterar sobre elementos nulos.
-		 */
-		while (personas[i] != NULL) // --> ^^^^^
+		
+		 	//mientras que el elemento actual no sea nulo, para evitar obtener
+			//un NullPointerException, ya que antes tenia un ciclo For que llegaba hasta "personas.length",
+			//pero como length es un numero fijo, podia iterar sobre elementos nulos.
+		 
+		while (personas[i] != null) // --> ^^^^^
 		{
 			JOptionPane.showMessageDialog(null, personas[i].getClass().getSimpleName() + " " + (i + 1) + "\n");
 			personas[i].imprimirDatos();
@@ -323,25 +418,13 @@ public class Main
 
 			i++;
 		}
-		/* el metodo getClass retorna un objeto que en este caso representaria la clase que queremos acceder
-		   despues, el metodo getSimpleName retornaria el nombre de la clase a la que queremos acceder
-		   hice esto ya que en mi metodo de mostrarAlumno o mostrarMaestro incluyo un mensaje que 
-		  menciona el nombre del objeto y el numero de iteracion, ejemplo: "alumno" + (i+1) */
+		// el metodo getClass retorna un objeto que en este caso representaria la clase que queremos acceder
+		//   despues, el metodo getSimpleName retornaria el nombre de la clase a la que queremos acceder
+		//   hice esto ya que en mi metodo de mostrarAlumno o mostrarMaestro incluyo un mensaje que 
+		//  menciona el nombre del objeto y el numero de iteracion, ejemplo: "alumno" + (i+1)
 		
-	}
+	} 
+	*/
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
