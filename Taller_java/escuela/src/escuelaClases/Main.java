@@ -5,16 +5,6 @@ import java.util.ArrayList;
 
 public class Main 
 {
-	/* 
-	 * TODO: Arreglar Excepcion IndexOutOfBounds en 
-	 * seleccionar maestro y alumno, agregar try-catch
-	 * 
-	
-	*/
-	//Alumno estudiantes[] = new Alumno[15]; 
-	//Maestro profesores[] = new Maestro[15];
-	//Grupo grupos[] = new Grupo[15];
-	//int contadorEstudiantes = 0, contadorProfesores = 0, contadorGrupos = 0, 
 	int edadBuffer = 0, matriculaBuffer = 0;
 	String facultadBuffer = null, nombreBuffer = null;
 	
@@ -29,7 +19,7 @@ public class Main
 		menu();
 	}
 	
-	public void menu() // TODO: agregar una expresion LAMBDA y ciclo for mejorado
+	public void menu() // TODO: agregar una expresion LAMBDA
 	{
 		Control.inicializarArreglos();
 		Boolean correPrograma = true;
@@ -155,28 +145,25 @@ public class Main
 	public void altaMaestro()
 	{
 		String titulo;
-		String esp;
 		// pedimos los datos
 		nombreBuffer = scanString("Nombre: ");
 		edadBuffer = scanUnsignedInteger("Edad: ");
 		matriculaBuffer = scanUnsignedInteger("Matricula: ");
 		facultadBuffer = scanString("Facultad: ");
 		titulo = scanString("Titulo: ");
-		esp = scanString("Especialidad: ");
+		//esp = scanString("Especialidad: ");
 		
 		// verificacion en caso de que algun valor no sea valido
 		if (nombreBuffer == null || edadBuffer < 0 || 
 			matriculaBuffer < 0 || facultadBuffer == null 
-			|| titulo == null || esp == null) {
+			|| titulo == null) {
 			JOptionPane.showMessageDialog(null, "ERROR: valor invalido ingresado.");
 			return;
 		}
 		
-		Maestro nuevoProf = new Maestro(nombreBuffer, edadBuffer, matriculaBuffer, facultadBuffer, 
-										titulo, esp);
+		Maestro nuevoProf = new Maestro(nombreBuffer, edadBuffer, matriculaBuffer, facultadBuffer, titulo);
 		
 		Control.agregarMaestro(nuevoProf);
-		//profesores[contadorProfesores++] = (Maestro) nuevoProf;
 		JOptionPane.showMessageDialog(null, "Docente agreado exitosamente.");
 	}
 
@@ -210,7 +197,6 @@ public class Main
 										promedio, carrera, materias, semestre);
 		
 		Control.agregarAlumnos(nuevoAlu);
-		//estudiantes[contadorEstudiantes++] = (Alumno) nuevoAlu;
 		JOptionPane.showMessageDialog(null, "Alumno agreado exitosamente.");
 	}
 	
@@ -224,43 +210,30 @@ public class Main
 		
 		int num = scanUnsignedInteger("Ingrese el numero del grupo: ");
 		int cantidad = scanUnsignedInteger("Ingrese la cantidad maxima de alumnos del grupo: ");
-		Maestro profesorDelGrupo = seleccionarMaestro(profesores, listaMaestros);
+		
+		Maestro profesorDelGrupo = seleccionarMaestro(profesores, listaMaestros); 
+			
+		if (profesorDelGrupo == null)
+		{
+			JOptionPane.showMessageDialog(null, "Indice no valido.");
+			return;
+		}
 		
 		Grupo nuevoGrupo = new Grupo(num, cantidad, profesorDelGrupo);
-		Alumno nuevo = null;
 		
 		for (int i = 0 ; i < cantidad ; i++)
 		{
-			nuevo = seleccionarAlumno(alumnos, listaAlumnos);
+			Alumno nuevo = seleccionarAlumno(alumnos, listaAlumnos);
+			
+			if (nuevo == null)
+			{
+				JOptionPane.showMessageDialog(null, "Indice no valido.");
+				break;
+			}
 			nuevoGrupo.agregarAlumno(nuevo);
 		}
 		
 		Control.agregarGrupo(nuevoGrupo);
-		/*
-		for (int i = 0 ; i < contadorProfesores ; i++)
-		{
-			
-			if (profesores[i].getNombre().equals(profesor)) // si el nombre de la iteracion 'i' del arreglo profesores
-			{												// es igual al nombre pedido previamente
-				profesorDelGrupo = new Maestro(profesores[i].getNombre(),
-									profesores[i].getEdad(), profesores[i].getMatricula(),
-									profesores[i].getFacultad(), profesores[i].getTituloAcademico(),
-									profesores[i].getEspecializacion() );
-				seEncontro = true;
-				break; 
-			}
-			
-		}
-		
-		if (!seEncontro || profesorDelGrupo == null)
-		{
-			JOptionPane.showMessageDialog(null, "No se encontro el profesor.");
-			return;
-		}
-		
-		
-		//grupos[contadorGrupos++] = nuevoGrupo;
-		*/
 	}
 	
 	public void mostrarAlumnos()
@@ -329,37 +302,35 @@ public class Main
 	
 	public Maestro seleccionarMaestro(ArrayList<Maestro> maestros, String listado)
 	{
-		int indice = 0;
-		do
-		{
-			indice = scanUnsignedInteger("Maestros\n" + listado + "\nSeleccione un maestro para el grupo: ");
+		int indice = scanUnsignedInteger("Maestros\n" + listado + "\nSeleccione un maestro para el grupo: ");	
+		Maestro output = null;
 		
-			if (indice == -1)
-			{
-				JOptionPane.showMessageDialog(null, "Maestro elegido no valido");
-			}
+		try
+		{
+			 output = maestros.get(indice);
 			
-		} while(indice == -1);
-			
-		return maestros.get(indice);
+		} catch(IndexOutOfBoundsException e){
+			return null;
+		}
+		
+		return output;
 	}
 	
 	public Alumno seleccionarAlumno(ArrayList<Alumno> estudiantes, String listado)
 	{
-		int indice = 0;
-		do
+		int indice = scanUnsignedInteger("Alumnos\n" + listado + "\nSeleccione un alumno para añadr a el grupo: ");
+		
+		Alumno output = null;
+		try 
 		{
-			 indice = scanUnsignedInteger("Alumnos\n" + listado + "\nSeleccione un alumno para añadr a el grupo: ");
-			 
-			 if (indice == -1)
-			 {
-				 JOptionPane.showMessageDialog(null, "Alumno elegido no valido");
-			 }
-			 
-		} while(indice == -1);
+			output = estudiantes.get(indice);
+			
+		} catch(IndexOutOfBoundsException e) {
+			
+			return null;
+		}
 		
-		
-		return estudiantes.get(indice);
+		return output;
 	}
 	
 	// hice esta funcion para facilitar la generacion del listado que se mostrara al seleccionar un maestro o alumno
