@@ -1,5 +1,12 @@
 import javax.swing.JOptionPane;
+import java.awt.*;
+//import java.sql.Array;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.ListIterator;
+import java.util.stream.Collectors;
+import java.util.List;
 
 public class Main
 {
@@ -17,9 +24,12 @@ public class Main
         menu();
     }
 
-    public void menu() // TODO: agregar una expresion LAMBDA y terminar tareas de la actividad 2.2.1
+    public void menu() // TODO: arreglar bug en metodo ordenarPersonasPorEdad, al llamarla con el argumento "maestro" crashea indirectamente
     {
         Control.inicializarArreglos();
+        Control.testMaestros();
+        Control.testAlumnos();
+
         Boolean correPrograma = true;
         String opcion;
 
@@ -29,7 +39,7 @@ public class Main
                 opcion = (JOptionPane.showInputDialog(null, "Que deseas hacer?", "MENU DE ESCUELA",
                         JOptionPane.PLAIN_MESSAGE, null, new Object[] {"Seleccionar", "Dar de alta maestro", "Dar de alta alumno",
                                 "Dar de alta grupo", "Mostrar datos de maestros", "Mostrar datos de alumnos", "Mostrar datos de grupos",
-                                "Mostrar nombres de alumnos alfabeticamente", "Mostrar alumnos ordenados por edad"
+                                "Mostrar nombres de personas alfabeticamente", "Mostrar personas ordenadas por edad"
                                 ,"Terminar programa"}, "Seleccionar")).toString();
 
             } catch(NullPointerException e){
@@ -66,9 +76,11 @@ public class Main
                     break;
 
                 case "Mostrar nombres de personas alfabeticamente":
+                    subMenuOrdenarPersonaPorNombre();
                     break;
 
-                case "Mostrar personas ordenados por edad":
+                case "Mostrar personas ordenadas por edad":
+                    subMenuOrdenarPersonaPorEdad();
                     break;
 
                 case "Terminar programa":
@@ -258,6 +270,7 @@ public class Main
         for (Alumno estudiante : alumnosAux)
         {
             estudiante.imprimirDatos();
+            estudiante.imprimirMaterias();
         }
     }
 
@@ -372,7 +385,7 @@ public class Main
         try {
             seleccion = (JOptionPane.showInputDialog(null, "Que tipo de persona deseas ordenar por nombre alfabeticamente", "Ordenar por nombre",
                     JOptionPane.PLAIN_MESSAGE, null, new Object[]{"Seleccionar", "Ordenar alumnos",
-                            "Ordenar maestros", "Terminar programa"}, "Seleccionar")).toString();
+                            "Ordenar maestros"}, "Seleccionar")).toString();
         }catch (NullPointerException e){
             return;
         }
@@ -380,16 +393,187 @@ public class Main
         switch (seleccion)
         {
             case "Ordenar alumnos":
+                ordenarPersonasPorNombreAlfabeticamente("alumno");
                 break;
 
             case "Ordenar maestros":
+                ordenarPersonasPorNombreAlfabeticamente("maestro");
                 break;
         }
     }
 
-    public void ordenarPersonasPorNombreAlfabeticamente(Persona claseAOrdenar)
+    public void ordenarPersonasPorNombreAlfabeticamente(String criterioDeOrden)
     {
-        // terminar
+        // pequeña validacion para llamadas a la funcion
+        if (criterioDeOrden == null) { return; }
+
+        if (criterioDeOrden.equals("alumno"))
+        {
+            if (Control.getEstudiantes().isEmpty())
+            {
+                JOptionPane.showMessageDialog(null, "Arreglo vacio.\n");
+                return;
+            }
+
+            ArrayList<Alumno> temp = Control.getEstudiantes();
+            List<Alumno> nombresOrdenados = ordenarAlfAlumnos(temp);
+
+            // Usamos la clase StringBuilder para generar la lista, lo cual
+            // nos permite añadir los nombres de manera mas eficiente
+            // Preferi este enfoque para usar forEach como metodo de iteracion
+            StringBuilder listaConstructor = new StringBuilder();
+
+            // pasamos los nombres del arraylist original al string de nombres
+            nombresOrdenados.forEach(alumno ->  listaConstructor.append(alumno.getNombre()).append("\n"));
+            // pasamos el string builder a un string normal
+            String listado = listaConstructor.toString();
+            JOptionPane.showMessageDialog(null, "Listado de nombres ordenados:\n" + listado);
+
+            return;
+        }
+
+        if (criterioDeOrden.equals("maestro"))
+        {
+            if (Control.getProfesores().isEmpty())
+            {
+                JOptionPane.showMessageDialog(null, "Arreglo vacio.\n");
+                return;
+            }
+
+            ArrayList<Maestro> temp = Control.getProfesores();
+            List<Maestro> nombresOrdenados = ordenarAlfMaestros(temp);
+
+            StringBuilder listaConstructor = new StringBuilder();
+            nombresOrdenados.forEach(maestro -> listaConstructor.append(maestro.getNombre()).append("\n"));
+
+            String listado = listaConstructor.toString();
+            JOptionPane.showMessageDialog(null, "Listado de nombres ordenados:\n" + listado);
+
+            return;
+        }
+    }
+
+    // este tipos de metodos solo se encargan de devolver un list ordenado
+    public static List<Alumno> ordenarAlfAlumnos(ArrayList<Alumno> alumnos)
+    {
+        List<Alumno> listadoOrdenado =
+                alumnos.stream().sorted(Comparator.comparing(p -> p.getNombre())).collect(Collectors.toList());
+
+        return listadoOrdenado;
+    }
+
+    public static List<Maestro> ordenarAlfMaestros(ArrayList<Maestro> profesores)
+    {
+        List<Maestro> listadoOrdenado =
+        profesores.stream().sorted(Comparator.comparing(p -> p.getNombre())).collect(Collectors.toList());
+
+        return listadoOrdenado;
+    }
+
+    public void subMenuOrdenarPersonaPorEdad()
+    {
+        String seleccion;
+
+        try {
+            seleccion = (JOptionPane.showInputDialog(null, "Que tipo de persona deseas ordenar por edad (ascedente)", "Ordenar por edad",
+                    JOptionPane.PLAIN_MESSAGE, null, new Object[]{"Seleccionar", "Ordenar alumnos",
+                            "Ordenar maestros"}, "Seleccionar")).toString();
+        }catch (NullPointerException e){
+            return;
+        }
+
+        switch (seleccion)
+        {
+            case "Ordenar alumnos":
+                ordenarPersonasPorEdad("alumno");
+                break;
+
+            case "Ordenar maestros":
+                ordenarPersonasPorEdad("maestro");
+                break;
+        }
+    }
+
+    public void ordenarPersonasPorEdad(String criterioDeOrden)
+    {
+        // pequeña validacion para llamadas a la funcion
+        if (criterioDeOrden == null) {
+            return;
+        }
+
+        if (criterioDeOrden.equals("alumno"))
+        {
+            if (Control.getEstudiantes().isEmpty())
+            {
+                JOptionPane.showMessageDialog(null, "Arreglo vacio.\n");
+                return;
+            }
+
+            ArrayList<Alumno> temp = Control.getEstudiantes();
+            List<Alumno> edadesOrdenadas = ordenarEdadAlumnos(temp);
+
+            String listado = "";
+            // en este caso, iteraremos usando el ListIterator
+            // para este estilo de iterador no necesite hacer uso del StringBuilder
+            ListIterator<Alumno> edadesIterador = edadesOrdenadas.listIterator();
+            while(edadesIterador.hasNext())
+            {
+
+                // obtenemos el nombre del elemento siguiente del iterador
+                Alumno aux = edadesIterador.next();
+                String nameAux = aux.getNombre();
+                int ageAux = aux.getEdad();
+                listado += nameAux + " " + ageAux + "\n";
+            }
+
+            JOptionPane.showMessageDialog(null, "Listado de nombres ordenados:\n" + listado);
+
+            return;
+        }
+
+        if (criterioDeOrden.equals("maestro"))
+        {
+            if (Control.getProfesores().isEmpty())
+            {
+                JOptionPane.showMessageDialog(null, "Arreglo vacio.\n");
+                return;
+            }
+
+            ArrayList<Maestro> temp = Control.getProfesores();
+            List<Maestro> edadesOrdenadas = ordenarEdadMaestros(temp);
+
+            String listado = "";
+            ListIterator<Maestro> edadesIterador = edadesOrdenadas.listIterator();
+
+            while(edadesIterador.hasNext());
+            {
+                Maestro actual = edadesIterador.next();
+                String nameAux = actual.getNombre();
+                int ageAux = actual.getEdad();
+                listado += nameAux + " " + ageAux + "\n";
+            }
+
+            JOptionPane.showMessageDialog(null, "Listado de nombres ordenados por edad:\n" + listado);
+
+            return;
+        }
+
+    }
+
+    public static List<Alumno> ordenarEdadAlumnos(ArrayList<Alumno> alumnos)
+    {
+        List<Alumno> listadoOrdenado =
+                alumnos.stream().sorted(Comparator.comparing(p -> p.getEdad())).collect(Collectors.toList());
+
+        return listadoOrdenado;
+    }
+
+    public static List<Maestro> ordenarEdadMaestros(ArrayList<Maestro> maestros)
+    {
+        List<Maestro> listadoOrdenado =
+                maestros.stream().sorted(Comparator.comparing(p -> p.getEdad())).collect(Collectors.toList());
+
+        return listadoOrdenado;
     }
 
 	/*

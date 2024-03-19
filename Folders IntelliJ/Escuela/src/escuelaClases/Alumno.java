@@ -67,13 +67,26 @@ public class Alumno extends Persona
 
     public void imprimirMaterias()
     {
-        JOptionPane.showMessageDialog(null, "Materias que lleva el alumno:\n");
+        // este if solo es para los test, en los cuales
+        // predefino instancias de alumnos sin materias
+        if (materias == null)
+        {
+            JOptionPane.showMessageDialog(null, "No hay materias");
+            return;
+        }
+        // aplicamos la logica que se usa en generarListado, pues muestra las materias de forma menos "engorrosa"
         String[] materias = this.getMaterias();
+        String listadoAImprimir = "";
 
         for (String materia : materias)
         {
-            JOptionPane.showMessageDialog(null, materia + "\n");
+             listadoAImprimir += materia + "\n";
+
         }
+
+        JOptionPane.showMessageDialog(null, "Materias que lleva el alumno:\n" + listadoAImprimir);
+
     }
+
 }
 

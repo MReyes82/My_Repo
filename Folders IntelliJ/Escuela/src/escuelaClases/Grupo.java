@@ -58,6 +58,7 @@ public class Grupo
         {
             JOptionPane.showMessageDialog(null, "Alumno " + (i+1) + ":");
             alumnos[i].imprimirDatos();
+            alumnos[i].imprimirMaterias();
         }
     }
 

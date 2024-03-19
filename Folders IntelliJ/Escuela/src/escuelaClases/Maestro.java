@@ -20,7 +20,7 @@ public class Maestro extends Persona
     {
         JOptionPane.showMessageDialog(null, "Nombre: " + this.getNombre() + "\nEdad: " + this.getEdad() +
                 "\nMatricula: " + this.getMatricula() + "\nFacultad: " + this.getFacultad() +
-                "\nTitulo: " + this.getTituloAcademico() + "\nEspecializacion: ");
+                "\nTitulo: " + this.getTituloAcademico());
     }
 
 }
