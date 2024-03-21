@@ -27,7 +27,7 @@ int main (void)
 
         if (opcion == 4)
         {
-            printf("\nHasta luego tilin.\n");
+            printf("\nHazta luego tilin.\n");
             runs = 0;
             break;
 
