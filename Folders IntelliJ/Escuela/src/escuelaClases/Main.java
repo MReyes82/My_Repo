@@ -1,12 +1,11 @@
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import java.awt.*;
 //import java.sql.Array;
+import java.lang.annotation.ElementType;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.ListIterator;
-import java.util.stream.Collectors;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main
 {
@@ -39,8 +38,8 @@ public class Main
                 opcion = (JOptionPane.showInputDialog(null, "Que deseas hacer?", "MENU DE ESCUELA",
                         JOptionPane.PLAIN_MESSAGE, null, new Object[] {"Seleccionar", "Dar de alta maestro", "Dar de alta alumno",
                                 "Dar de alta grupo", "Mostrar datos de maestros", "Mostrar datos de alumnos", "Mostrar datos de grupos",
-                                "Mostrar nombres de personas alfabeticamente", "Mostrar personas ordenadas por edad"
-                                ,"Terminar programa"}, "Seleccionar")).toString();
+                                "Mostrar nombres de personas alfabeticamente", "Mostrar personas ordenadas por edad",
+                                "Eliminar elemento de un arreglo", "Terminar programa"}, "Seleccionar")).toString();
 
             } catch(NullPointerException e){
                 correPrograma = false;
@@ -81,6 +80,17 @@ public class Main
 
                 case "Mostrar personas ordenadas por edad":
                     subMenuOrdenarPersonaPorEdad();
+                    break;
+
+                case "Eliminar elemento de un arreglo":
+
+                    String elemento = subMenuEliminarInstancia();
+                    if (elemento == null) { break; }
+
+                    String identificador = scanString("Igrese el nombre (o numero) del elemento que quiera eliminar.");
+                    if (identificador == null) { break; }
+
+                    eliminarInstancia(elemento, identificador);
                     break;
 
                 case "Terminar programa":
@@ -251,6 +261,7 @@ public class Main
         }
 
         Control.agregarGrupo(nuevoGrupo);
+        JOptionPane.showMessageDialog(null, "Grupo agreado exitosamente.");
     }
 
     public void mostrarAlumnos()
@@ -358,7 +369,7 @@ public class Main
         int i = 0;
         for (Maestro profesor: maestros)
         {
-            lista += " " + i + ") " + profesor.getNombre() + "";
+            lista += " " + i + ") " + profesor.getNombre() + "\n";
             i++;
         }
 
@@ -371,7 +382,7 @@ public class Main
         int i = 0;
         for (Alumno alumno : estudiantes)
         {
-            lista += " " + i + ") " + alumno.getNombre() + "";
+            lista += " " + i + ") " + alumno.getNombre() + "\n";
             i++;
         }
 
@@ -422,7 +433,6 @@ public class Main
             // nos permite añadir los nombres de manera mas eficiente
             // Preferi este enfoque para usar forEach como metodo de iteracion
             StringBuilder listaConstructor = new StringBuilder();
-
             // pasamos los nombres del arraylist original al string de nombres
             nombresOrdenados.forEach(alumno ->  listaConstructor.append(alumno.getNombre()).append("\n"));
             // pasamos el string builder a un string normal
@@ -514,7 +524,7 @@ public class Main
 
             String listado = "";
             // en este caso, iteraremos usando el ListIterator
-            // para este estilo de iterador no necesite hacer uso del StringBuilder
+            // para este estilo de iteracion no necesite hacer uso del StringBuilder
             ListIterator<Alumno> edadesIterador = edadesOrdenadas.listIterator();
             while(edadesIterador.hasNext())
             {
@@ -541,17 +551,10 @@ public class Main
 
             ArrayList<Maestro> temp = Control.getProfesores();
             List<Maestro> edadesOrdenadas = ordenarEdadMaestros(temp);
+            StringBuilder listaConstructor = new StringBuilder();
 
-            String listado = "";
-            ListIterator<Maestro> edadesIterador = edadesOrdenadas.listIterator();
-
-            while(edadesIterador.hasNext());
-            {
-                Maestro actual = edadesIterador.next();
-                String nameAux = actual.getNombre();
-                int ageAux = actual.getEdad();
-                listado += nameAux + " " + ageAux + "\n";
-            }
+            edadesOrdenadas.forEach(maestro -> listaConstructor.append(maestro.getNombre() + " " + maestro.getEdad() + "\n"));
+            String listado = listaConstructor.toString();
 
             JOptionPane.showMessageDialog(null, "Listado de nombres ordenados por edad:\n" + listado);
 
@@ -575,6 +578,123 @@ public class Main
 
         return listadoOrdenado;
     }
+
+    public String subMenuEliminarInstancia()
+    {
+        String seleccion = null;
+
+        try {
+            seleccion = (JOptionPane.showInputDialog(null, "Que tipo instancia deseas eliminar?", "Eliminar instancia",
+                    JOptionPane.PLAIN_MESSAGE, null, new Object[]{"Seleccionar", "Maestro",
+                            "Alumno", "Grupo"}, "Seleccionar")).toString();
+        }catch (NullPointerException e){
+            return null;
+        }
+
+        switch (seleccion)
+        {
+            case "Maestro":
+                seleccion = "maestro";
+                break;
+
+            case "Alumno":
+                seleccion = "alumno";
+                break;
+
+            case "Grupo":
+                seleccion = "grupo";
+                break;
+        }
+
+        return seleccion;
+    }
+
+
+    public void eliminarInstancia(String criterioDeBusqueda, String elementoAEliminar)
+    {
+        // creterio de busqueda: el tipo de instancia que quiera eliminar
+        // elemento a eliminar el nombre de la instancia que quiera eliminar
+
+        if (criterioDeBusqueda == null || elementoAEliminar == null) { return; }
+
+        Boolean seEncontro = false;
+        int indice = 0;
+
+        if (criterioDeBusqueda.equals("maestro"))
+        {
+            if (Control.getProfesores().isEmpty()) { return; }
+
+            ArrayList<Maestro> temp = Control.getProfesores();
+
+            for (Maestro actual : temp)
+            {
+                String aux = actual.getNombre();
+                if (aux.equals(elementoAEliminar))
+                {
+                    Control.profesores.remove(indice);
+                    seEncontro = true;
+                    break;
+                }
+                indice++;
+            }
+
+            if (!seEncontro) { JOptionPane.showMessageDialog(null, "No se encontro el elemento"); }
+
+            else { JOptionPane.showMessageDialog(null, "Se elimino la instancia."); }
+        }
+
+        if (criterioDeBusqueda.equals("alumno"))
+        {
+            if (Control.getEstudiantes().isEmpty()) { return; }
+
+            ArrayList<Alumno> temp = Control.getEstudiantes();
+
+            for (Alumno actual : temp)
+            {
+                String aux = actual.getNombre();
+                if (aux.equals(elementoAEliminar))
+                {
+                    seEncontro = true;
+                    Control.estudiantes.remove(indice);
+                    break;
+                }
+                indice++;
+            }
+
+            if (!seEncontro) { JOptionPane.showMessageDialog(null, "No se encontro el elemento"); }
+
+            else { JOptionPane.showMessageDialog(null, "Se elimino la instancia."); }
+        }
+
+        if (criterioDeBusqueda.equals("grupo"))
+        {
+            if (Control.getGrupos().isEmpty()) { return; }
+            // antes de buscar el elemento, convertimos el string a entero
+            // pues los grupos usan un identificador (entero),
+            // no tienen nombre.
+            Integer identificadorGrupo = Integer.valueOf(elementoAEliminar);
+            ArrayList<Grupo> temp = Control.getGrupos();
+
+            for (Grupo actual : temp)
+            {
+                int aux = actual.getNumeroDeGrupo();
+                if (aux == identificadorGrupo)
+                {
+                    seEncontro = true;
+                    Control.grupos.remove(indice);
+                    break;
+                }
+                indice++;
+            }
+
+            if (!seEncontro) { JOptionPane.showMessageDialog(null, "No se encontro el elemento"); }
+
+            else { JOptionPane.showMessageDialog(null, "Se elimino la instancia."); }
+        }
+
+        return;
+    }
+
 
 	/*
 	public static <T extends Persona> void mostrarInstancias(T[] personas)
