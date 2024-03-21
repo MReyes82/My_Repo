@@ -23,7 +23,7 @@ public class Main
         menu();
     }
 
-    public void menu() // TODO: arreglar bug en metodo ordenarPersonasPorEdad, al llamarla con el argumento "maestro" crashea indirectamente
+    public void menu() // TODO: nada
     {
         Control.inicializarArreglos();
         Control.testMaestros();
@@ -237,6 +237,12 @@ public class Main
 
         int num = scanUnsignedInteger("Ingrese el numero del grupo: ");
         int cantidad = scanUnsignedInteger("Ingrese la cantidad maxima de alumnos del grupo: ");
+
+        if (num < 0 || cantidad < 0)
+        {
+            JOptionPane.showMessageDialog(null, "ERROR: valor invalido ingresado.");
+            return;
+        }
 
         Maestro profesorDelGrupo = seleccionarMaestro(profesores, listaMaestros);
 
@@ -463,7 +469,7 @@ public class Main
         }
     }
 
-    // este tipos de metodos solo se encargan de devolver un list ordenado
+    // este metodo solo se encarga de devolver un list ordenado
     public static List<Alumno> ordenarAlfAlumnos(ArrayList<Alumno> alumnos)
     {
         List<Alumno> listadoOrdenado =
@@ -507,7 +513,8 @@ public class Main
     public void ordenarPersonasPorEdad(String criterioDeOrden)
     {
         // pequeña validacion para llamadas a la funcion
-        if (criterioDeOrden == null) {
+        if (criterioDeOrden == null)
+        {
             return;
         }
 
@@ -543,6 +550,10 @@ public class Main
 
         if (criterioDeOrden.equals("maestro"))
         {
+            /*
+            * aqui use el StringBuilder nuevamente porque por algunas razon
+            * al usar el ListIterator el programa se congela
+            */
             if (Control.getProfesores().isEmpty())
             {
                 JOptionPane.showMessageDialog(null, "Arreglo vacio.\n");
@@ -616,6 +627,8 @@ public class Main
         // elemento a eliminar el nombre de la instancia que quiera eliminar
 
         if (criterioDeBusqueda == null || elementoAEliminar == null) { return; }
+        // si alguno de los parametros no son validos, salimos
+        // pues no se puede hacer nada
 
         Boolean seEncontro = false;
         int indice = 0;
@@ -669,10 +682,12 @@ public class Main
         if (criterioDeBusqueda.equals("grupo"))
         {
             if (Control.getGrupos().isEmpty()) { return; }
+
+            Integer identificadorGrupo = Integer.valueOf(elementoAEliminar);
             // antes de buscar el elemento, convertimos el string a entero
             // pues los grupos usan un identificador (entero),
-            // no tienen nombre.
-            Integer identificadorGrupo = Integer.valueOf(elementoAEliminar);
+            // porque no tienen nombre
+
             ArrayList<Grupo> temp = Control.getGrupos();
 
             for (Grupo actual : temp)

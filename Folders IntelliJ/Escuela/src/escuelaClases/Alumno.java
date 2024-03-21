@@ -71,7 +71,7 @@ public class Alumno extends Persona
         // predefino instancias de alumnos sin materias
         if (materias == null)
         {
-            JOptionPane.showMessageDialog(null, "No hay materias");
+            //JOptionPane.showMessageDialog(null, "No hay materias");
             return;
         }
         // aplicamos la logica que se usa en generarListado, pues muestra las materias de forma menos "engorrosa"
@@ -81,7 +81,6 @@ public class Alumno extends Persona
         for (String materia : materias)
         {
              listadoAImprimir += materia + "\n";
-
         }
 
         JOptionPane.showMessageDialog(null, "Materias que lleva el alumno:\n" + listadoAImprimir);
