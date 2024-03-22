@@ -15,7 +15,7 @@ int main(void)
 
     while(correPrograma)
     {
-        //system("cls"); //WINDOWS
+        //system("clear"); 
         printf("\n\r");
         desplegarReproduccion(&colaReproduccion);
         printf("\n\r");
@@ -138,8 +138,14 @@ int main(void)
             break;
         default:
             break;
-        }
+        }        
     }
+
+    while (colaReproduccion.cantidadElementos > 0)
+    {
+        dequeue(&colaReproduccion, 0);
+    }
+
     printf("\n\n\r");
     return 0;
 }
