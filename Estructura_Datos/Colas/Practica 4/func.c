@@ -50,7 +50,6 @@ Cancion* dequeue(Cola *cola, int posicion)
         return null;
     }
 
-    //printf("%d\n", posicion);
     Elemento* elementoEliminado = null;
     Cancion* cancionOut = null;
 
@@ -92,23 +91,7 @@ Cancion* dequeue(Cola *cola, int posicion)
         
         cola->actual = cola->inicio;
     }
-    /*
-    cola->inicio = cola->inicio->siguiente;
-    cola->inicio->anterior = cola->final;
-    cola->final->siguiente = cola->inicio;
-
-    free(elementoEliminado);
-    cola->cantidadElementos--;
-
-    if (cola->cantidadElementos == 0)
-    {
-        cola->actual = null;
-    }
-    else
-    {
-        cola->actual = cola->inicio;
-    }
-    */
+    
     return cancionOut;
 }
 
@@ -169,35 +152,14 @@ void enqueue(Cola* cola, Cancion* cancion, int posicion)
     cola->actual = cola->inicio;
 
     return;
-    /*
-    if (cola->inicio == null)
-    {
-        cola->inicio = nuevoElemento;
-        cola->actual = nuevoElemento;
-        cola->final = nuevoElemento;
-        nuevoElemento->siguiente = nuevoElemento;
-        nuevoElemento->anterior = nuevoElemento;
-
-    }else{
-
-        nuevoElemento->siguiente = cola->inicio;
-        nuevoElemento->anterior = cola->final;
-        cola->final->siguiente = nuevoElemento;
-        cola->inicio->anterior = nuevoElemento;
-        cola->final = nuevoElemento;
-    }
-    */
-    cola->cantidadElementos++;
-
-    return;
 }
 
-void inicializarCola(Cola* cola)
+void inicializarCola(Cola* cola, int tam)
 {
     cola->inicio = null;
     cola->final = null;
     cola->actual = null;
-    cola->maxTam = 0;
+    cola->maxTam = tam;
     cola->cantidadElementos = 0;
 
     return;

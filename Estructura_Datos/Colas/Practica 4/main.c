@@ -1,8 +1,10 @@
 #include "header.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define null NULL
+#define NOLIMIT 0
 
 int main(void)
 {
@@ -11,11 +13,11 @@ int main(void)
     correPrograma = 1;
 
     Cola colaReproduccion;
-    inicializarCola(&colaReproduccion);
+    inicializarCola(&colaReproduccion, NOLIMIT);
 
     while(correPrograma)
     {
-        //system("clear"); 
+        system("clear"); 
         printf("\n\r");
         desplegarReproduccion(&colaReproduccion);
         printf("\n\r");
@@ -33,9 +35,6 @@ int main(void)
         switch(option)
         {
         case 0:
-            //CAMBIA EL COMPORTAMIENTO DE LA COLA
-            //SI NO ERA COLA CIRCULAR, LA HACE CIRCULAR
-            //SI ERA COLA CIRCULAR, LA DESHACE
             printf("[0] BUCLE\n");
 
             if (colaReproduccion.inicio->anterior == colaReproduccion.final 
@@ -54,9 +53,10 @@ int main(void)
                 printf("\nBUCLE ACTIVADO\n");
             }
 
-            //system("pause");
+            sleep(5);
 
             break;
+
         case 1:
             printf("\n[1] ANTERIOR\n");
 
@@ -66,7 +66,7 @@ int main(void)
                 
             }
 
-            //system("pause");
+            sleep(5);
 
             break;
         case 2:
@@ -77,7 +77,7 @@ int main(void)
                 colaReproduccion.actual = colaReproduccion.actual->siguiente;
             }
 
-            //system("pause");
+            sleep(5);
 
             break;
         case 3:
@@ -94,14 +94,14 @@ int main(void)
             //Cancion* temp = crearCancion(playlistOriginal[i].nombre, playlistOriginal[i].autor, playlistOriginal[i].fechaSalida);
             enqueue(&colaReproduccion, &playlistOriginal[i], indice);
 
-            //system("pause");
+            sleep(5);
 
             break;
         case 4:
             printf("\n[4] Mostrando cola de reproduccion\n");
             mostrarColaReproduccion(&colaReproduccion);
 
-            //system("pause");
+            sleep(5);
 
             break;
         case 5:
@@ -116,7 +116,7 @@ int main(void)
 
             printf("\nCancion eliminada: %s\n", out->nombre);
             
-            //system("pause");
+            sleep(5);
 
             break;
         case 6:
@@ -129,13 +129,15 @@ int main(void)
 
             printf("\nReproducción reiniciada.\n");
 
-            //system("pause");
+            sleep(5);
 
             break;
+
         case 7:
             printf("\nAdios\n");
             correPrograma = 0;
             break;
+
         default:
             break;
         }        

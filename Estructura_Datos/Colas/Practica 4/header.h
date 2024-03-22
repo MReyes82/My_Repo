@@ -30,9 +30,8 @@ typedef struct
 void desplegarReproduccion(Cola* colaReproduccion);
 Cancion* dequeue(Cola *cola, int posicion);
 void enqueue(Cola* cola, Cancion* cancion, int posicion);
-void inicializarCola(Cola* cola);
+void inicializarCola(Cola* cola, int tam);
 Elemento* alojarElemento(Cancion* cancion);
-//Cancion* crearCancion(char* nombre, char* autor, int fecha);
 void mostrarColaReproduccion(Cola* cola);
 int mostrarPlaylist(void);
 
