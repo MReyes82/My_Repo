@@ -36,7 +36,7 @@ void desplegarReproduccion(Cola* colaReproduccion)
     return;
 }
 
-Cancion* dequeue(Cola *cola, int posicion)
+Cancion* dequeue(Cola *cola, int posicion, bool estaEnBucle)
 {
     if (cola->cantidadElementos == 0)
     {
@@ -91,6 +91,8 @@ Cancion* dequeue(Cola *cola, int posicion)
         
         cola->actual = cola->inicio;
     }
+
+    if (!estaEnBucle) { toggleBucle(cola); }
     
     return cancionOut;
 }
@@ -190,7 +192,7 @@ void mostrarColaReproduccion(Cola* cola)
 
     while (n < cola->cantidadElementos)
     {
-        printf("%d)%s - %s\n", n, actual->cancion->nombre, actual->cancion->autor);
+        printf("%d) %s - %s\n", n, actual->cancion->nombre, actual->cancion->autor);
         n++;
 
         actual = actual->siguiente;
@@ -212,4 +214,29 @@ int mostrarPlaylist(void)
     scanf("\n%d", &seleccion);
 
     return seleccion;
+}
+
+void toggleBucle(Cola* cola)
+{
+    if (cola->inicio->anterior == cola->final && cola->final->siguiente == cola->inicio)
+    {
+        cola->inicio->anterior = null;
+        cola->final->siguiente = null;
+        printf("\nBUCLE DESACTIVADO\n");
+    }
+    else
+    {
+        cola->inicio->anterior = cola->final;
+        cola->final->siguiente = cola->inicio;
+        printf("\nBUCLE ACTIVADO\n");
+    }
+
+    return;
+}
+
+bool estaEnBucle(Cola* cola)
+{
+    // regresa 1 si esta en bucle
+    // 0 si no
+    return (cola->inicio->anterior == cola->final && cola->final->siguiente == cola->inicio);
 }

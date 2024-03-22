@@ -1,4 +1,5 @@
 #pragma once
+#include <stdbool.h>
 
 typedef struct 
 {
@@ -28,12 +29,14 @@ typedef struct
 } Cola;
 
 void desplegarReproduccion(Cola* colaReproduccion);
-Cancion* dequeue(Cola *cola, int posicion);
+Cancion* dequeue(Cola *cola, int posicion, bool estaEnBucle);
 void enqueue(Cola* cola, Cancion* cancion, int posicion);
 void inicializarCola(Cola* cola, int tam);
 Elemento* alojarElemento(Cancion* cancion);
 void mostrarColaReproduccion(Cola* cola);
 int mostrarPlaylist(void);
+void toggleBucle(Cola* cola);
+bool estaEnBucle(Cola* cola);
 
 static Cancion playlistOriginal[15] = 
 {

@@ -37,23 +37,9 @@ int main(void)
         case 0:
             printf("[0] BUCLE\n");
 
-            if (colaReproduccion.inicio->anterior == colaReproduccion.final 
-            &&
-            colaReproduccion.final->siguiente == colaReproduccion.inicio)
-            {
-                colaReproduccion.inicio->anterior = null;
-                colaReproduccion.final->siguiente = null;
-                printf("\nBUCLE DESACTIVADO\n");
-            }
+            toggleBucle(&colaReproduccion);
 
-            else
-            {
-                colaReproduccion.inicio->anterior = colaReproduccion.final;
-                colaReproduccion.final->siguiente = colaReproduccion.inicio;
-                printf("\nBUCLE ACTIVADO\n");
-            }
-
-            sleep(5);
+            sleep(1);
 
             break;
 
@@ -66,7 +52,7 @@ int main(void)
                 
             }
 
-            sleep(5);
+            sleep(1);
 
             break;
         case 2:
@@ -77,7 +63,7 @@ int main(void)
                 colaReproduccion.actual = colaReproduccion.actual->siguiente;
             }
 
-            sleep(5);
+            sleep(1);
 
             break;
         case 3:
@@ -91,17 +77,16 @@ int main(void)
             mostrarColaReproduccion(&colaReproduccion);
             printf("\nEliga una posicion donde insertar la cancion\n> ");
             scanf("\n%d", &indice);
-            //Cancion* temp = crearCancion(playlistOriginal[i].nombre, playlistOriginal[i].autor, playlistOriginal[i].fechaSalida);
             enqueue(&colaReproduccion, &playlistOriginal[i], indice);
 
-            sleep(5);
+            //sleep(2);
 
             break;
         case 4:
             printf("\n[4] Mostrando cola de reproduccion\n");
             mostrarColaReproduccion(&colaReproduccion);
 
-            sleep(5);
+            sleep(6);
 
             break;
         case 5:
@@ -112,11 +97,13 @@ int main(void)
             printf("\nEliga una posicion para eliminar la cancion\n> ");
             scanf("\n%d", &indice);
 
-            Cancion* out = dequeue(&colaReproduccion, indice);
+            bool verif = estaEnBucle(&colaReproduccion);
+
+            Cancion* out = dequeue(&colaReproduccion, indice, verif);
 
             printf("\nCancion eliminada: %s\n", out->nombre);
             
-            sleep(5);
+            sleep(1);
 
             break;
         case 6:
@@ -129,7 +116,7 @@ int main(void)
 
             printf("\nReproducción reiniciada.\n");
 
-            sleep(5);
+            sleep(1);
 
             break;
 
@@ -145,7 +132,7 @@ int main(void)
 
     while (colaReproduccion.cantidadElementos > 0)
     {
-        dequeue(&colaReproduccion, 0);
+        dequeue(&colaReproduccion, 0, true);
     }
 
     printf("\n\n\r");
