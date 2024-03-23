@@ -36,7 +36,7 @@ void desplegarReproduccion(Cola* colaReproduccion)
     return;
 }
 
-Cancion* dequeue(Cola *cola, int posicion, bool estaEnBucle)
+Cancion* dequeue(Cola *cola, int posicion)
 {
     if (cola->cantidadElementos == 0)
     {
@@ -72,12 +72,13 @@ Cancion* dequeue(Cola *cola, int posicion, bool estaEnBucle)
     else
     {
         Elemento* actual = cola->inicio;
-        for (int i = 0 ; i < cola->cantidadElementos ; i++) { actual = actual->siguiente; }
+        for (int i = 0 ; i < posicion ; i++) { actual = actual->siguiente; }
         
         elementoEliminado = actual;
         cancionOut = elementoEliminado->cancion;
         actual->anterior->siguiente = actual->siguiente;
         actual->siguiente->anterior = actual->anterior;
+        //printf("Se elimina.\n");
     }
 
     free(elementoEliminado);
@@ -92,7 +93,9 @@ Cancion* dequeue(Cola *cola, int posicion, bool estaEnBucle)
         cola->actual = cola->inicio;
     }
 
-    if (!estaEnBucle) { toggleBucle(cola); }
+    //bool aux = _estaEnBucle_(cola);
+
+    //if (!(estaEnBucle && aux)) { toggleBucle(cola); }
     
     return cancionOut;
 }
@@ -141,7 +144,7 @@ void enqueue(Cola* cola, Cancion* cancion, int posicion)
         else
         {
             Elemento* actual = cola->inicio;
-            for (int i = 0 ; i < posicion - 1 ; i++) { actual = actual->siguiente; }
+            for (int i = 0 ; i < posicion - 1; i++) { actual = actual->siguiente; }
 
             nuevoElemento->siguiente = actual->siguiente;
             nuevoElemento->anterior = actual;
@@ -153,6 +156,10 @@ void enqueue(Cola* cola, Cancion* cancion, int posicion)
     cola->cantidadElementos++;
     cola->actual = cola->inicio;
 
+    //bool aux = _estaEnBucle_(cola);
+
+    //if (!(estaEnBucle && cola->cantidadElementos > 0 && aux)) { toggleBucle(cola); }
+
     return;
 }
 
@@ -161,6 +168,7 @@ void inicializarCola(Cola* cola, int tam)
     cola->inicio = null;
     cola->final = null;
     cola->actual = null;
+
     cola->maxTam = tam;
     cola->cantidadElementos = 0;
 
@@ -205,7 +213,7 @@ int mostrarPlaylist(void)
 {
     int seleccion;
     printf("\nCanciones disponibles: \n");
-    for (int i = 0 ; i < 15 ; i++)
+    for (int i = 0 ; i < MAX_SIZE ; i++)
     {
         printf("%d) %s - %s\n", i, playlistOriginal[i].nombre, playlistOriginal[i].autor);
     }
@@ -234,7 +242,7 @@ void toggleBucle(Cola* cola)
     return;
 }
 
-bool estaEnBucle(Cola* cola)
+bool _estaEnBucle_(Cola* cola)
 {
     // regresa 1 si esta en bucle
     // 0 si no

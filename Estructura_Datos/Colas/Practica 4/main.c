@@ -4,21 +4,31 @@
 #include <unistd.h>
 
 #define null NULL
-#define NOLIMIT 0
+#define NO_LIMIT 0
 
 int main(void)
 {
     int i, option, correPrograma, indice;
+    bool verif = true, wasFuncCalled = false;
 
-    correPrograma = 1;
+    correPrograma = true;
 
     Cola colaReproduccion;
-    inicializarCola(&colaReproduccion, NOLIMIT);
+    inicializarCola(&colaReproduccion, NO_LIMIT);
+    //toggleBucle(&colaReproduccion);
 
     while(correPrograma)
     {
-        system("clear"); 
+        //system("clear"); // POSIX
         printf("\n\r");
+
+        if (colaReproduccion.cantidadElementos != 0)
+        {
+            verif = _estaEnBucle_(&colaReproduccion);
+            if (verif) { toggleBucle(&colaReproduccion); }
+            wasFuncCalled = true;
+        }
+
         desplegarReproduccion(&colaReproduccion);
         printf("\n\r");
         printf("\n\r [0] BUCLE");
@@ -46,10 +56,9 @@ int main(void)
         case 1:
             printf("\n[1] ANTERIOR\n");
 
-            if (colaReproduccion.actual != NULL)
+            if (colaReproduccion.actual != null && colaReproduccion.actual->anterior != null)
             {
                 colaReproduccion.actual = colaReproduccion.actual->anterior;
-                
             }
 
             sleep(1);
@@ -58,7 +67,7 @@ int main(void)
         case 2:
             printf("\n[2] SIGUIENTE\n");
 
-            if (colaReproduccion.actual != NULL)
+            if (colaReproduccion.actual != null && colaReproduccion.actual->siguiente != null)
             {
                 colaReproduccion.actual = colaReproduccion.actual->siguiente;
             }
@@ -77,6 +86,12 @@ int main(void)
             mostrarColaReproduccion(&colaReproduccion);
             printf("\nEliga una posicion donde insertar la cancion\n> ");
             scanf("\n%d", &indice);
+
+            //if (colaReproduccion.cantidadElementos > 0)
+            //{
+            //    verif = _estaEnBucle_(&colaReproduccion);
+            //}
+
             enqueue(&colaReproduccion, &playlistOriginal[i], indice);
 
             //sleep(2);
@@ -97,9 +112,7 @@ int main(void)
             printf("\nEliga una posicion para eliminar la cancion\n> ");
             scanf("\n%d", &indice);
 
-            bool verif = estaEnBucle(&colaReproduccion);
-
-            Cancion* out = dequeue(&colaReproduccion, indice, verif);
+            Cancion* out = dequeue(&colaReproduccion, indice);
 
             printf("\nCancion eliminada: %s\n", out->nombre);
             
@@ -122,7 +135,7 @@ int main(void)
 
         case 7:
             printf("\nAdios\n");
-            correPrograma = 0;
+            correPrograma = false;
             break;
 
         default:
@@ -130,9 +143,10 @@ int main(void)
         }        
     }
 
+    verif = _estaEnBucle_(&colaReproduccion);
     while (colaReproduccion.cantidadElementos > 0)
     {
-        dequeue(&colaReproduccion, 0, true);
+        dequeue(&colaReproduccion, 0);
     }
 
     printf("\n\n\r");
