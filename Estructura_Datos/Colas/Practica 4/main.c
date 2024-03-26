@@ -4,31 +4,22 @@
 #include <unistd.h>
 
 #define null NULL
-#define NO_LIMIT 0
+#define ACTIVAR 1
+#define DESACTIVAR 0
 
 int main(void)
 {
     int i, option, correPrograma, indice;
-    bool verif = true, wasFuncCalled = false;
-
-    correPrograma = true;
+    
+    correPrograma = 1;
 
     Cola colaReproduccion;
-    inicializarCola(&colaReproduccion, NO_LIMIT);
-    //toggleBucle(&colaReproduccion);
+    inicializarCola(&colaReproduccion);
 
     while(correPrograma)
     {
-        //system("clear"); // POSIX
+        system("clear"); 
         printf("\n\r");
-
-        if (colaReproduccion.cantidadElementos != 0)
-        {
-            verif = _estaEnBucle_(&colaReproduccion);
-            if (verif) { toggleBucle(&colaReproduccion); }
-            wasFuncCalled = true;
-        }
-
         desplegarReproduccion(&colaReproduccion);
         printf("\n\r");
         printf("\n\r [0] BUCLE");
@@ -47,32 +38,32 @@ int main(void)
         case 0:
             printf("[0] BUCLE\n");
 
-            toggleBucle(&colaReproduccion);
+            if (colaReproduccion.estaEnBucle)
+            {
+                toggleBucle(&colaReproduccion, DESACTIVAR);
 
-            sleep(1);
+            }else{
+                toggleBucle(&colaReproduccion, ACTIVAR);
+            }
 
             break;
-
         case 1:
             printf("\n[1] ANTERIOR\n");
 
-            if (colaReproduccion.actual != null && colaReproduccion.actual->anterior != null)
+            if (colaReproduccion.actual != NULL)
             {
                 colaReproduccion.actual = colaReproduccion.actual->anterior;
+                
             }
-
-            sleep(1);
 
             break;
         case 2:
             printf("\n[2] SIGUIENTE\n");
 
-            if (colaReproduccion.actual != null && colaReproduccion.actual->siguiente != null)
+            if (colaReproduccion.actual != NULL)
             {
                 colaReproduccion.actual = colaReproduccion.actual->siguiente;
             }
-
-            sleep(1);
 
             break;
         case 3:
@@ -87,21 +78,33 @@ int main(void)
             printf("\nEliga una posicion donde insertar la cancion\n> ");
             scanf("\n%d", &indice);
 
-            //if (colaReproduccion.cantidadElementos > 0)
-            //{
-            //    verif = _estaEnBucle_(&colaReproduccion);
-            //}
-
             enqueue(&colaReproduccion, &playlistOriginal[i], indice);
 
-            //sleep(2);
+            if (colaReproduccion.estaEnPrimIter)
+            {
+                /*
+                * esta validacion es para tener el bucle desactivado tras la primera iteracion
+                * esto ya que nos interesa que el el modo circular no este activado
+                * predeterminadamente
+                */
+                toggleBucle(&colaReproduccion, DESACTIVAR);
+                colaReproduccion.estaEnPrimIter = false;
+                break;
+            }
+
+            if (estaEnModoCircular(&colaReproduccion) && !colaReproduccion.estaEnBucle)
+            {
+                toggleBucle(&colaReproduccion, DESACTIVAR);
+            }
+
+            sleep(0.5);
 
             break;
         case 4:
             printf("\n[4] Mostrando cola de reproduccion\n");
             mostrarColaReproduccion(&colaReproduccion);
 
-            sleep(6);
+            sleep(4);
 
             break;
         case 5:
@@ -112,11 +115,14 @@ int main(void)
             printf("\nEliga una posicion para eliminar la cancion\n> ");
             scanf("\n%d", &indice);
 
-            Cancion* out = dequeue(&colaReproduccion, indice);
+            dequeue(&colaReproduccion, indice);
 
-            printf("\nCancion eliminada: %s\n", out->nombre);
-            
-            sleep(1);
+            if (estaEnModoCircular(&colaReproduccion) && !colaReproduccion.estaEnBucle)
+            {
+                toggleBucle(&colaReproduccion, DESACTIVAR);
+            }
+
+            sleep(0.5);
 
             break;
         case 6:
@@ -129,21 +135,18 @@ int main(void)
 
             printf("\nReproducción reiniciada.\n");
 
-            sleep(1);
+            //system("pause");
 
             break;
-
         case 7:
             printf("\nAdios\n");
-            correPrograma = false;
+            correPrograma = 0;
             break;
-
         default:
             break;
         }        
     }
 
-    verif = _estaEnBucle_(&colaReproduccion);
     while (colaReproduccion.cantidadElementos > 0)
     {
         dequeue(&colaReproduccion, 0);

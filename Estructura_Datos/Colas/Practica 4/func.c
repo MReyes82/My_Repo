@@ -36,30 +36,36 @@ void desplegarReproduccion(Cola* colaReproduccion)
     return;
 }
 
-Cancion* dequeue(Cola *cola, int posicion)
+void dequeue(Cola *cola, int posicion)
 {
     if (cola->cantidadElementos == 0)
     {
         printf("ERROR:underflow\n");
-        return null;
+        return;
     }
 
     if (posicion < 0 || posicion > cola->cantidadElementos)
     {
         printf("\nERROR:unvalidPOS\n");
-        return null;
+        return;
     }
 
+    //printf("%d\n", posicion);
     Elemento* elementoEliminado = null;
     Cancion* cancionOut = null;
 
     if (posicion == 0)
     {
         elementoEliminado = cola->inicio;
+        printf("llega aqui1\n");
         cancionOut = elementoEliminado->cancion;
+        printf("llega aqui2\n");
         cola->inicio = cola->inicio->siguiente;
-        cola->inicio->anterior = cola->final;
+        printf("llega aqui3\n");
+        cola->inicio->anterior = cola->final; // aqui tira segmentation fault
+        printf("llega aqui4\n");
         cola->final->siguiente = cola->inicio;
+        printf("Se completa bloque 1\n");
     }
     else if (posicion == cola->cantidadElementos - 1)
     {
@@ -78,7 +84,6 @@ Cancion* dequeue(Cola *cola, int posicion)
         cancionOut = elementoEliminado->cancion;
         actual->anterior->siguiente = actual->siguiente;
         actual->siguiente->anterior = actual->anterior;
-        //printf("Se elimina.\n");
     }
 
     free(elementoEliminado);
@@ -87,17 +92,16 @@ Cancion* dequeue(Cola *cola, int posicion)
     if (cola->cantidadElementos == 0)
     {
         cola->actual = null;
+        printf("Se completa bloque 2\n");
 
     }else{
         
         cola->actual = cola->inicio;
     }
-
-    //bool aux = _estaEnBucle_(cola);
-
-    //if (!(estaEnBucle && aux)) { toggleBucle(cola); }
     
-    return cancionOut;
+    printf("\nCancion eliminada: %s\n", cancionOut->nombre);
+
+    return;
 }
 
 void enqueue(Cola* cola, Cancion* cancion, int posicion)
@@ -144,7 +148,7 @@ void enqueue(Cola* cola, Cancion* cancion, int posicion)
         else
         {
             Elemento* actual = cola->inicio;
-            for (int i = 0 ; i < posicion - 1; i++) { actual = actual->siguiente; }
+            for (int i = 0 ; i < posicion - 1 ; i++) { actual = actual->siguiente; }
 
             nuevoElemento->siguiente = actual->siguiente;
             nuevoElemento->anterior = actual;
@@ -156,21 +160,18 @@ void enqueue(Cola* cola, Cancion* cancion, int posicion)
     cola->cantidadElementos++;
     cola->actual = cola->inicio;
 
-    //bool aux = _estaEnBucle_(cola);
-
-    //if (!(estaEnBucle && cola->cantidadElementos > 0 && aux)) { toggleBucle(cola); }
-
     return;
 }
 
-void inicializarCola(Cola* cola, int tam)
+void inicializarCola(Cola* cola)
 {
     cola->inicio = null;
     cola->final = null;
     cola->actual = null;
-
-    cola->maxTam = tam;
+    cola->maxTam = 0;
     cola->cantidadElementos = 0;
+    cola->estaEnBucle = true;
+    cola->estaEnPrimIter = true;
 
     return;
 }
@@ -200,7 +201,7 @@ void mostrarColaReproduccion(Cola* cola)
 
     while (n < cola->cantidadElementos)
     {
-        printf("%d) %s - %s\n", n, actual->cancion->nombre, actual->cancion->autor);
+        printf("%d)%s - %s\n", n, actual->cancion->nombre, actual->cancion->autor);
         n++;
 
         actual = actual->siguiente;
@@ -213,7 +214,7 @@ int mostrarPlaylist(void)
 {
     int seleccion;
     printf("\nCanciones disponibles: \n");
-    for (int i = 0 ; i < MAX_SIZE ; i++)
+    for (int i = 0 ; i < 15 ; i++)
     {
         printf("%d) %s - %s\n", i, playlistOriginal[i].nombre, playlistOriginal[i].autor);
     }
@@ -224,27 +225,30 @@ int mostrarPlaylist(void)
     return seleccion;
 }
 
-void toggleBucle(Cola* cola)
+void toggleBucle(Cola* cola, int activar)
 {
-    if (cola->inicio->anterior == cola->final && cola->final->siguiente == cola->inicio)
-    {
-        cola->inicio->anterior = null;
-        cola->final->siguiente = null;
-        printf("\nBUCLE DESACTIVADO\n");
-    }
-    else
+    // si la cola esta vacia, salimos para evitar segmentation fault
+    if (cola->cantidadElementos == 0) { return; }
+
+    if (activar)
     {
         cola->inicio->anterior = cola->final;
         cola->final->siguiente = cola->inicio;
-        printf("\nBUCLE ACTIVADO\n");
+        cola->estaEnBucle = true;
+        //printf("\nBUCLE ACTIVADO\n"); debug
     }
-
-    return;
+    else
+    {
+        cola->inicio->anterior = null;
+        cola->final->siguiente = null;
+        cola->estaEnBucle = false;
+        //printf("\nBUCLE DESACTIVADO\n"); debug
+    }
 }
 
-bool _estaEnBucle_(Cola* cola)
+bool estaEnModoCircular(Cola* cola)
 {
-    // regresa 1 si esta en bucle
-    // 0 si no
-    return (cola->inicio->anterior == cola->final && cola->final->siguiente == cola->inicio);
+    bool output = cola->inicio->anterior == cola->final && cola->final->siguiente == cola->inicio;
+
+    return (output && cola->cantidadElementos > 0);
 }

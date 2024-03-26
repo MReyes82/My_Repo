@@ -1,6 +1,5 @@
 #pragma once
 #include <stdbool.h>
-#define MAX_SIZE 15
 
 typedef struct 
 {
@@ -25,21 +24,23 @@ typedef struct
     Elemento* actual;
 
     int maxTam;
-    int cantidadElementos;
+    int cantidadElementos;  
+    bool estaEnBucle;
+    bool estaEnPrimIter;
 
 } Cola;
 
 void desplegarReproduccion(Cola* colaReproduccion);
-Cancion* dequeue(Cola *cola, int posicion);
+void dequeue(Cola *cola, int posicion);
 void enqueue(Cola* cola, Cancion* cancion, int posicion);
-void inicializarCola(Cola* cola, int tam);
+void inicializarCola(Cola* cola);
 Elemento* alojarElemento(Cancion* cancion);
 void mostrarColaReproduccion(Cola* cola);
 int mostrarPlaylist(void);
-void toggleBucle(Cola* cola);
-bool _estaEnBucle_(Cola* cola);
+void toggleBucle(Cola* cola, int activar);
+bool estaEnModoCircular(Cola* cola);
 
-static Cancion playlistOriginal[MAX_SIZE] = 
+static Cancion playlistOriginal[15] = 
 {
     {"Like a Stone", "Audioslave", 2002},
     {"Decadence", "Disturbed", 2005},
@@ -55,5 +56,5 @@ static Cancion playlistOriginal[MAX_SIZE] =
     {"The People That We Love", "Bush", 2001},
     {"Feel Good Inc", "Gorillaz", 2005},
     {"The Trooper", "Iron Maiden", 1983},
-    {"Broken Promises", "Element Eighty", 2003},
+    {"Broken Promises", "Element Eighty", 2003}
 };
