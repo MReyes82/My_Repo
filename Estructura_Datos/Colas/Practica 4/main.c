@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #define null NULL
 #define ACTIVAR 1
@@ -11,7 +12,7 @@ int main(void)
 {
     int i, option, correPrograma, indice;
     
-    correPrograma = 1;
+    correPrograma = true;
 
     Cola colaReproduccion;
     inicializarCola(&colaReproduccion);
@@ -50,7 +51,7 @@ int main(void)
         case 1:
             printf("\n[1] ANTERIOR\n");
 
-            if (colaReproduccion.actual != NULL)
+            if (colaReproduccion.actual != null)
             {
                 colaReproduccion.actual = colaReproduccion.actual->anterior;
                 
@@ -60,7 +61,7 @@ int main(void)
         case 2:
             printf("\n[2] SIGUIENTE\n");
 
-            if (colaReproduccion.actual != NULL)
+            if (colaReproduccion.actual != null)
             {
                 colaReproduccion.actual = colaReproduccion.actual->siguiente;
             }
@@ -117,6 +118,9 @@ int main(void)
 
             dequeue(&colaReproduccion, indice);
 
+            // validacion para evitar crash en caso de que se elimine el ultimo elemento de la cola
+            if (colaReproduccion.cantidadElementos == 0) { break; }
+
             if (estaEnModoCircular(&colaReproduccion) && !colaReproduccion.estaEnBucle)
             {
                 toggleBucle(&colaReproduccion, DESACTIVAR);
@@ -135,12 +139,12 @@ int main(void)
 
             printf("\nReproducción reiniciada.\n");
 
-            //system("pause");
+            sleep(0.5);
 
             break;
         case 7:
             printf("\nAdios\n");
-            correPrograma = 0;
+            correPrograma = false;
             break;
         default:
             break;

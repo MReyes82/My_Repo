@@ -40,37 +40,41 @@ void dequeue(Cola *cola, int posicion)
 {
     if (cola->cantidadElementos == 0)
     {
-        printf("ERROR:underflow\n");
+        printf("ERROR: underflow\n");
         return;
     }
 
-    if (posicion < 0 || posicion > cola->cantidadElementos)
+    if (posicion < 0 || posicion >= cola->cantidadElementos)
     {
-        printf("\nERROR:unvalidPOS\n");
+        printf("\nERROR: unvalidPOS\n");
         return;
     }
 
-    //printf("%d\n", posicion);
     Elemento* elementoEliminado = null;
     Cancion* cancionOut = null;
 
     if (posicion == 0)
     {
         elementoEliminado = cola->inicio;
-        printf("llega aqui1\n");
         cancionOut = elementoEliminado->cancion;
-        printf("llega aqui2\n");
-        cola->inicio = cola->inicio->siguiente;
-        printf("llega aqui3\n");
-        cola->inicio->anterior = cola->final; // aqui tira segmentation fault
-        printf("llega aqui4\n");
-        cola->final->siguiente = cola->inicio;
-        printf("Se completa bloque 1\n");
+
+        if (cola->cantidadElementos == 1)
+        {
+            cola->inicio = null;
+            cola->final = null;
+        }
+        else
+        {
+            cola->inicio = cola->inicio->siguiente;
+            cola->inicio->anterior = cola->final;
+            cola->final->siguiente = cola->inicio;
+        }
     }
     else if (posicion == cola->cantidadElementos - 1)
     {
         elementoEliminado = cola->final;
         cancionOut = elementoEliminado->cancion;
+
         cola->final = cola->final->anterior;
         cola->final->siguiente = cola->inicio;
         cola->inicio->anterior = cola->final;
@@ -78,10 +82,14 @@ void dequeue(Cola *cola, int posicion)
     else
     {
         Elemento* actual = cola->inicio;
-        for (int i = 0 ; i < posicion ; i++) { actual = actual->siguiente; }
-        
+        for (int i = 0; i < posicion; i++)
+        {
+            actual = actual->siguiente;
+        }
+
         elementoEliminado = actual;
         cancionOut = elementoEliminado->cancion;
+
         actual->anterior->siguiente = actual->siguiente;
         actual->siguiente->anterior = actual->anterior;
     }
@@ -92,15 +100,15 @@ void dequeue(Cola *cola, int posicion)
     if (cola->cantidadElementos == 0)
     {
         cola->actual = null;
-        printf("Se completa bloque 2\n");
-
-    }else{
-        
+    }
+    else
+    {
         cola->actual = cola->inicio;
     }
-    
-    printf("\nCancion eliminada: %s\n", cancionOut->nombre);
 
+    printf("\nCancion eliminada: %s\n", cancionOut->nombre);
+    printf("Llega a return statement\n");
+    
     return;
 }
 
