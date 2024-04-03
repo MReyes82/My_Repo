@@ -39,7 +39,7 @@ public class Main
                         JOptionPane.PLAIN_MESSAGE, null, new Object[] {"Seleccionar", "Dar de alta maestro", "Dar de alta alumno",
                                 "Dar de alta grupo", "Mostrar datos de maestros", "Mostrar datos de alumnos", "Mostrar datos de grupos",
                                 "Mostrar nombres de personas alfabeticamente", "Mostrar personas ordenadas por edad",
-                                "Eliminar elemento de un arreglo", "Terminar programa"}, "Seleccionar")).toString();
+                                "Eliminar elemento de un arreglo", "Buscar persona","Terminar programa"}, "Seleccionar")).toString();
 
             } catch(NullPointerException e){
                 correPrograma = false;
@@ -93,6 +93,16 @@ public class Main
                     eliminarInstancia(elemento, identificador);
                     break;
 
+                case "Buscar persona":
+
+                    String criterio = subMenuBuscarPersona();
+
+                    if (criterio == null) { break; }
+
+                    buscarPersona(criterio);
+
+                    break;
+
                 case "Terminar programa":
                     JOptionPane.showMessageDialog(null, "Hasta luego!");
                     correPrograma = false;
@@ -119,7 +129,7 @@ public class Main
     // este metodo scanea un valor entero, implementando validacion de datos
     public int scanUnsignedInteger(String textoInput)
     {
-        int input = 0;
+        int input = -1;
         do {
             try {
                 input = Integer.parseInt(JOptionPane.showInputDialog(textoInput));
@@ -130,12 +140,13 @@ public class Main
                 }
 
             } catch (NullPointerException e){
-
-                return -1; // regresamos -1 en caso de que pulse cancelar
+                break;
+                //return -1; // regresamos -1 en caso de que pulse cancelar
 
             } catch (NumberFormatException e) {
 
                 JOptionPane.showMessageDialog(null, "Ingrese un valor numerico.");
+                input = -1;
             }
 
         } while(input < 0);
@@ -157,11 +168,13 @@ public class Main
                 }
 
             } catch(NullPointerException e) {
-
-                return (float) -1;
+                //input = -1;
+                //return (float) -1;
+                break;
 
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Ingrese un valor numerico.");
+                input = -1;
             }
 
         } while(input < 0);
@@ -620,7 +633,6 @@ public class Main
         return seleccion;
     }
 
-
     public void eliminarInstancia(String criterioDeBusqueda, String elementoAEliminar)
     {
         // creterio de busqueda: el tipo de instancia que quiera eliminar
@@ -710,41 +722,115 @@ public class Main
         return;
     }
 
+    public String subMenuBuscarPersona()
+    {
+        String seleccion = null;
 
-	/*
-	public static <T extends Persona> void mostrarInstancias(T[] personas)
-	{
-		// pregunta si la primera posicion del arreglo es nulo, lo que significaria que no hay elementos para mostrar
-		// si no los hay, avisa al usuario y sale del motodo.
-		if (personas[0] == null)
-		{
-			JOptionPane.showMessageDialog(null, "No hay personas para mostrar.");
-			return;
-		}
+        try {
+            seleccion = (JOptionPane.showInputDialog(null, "Que tipo de persona desea buscar?", "Buscar persona",
+                    JOptionPane.PLAIN_MESSAGE, null, new Object[]{"Seleccionar", "Maestro",
+                            "Alumno"}, "Seleccionar")).toString();
+        }catch (NullPointerException e){
+            return null;
+        }
 
-		int i = 0;
+        switch (seleccion)
+        {
+            case "Maestro":
+                seleccion = "maestro";
+                break;
 
-		 	//mientras que el elemento actual no sea nulo, para evitar obtener
-			//un NullPointerException, ya que antes tenia un ciclo For que llegaba hasta "personas.length",
-			//pero como length es un numero fijo, podia iterar sobre elementos nulos.
+            case "Alumno":
+                seleccion = "alumno";
+                break;
+        }
 
-		while (personas[i] != null) // --> ^^^^^
-		{
-			JOptionPane.showMessageDialog(null, personas[i].getClass().getSimpleName() + " " + (i + 1) + "\n");
-			personas[i].imprimirDatos();
+        return seleccion;
+    }
 
-			if (personas[i] instanceof Alumno) // si el elemento actual es una instancia de alumno,
-			{								   // llama al metodo para imprimir las materias del alumno
-				personas[i].imprimirMaterias();
-			}
+    public void buscarPersona(String criterioBusqueda)
+    {
+        if (criterioBusqueda == null) { return; }
 
-			i++;
-		}
-		// el metodo getClass retorna un objeto que en este caso representaria la clase que queremos acceder
-		//   despues, el metodo getSimpleName retornaria el nombre de la clase a la que queremos acceder
-		//   hice esto ya que en mi metodo de mostrarAlumno o mostrarMaestro incluyo un mensaje que
-		//  menciona el nombre del objeto y el numero de iteracion, ejemplo: "alumno" + (i+1)
+        if (criterioBusqueda.equals("alumno"))
+        {
+            ArrayList<Alumno> aux = Control.getEstudiantes();
+            Map<Integer, Alumno> diccionarioAuxiliar = mapDatosAlumno(aux);
 
-	}
-	*/
+            busquedaMatriculaAlumno(diccionarioAuxiliar);
+        }
+        else if(criterioBusqueda.equals("maestro"))
+        {
+            ArrayList<Maestro> aux = Control.getProfesores();
+            Map<Integer, Maestro> diccionarioAuxiliar = mapDatosMaestro(aux);
+
+            busquedaMatriculaMaestro(diccionarioAuxiliar);
+        }
+
+        return;
+    }
+
+    public static Map<Integer, Alumno> mapDatosAlumno(ArrayList<Alumno> datos)
+    {
+        Map<Integer, Alumno> diccionario = new TreeMap<Integer, Alumno>();
+
+        for(Alumno elemento : datos)
+        {
+            diccionario.put(elemento.getMatricula(), elemento);
+        }
+
+        return diccionario;
+    }
+
+    public void busquedaMatriculaAlumno(Map<Integer, Alumno> diccionario)
+    {
+        Integer filtro = scanUnsignedInteger("Ingrese la matricula del alumno a buscar: ");
+
+        if (filtro < 0)
+        {
+            return;
+        }
+
+        Alumno alumnoEncontrado = diccionario.get(filtro);
+
+        if (alumnoEncontrado != null)
+        {
+            alumnoEncontrado.imprimirDatos();
+            return;
+        }
+
+        JOptionPane.showMessageDialog(null, "No se encontro el elemento.");
+    }
+
+    public static Map<Integer, Maestro> mapDatosMaestro(ArrayList<Maestro> datos)
+    {
+        Map<Integer, Maestro> diccionario = new TreeMap<Integer, Maestro>();
+
+        for(Maestro elemento : datos)
+        {
+            diccionario.put(elemento.getMatricula(), elemento);
+        }
+
+        return diccionario;
+    }
+
+    public void busquedaMatriculaMaestro(Map<Integer, Maestro> diccionario)
+    {
+        Integer filtro = scanUnsignedInteger("Ingrese la matricula del maestro a buscar: ");
+
+        if (filtro < 0)
+        {
+            return;
+        }
+
+        Maestro alumnoEncontrado = diccionario.get(filtro);
+
+        if (alumnoEncontrado != null)
+        {
+            alumnoEncontrado.imprimirDatos();
+            return;
+        }
+
+        JOptionPane.showMessageDialog(null, "No se encontro el elemento.");
+    }
 }
