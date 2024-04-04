@@ -94,8 +94,44 @@ void dequeue(Cola *cola, int posicion)
         actual->siguiente->anterior = actual->anterior;
     }
 
-    free(elementoEliminado);
     cola->cantidadElementos--;
+
+    if (cola->cantidadElementos == 0)
+    {
+        cola->actual = null;
+    }
+    else if (cola->actual == elementoEliminado && cola->cantidadElementos != 0)
+    {
+        if (cola->actual->siguiente != null) 
+        {
+            //cola->actual = cola->actual->anterior;
+            cola->actual = cola->actual->siguiente;
+
+        }else{
+            // cola->actual = cola->actual->siguiente; OPCION B: tiene mismo efecto
+            cola->actual = cola->inicio;
+        }
+    }
+    else{
+        //representativo, cola->actual se queda igual.
+        //cola->actual = cola->actual;
+    }
+
+    free(elementoEliminado);
+    printf("\nCancion eliminada: %s\n", cancionOut->nombre);
+    /*
+    if (cola->actual == elementoEliminado && cola->cantidadElementos != 0)
+    {
+        cola->actual = cola->actual->anterior;
+
+        free(elementoEliminado);
+        cola->cantidadElementos--;
+        //printf("\nCancion eliminada: %s\n", cancionOut->nombre);
+        return;
+    }
+
+    
+    
 
     if (cola->cantidadElementos == 0)
     {
@@ -103,12 +139,11 @@ void dequeue(Cola *cola, int posicion)
     }
     else
     {
-        cola->actual = cola->inicio;
+        cola->actual = cola->actual;
     }
-
-    printf("\nCancion eliminada: %s\n", cancionOut->nombre);
-    printf("Llega a return statement\n");
+    */
     
+    //printf("Llega a return statement\n");
     return;
 }
 
@@ -166,7 +201,13 @@ void enqueue(Cola* cola, Cancion* cancion, int posicion)
     }
 
     cola->cantidadElementos++;
-    cola->actual = cola->inicio;
+
+    if (cola->cantidadElementos == 1) { cola->actual = cola->inicio; }
+
+    else{
+        //representativo, {cola->actual} se queda igual.
+        //cola->actual = cola->actual; 
+    } 
 
     return;
 }

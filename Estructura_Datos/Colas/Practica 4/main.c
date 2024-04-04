@@ -143,7 +143,7 @@ int main(void)
 
             break;
         case 7:
-            printf("\nAdios\n");
+            printf("Bye bye\n");
             correPrograma = false;
             break;
         default:
