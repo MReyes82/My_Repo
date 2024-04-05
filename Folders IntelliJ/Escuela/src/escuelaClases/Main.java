@@ -39,7 +39,8 @@ public class Main
                         JOptionPane.PLAIN_MESSAGE, null, new Object[] {"Seleccionar", "Dar de alta maestro", "Dar de alta alumno",
                                 "Dar de alta grupo", "Mostrar datos de maestros", "Mostrar datos de alumnos", "Mostrar datos de grupos",
                                 "Mostrar nombres de personas alfabeticamente", "Mostrar personas ordenadas por edad",
-                                "Eliminar elemento de un arreglo", "Buscar persona","Terminar programa"}, "Seleccionar")).toString();
+                                "Eliminar elemento de un arreglo", "Buscar persona",
+                                "Agregar actividades extracurriculares","Terminar programa"}, "Seleccionar")).toString();
 
             } catch(NullPointerException e){
                 correPrograma = false;
@@ -85,10 +86,12 @@ public class Main
                 case "Eliminar elemento de un arreglo":
 
                     String elemento = subMenuEliminarInstancia();
-                    if (elemento == null) { break; }
+                    if (elemento == null)
+                    { break; }
 
                     String identificador = scanString("Igrese el nombre (o numero) del elemento que quiera eliminar.");
-                    if (identificador == null) { break; }
+                    if (identificador == null)
+                    { break; }
 
                     eliminarInstancia(elemento, identificador);
                     break;
@@ -97,9 +100,21 @@ public class Main
 
                     String criterio = subMenuBuscarPersona();
 
-                    if (criterio == null) { break; }
+                    if (criterio == null)
+                    { break; }
 
                     buscarPersona(criterio);
+
+                    break;
+
+                case "Agregar actividades extracurriculares":
+
+                    String criterioBusqueda = subMenuAgregarActividades();
+
+                    if (criterioBusqueda == null)
+                    { break; }
+
+                    agregarActividades(criterioBusqueda);
 
                     break;
 
@@ -833,4 +848,111 @@ public class Main
 
         JOptionPane.showMessageDialog(null, "No se encontro el elemento.");
     }
+
+    public String subMenuAgregarActividades()
+    {
+        String opcion;
+
+        try {
+            opcion = (JOptionPane.showInputDialog(null, "A Que tipo de persona desea agregar una actividad?", "Buscar persona",
+                    JOptionPane.PLAIN_MESSAGE, null, new Object[]{"Seleccionar", "Maestro",
+                            "Alumno"}, "Seleccionar")).toString();
+
+        }catch(NullPointerException e){
+            return null;
+        };
+
+        if (opcion.equals("Maestro"))
+        {
+            opcion = "maestro";
+        }
+        else if (opcion.equals("Alumno"))
+        {
+            opcion = "alumno";
+        }
+
+        return opcion;
+    }
+
+    public void agregarActividades(String criterioBusqueda)
+    {
+        if (criterioBusqueda == null) { return; }
+
+        if (criterioBusqueda.equals("alumno"))
+        {
+            Integer matFiltro = scanUnsignedInteger("Ingrese la matricula del alumno al cual\n" +
+                                                        "se le asignara la actividad: ");
+            if (matFiltro < 0)
+            { return; }
+
+            ArrayList<Alumno> aux = Control.getEstudiantes();
+            Map<Integer, Alumno> diccionario = mapDatosAlumno(aux);
+            Alumno alumnoEncontrado = diccionario.get(matFiltro);
+
+            if (alumnoEncontrado == null)
+            {
+                // en caso de que no se encuentre el alumno, no hacemos nada mas
+                JOptionPane.showMessageDialog(null, "Alumno no encontrado");
+                return;
+            }
+
+            String fecha = scanString("Ingrese la fecha de la actividad: ");
+            String actividad = scanString("Ingrese el nombre de la actividad: ");
+
+            if (fecha == null || actividad == null)
+            { return; }
+
+            alumnoEncontrado.agregarActividad(fecha, actividad);
+
+            //JOptionPane.showMessageDialog(null,"Actividad agregada.");
+
+
+
+            JOptionPane.showMessageDialog(
+                    null, "Actividades agregadas hasta para el alumno " +
+                            alumnoEncontrado.getNombre()+ ": ");
+            String actividades = alumnoEncontrado.muestraActividad();
+            JOptionPane.showMessageDialog(null, actividades);
+
+            //busquedaMatriculaAlumno(diccionarioAuxiliar);
+        }
+        else if(criterioBusqueda.equals("maestro"))
+        {
+            Integer matFiltro = scanUnsignedInteger("Ingrese la matricula del maestro al cual\n" +
+                                                        "se le asignara la actividad: ");
+            if (matFiltro < 0)
+            { return; }
+
+            ArrayList<Maestro> aux = Control.getProfesores();
+            Map<Integer, Maestro> diccionario = mapDatosMaestro(aux);
+            Maestro maestroEncontado = diccionario.get(matFiltro);
+
+            if (maestroEncontado == null)
+            {
+                JOptionPane.showMessageDialog(null, "Alumno no encontrado");
+                return;
+            }
+
+            String fecha = scanString("Ingrese la fecha de la actividad: ");
+            String actividad = scanString("Ingrese el nombre de la actividad: ");
+
+            if (fecha == null || actividad == null)
+            { return; }
+
+            maestroEncontado.agregarActividad(fecha, actividad);
+
+            //JOptionPane.showMessageDialog(null,"Actividad agregada.");
+
+            JOptionPane.showMessageDialog(
+                    null, "Actividades agregadas hasta para el maestro " +
+                            maestroEncontado.getNombre()+ ": ");
+
+            String actividades = maestroEncontado.muestraActividad();
+            JOptionPane.showMessageDialog(null, actividades);
+            //busquedaMatriculaMaestro(diccionarioAuxiliar);
+        }
+
+        return;
+    }
+
 }
