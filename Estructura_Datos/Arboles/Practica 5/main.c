@@ -40,21 +40,25 @@ int main (void)
     arbol = borrarArbol(&arbol);
 
     if (arbol == NULL) { printf("\nSet to null\n"); }
-    /*
-    int temp;
-    for (int i = 0 ; i < 7 ; i++)
+    
+    int* valores = calloc(7, sizeof(int));
+
+    for (int i = 0 ; i < 7 ; i++) 
     {
+        //int temp;
         printf("\n> ");
-        scanf("\n%d", &temp);
-        insertarNodo(&arbol, temp);
+        scanf("\n%d", &valores[i]);
     }
 
-    printf("\n");
+    llenarArbolBalanceado(&arbol, valores, 7);
+
+    printf("Mostrando arbol.\n");
     imprimirArbol(arbol, raiz);
+
     borrarArbol(&arbol);
-    */
-    //arbol = NULL;
-    
+    free(valores);
+
+    printf("\n\nALL MODULES FREED\n\n");
 
     return  0;
 }

@@ -167,37 +167,55 @@ int calcularNivel(Nodo* raiz, int valorBusqueda, int nivelActual)
 
     return nivel;
 }
-/*
-void insertarNodo(Nodo** raizArbol, int valorInsert) // inserta un numero de manera ordenada
-{ 
-    // inserta los menores a la izquierda y los mayores a la derecha, hay prioridad
-    // de inserción en la izquierda en caso de que el numero ya exista (sean iguales) 
-    // inserta en raiz si no hay nodo
 
-    // Si el árbol está vacío, insertar en la raíz
-    if (*raizArbol == NULL) 
+
+void insertarNodo(Nodo** raiz, int valor) 
+{
+    if (*raiz == null) 
     {
-        *raizArbol = crearNodo(valorInsert);
+        *raiz = crearNodo(valor);
         return;
     }
 
-    // Si el valor ya existe en el árbol, insertar a la izquierda
-    if ((*raizArbol)->valor == valorInsert) 
+    if ((*raiz)->valor == valor) 
     {
-        insertarNodo(&(*raizArbol)->izquierda, valorInsert);
+        insertarNodo(&(*raiz)->izquierda, valor);
         return;
     }
 
-    // Insertar en el subárbol izquierdo si el valor es menor
-    if (valorInsert < (*raizArbol)->valor) 
+    if (valor < (*raiz)->valor) 
     {
-        insertarNodo(&(*raizArbol)->izquierda, valorInsert);
-    } 
-    // Insertar en el subárbol derecho si el valor es mayor
-    else 
-    {
-        insertarNodo(&(*raizArbol)->derecha, valorInsert);
-    }
+        insertarNodo(&(*raiz)->izquierda, valor);
 
+    } else {
+        insertarNodo(&(*raiz)->derecha, valor);
+    }
 }
-*/
+
+void insertarNodosBalanceados(Nodo** raiz, int* valores, int inicio, int fin) 
+{
+    if (inicio > fin) 
+    {
+        return;
+    }
+
+    int medio = (inicio + fin) / 2;
+    insertarNodo(raiz, valores[medio]);
+
+    insertarNodosBalanceados(raiz, valores, inicio, medio - 1);
+    insertarNodosBalanceados(raiz, valores, medio + 1, fin);
+}
+
+void llenarArbolBalanceado(Nodo** raiz, int* valores, int n) 
+{
+    // Ordenar el arreglo de valores
+    qsort(valores, n, sizeof(int), compararEnteros);
+
+    // Insertar los valores balanceadamente en el árbol
+    insertarNodosBalanceados(raiz, valores, 0, n - 1);
+}
+
+int compararEnteros(const void* a, const void* b)
+{
+    return (*(int*)a - *(int*)b);
+}
