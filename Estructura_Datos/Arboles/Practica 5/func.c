@@ -32,7 +32,6 @@ void imprimirArbol(Nodo* nodo, int nivel)
 
                 else { printf(" |      ");}
             }
-            // recursivo: volvemos a empezar 
             imprimirArbol(nodo->derecha, nivel + 1);
         }
 
@@ -74,14 +73,12 @@ Nodo* borrarArbol(Nodo** nodo)
         }
 
         free((*nodo));
-
-        //return null;
     }
 
     return null;
 }
 
-int numElementos(Nodo* nodo) // retorno la cantidad de nodos
+int numElementos(Nodo* nodo) // retorna la cantidad de nodos
 {
     int n = 0;
     if (nodo != null)
@@ -97,7 +94,6 @@ int numElementos(Nodo* nodo) // retorno la cantidad de nodos
         }
 
         n++;
-        //return n;
     }
 
     return n;
@@ -154,14 +150,16 @@ int compararArboles(Nodo* arbolA, Nodo* arbolB)
 
 int calcularNivel(Nodo* raiz, int valorBusqueda, int nivelActual) 
 {
-    if (raiz == null) { return -1; } // si el arbol esta vacio
+    if (raiz == null) 
+    { return -1; } // si el arbol esta vacio
 
     if (raiz->valor == valorBusqueda)
     { return nivelActual; } // si es igual, retornamos el valor de nivel actual
 
     int nivel = calcularNivel(raiz->izquierda, valorBusqueda, nivelActual + 1);
 
-    if (nivel != -1) { return nivel; }
+    if (nivel != -1) 
+    { return nivel; }
 
     nivel = calcularNivel(raiz->derecha, valorBusqueda, nivelActual + 1);
 
@@ -206,7 +204,7 @@ void insertarNodosBalanceados(Nodo** raiz, int* valores, int inicio, int fin)
     insertarNodosBalanceados(raiz, valores, medio + 1, fin);
 }
 
-void llenarArbolBalanceado(Nodo** raiz, int* valores, int n) 
+void llenarArbolBalanceado(Nodo** raiz, int* valores, int n) // called in main
 {
     // Ordenar el arreglo de valores
     qsort(valores, n, sizeof(int), compararEnteros);
@@ -215,7 +213,7 @@ void llenarArbolBalanceado(Nodo** raiz, int* valores, int n)
     insertarNodosBalanceados(raiz, valores, 0, n - 1);
 }
 
-int compararEnteros(const void* a, const void* b)
+int compararEnteros(const void* a, const void* b) // called by llenarArbolesBalanceados
 {
     return (*(int*)a - *(int*)b);
 }
