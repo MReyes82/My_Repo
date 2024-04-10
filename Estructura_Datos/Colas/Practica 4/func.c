@@ -250,7 +250,7 @@ void mostrarColaReproduccion(Cola* cola)
 
     while (n < cola->cantidadElementos)
     {
-        printf("%d)%s - %s\n", n, actual->cancion->nombre, actual->cancion->autor);
+        printf("%d) %s - %s\n", n, actual->cancion->nombre, actual->cancion->autor);
         n++;
 
         actual = actual->siguiente;
