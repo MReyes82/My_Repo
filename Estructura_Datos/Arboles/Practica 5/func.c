@@ -154,7 +154,7 @@ int calcularNivel(Nodo* raiz, int valorBusqueda, int nivelActual)
     { return -1; } // si el arbol esta vacio
 
     if (raiz->valor == valorBusqueda)
-    { return nivelActual; } // si es igual, retornamos el valor de nivel actual
+    { return nivelActual - 1; } // si es igual, retornamos el valor de nivel actual
 
     int nivel = calcularNivel(raiz->izquierda, valorBusqueda, nivelActual + 1);
 
@@ -166,54 +166,24 @@ int calcularNivel(Nodo* raiz, int valorBusqueda, int nivelActual)
     return nivel;
 }
 
-
-void insertarNodo(Nodo** raiz, int valor) 
+/* 
+*   insertar un nodo al arbol, manteniendo el orden preestablecido
+*   regresa la raiz del arbol 
+*/ 
+Nodo* insertarNodo(Nodo* raiz, int valor) 
 {
-    if (*raiz == null) 
+    if (raiz == null)
     {
-        *raiz = crearNodo(valor);
-        return;
+        raiz = crearNodo(valor);
+    }
+    else if (valor <= raiz->valor)
+    {
+        raiz->izquierda = insertarNodo(raiz->izquierda, valor);
+    }
+    else
+    {
+        raiz->derecha = insertarNodo(raiz->derecha, valor);
     }
 
-    if ((*raiz)->valor == valor) 
-    {
-        insertarNodo(&(*raiz)->izquierda, valor);
-        return;
-    }
-
-    if (valor < (*raiz)->valor) 
-    {
-        insertarNodo(&(*raiz)->izquierda, valor);
-
-    } else {
-        insertarNodo(&(*raiz)->derecha, valor);
-    }
-}
-
-void insertarNodosBalanceados(Nodo** raiz, int* valores, int inicio, int fin) 
-{
-    if (inicio > fin) 
-    {
-        return;
-    }
-
-    int medio = (inicio + fin) / 2;
-    insertarNodo(raiz, valores[medio]);
-
-    insertarNodosBalanceados(raiz, valores, inicio, medio - 1);
-    insertarNodosBalanceados(raiz, valores, medio + 1, fin);
-}
-
-void llenarArbolBalanceado(Nodo** raiz, int* valores, int n) // called in main
-{
-    // Ordenar el arreglo de valores
-    qsort(valores, n, sizeof(int), compararEnteros);
-
-    // Insertar los valores balanceadamente en el árbol
-    insertarNodosBalanceados(raiz, valores, 0, n - 1);
-}
-
-int compararEnteros(const void* a, const void* b) // called by llenarArbolesBalanceados
-{
-    return (*(int*)a - *(int*)b);
+    return raiz;
 }

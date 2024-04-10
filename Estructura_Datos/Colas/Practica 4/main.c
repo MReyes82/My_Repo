@@ -51,7 +51,7 @@ int main(void)
         case 1:
             printf("\n[1] ANTERIOR\n");
 
-            if (colaReproduccion.actual != null)
+            if (colaReproduccion.actual != null && colaReproduccion.actual->anterior != null)
             {
                 colaReproduccion.actual = colaReproduccion.actual->anterior;
                 
@@ -61,7 +61,7 @@ int main(void)
         case 2:
             printf("\n[2] SIGUIENTE\n");
 
-            if (colaReproduccion.actual != null)
+            if (colaReproduccion.actual != null && colaReproduccion.actual->siguiente != null)
             {
                 colaReproduccion.actual = colaReproduccion.actual->siguiente;
             }
