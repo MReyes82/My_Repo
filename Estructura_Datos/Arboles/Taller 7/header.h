@@ -6,16 +6,17 @@ typedef struct Nodo
 {
     struct Nodo* izquierda;
     char valor; // un solo byte para el arbol de expresion
+    int indice;
     struct Nodo* derecha;
 
 } Nodo;
 
-Nodo* crearNodo(char valor);
+Nodo* crearNodo(char valor, int indice);
 void imprimirArbol(Nodo* nodo, int nivel);
+Nodo* construirArbol(const char* expresion);
 Nodo* borrarArbol(Nodo** nodo);
-Nodo* insertarNodo(Nodo* raiz, char valor);
 int esOperador(char valor);
-void recorridoPreOrden(Nodo* raiz);
 void recorridoEnOrden(Nodo* raiz);
-void recorridoPostOrden(Nodo* raiz);
+void obtenerIndices(Nodo* raiz, int* contador, int** arrayIndices);
+void printArray(int* arr, int len);
 void printNL(void);

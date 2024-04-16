@@ -1,28 +1,32 @@
 #include "header.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 int main (void)
 {
     Nodo* arbol = null;
-    int i;
-    
-    char valores[] = {'+', '*', '*'}; // expresion en notacion postfija
-    
-    int len = strlen(valores);
-    //int* indices = null; // arreglo de indices. Necesita ser dinamico por lo tanto sera pointer.
+      
+    char valores[] = "X*Y/A+B*C^D";
 
-    for (i = 0 ; i < len ; i++)
-    {
-        arbol = insertarNodo(arbol, valores[i]);
-    }
+    int contador = 0;
+    
+    int* indices = malloc(sizeof(int)); // arreglo de indices. Necesita ser dinamico por lo tanto sera pointer.
+
+    arbol = construirArbol(valores);
 
     printNL();
     imprimirArbol(arbol, 0);
     printNL();
 
+    obtenerIndices(arbol, &contador, &indices);
+  
+    printf("Expresion: \n");
+    recorridoEnOrden(arbol);
+    printf("\n\nIndices: \n");
+    printArray(indices, contador);
+    
     borrarArbol(&arbol);
+    free(indices);
 
     return 0;
 }
