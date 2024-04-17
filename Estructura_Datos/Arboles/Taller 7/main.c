@@ -10,7 +10,7 @@ int main (void)
 
     int contador = 0;
     
-    int* indices = malloc(sizeof(int)); // arreglo de indices. Necesita ser dinamico por lo tanto sera pointer.
+    int* indices = null;//malloc(sizeof(int)); // arreglo de indices. Necesita ser dinamico por lo tanto sera pointer.
 
     arbol = construirArbol(valores);
 
