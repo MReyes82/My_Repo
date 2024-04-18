@@ -146,57 +146,75 @@ public class Main
     // este metodo scanea un valor entero, implementando validacion de datos
     public int scanUnsignedInteger(String textoInput)
     {
-        int input = -1;
+        String input = null;
+        int inputParsed = -1;
         do {
             try {
-                input = Integer.parseInt(JOptionPane.showInputDialog(textoInput));
+            	// recibimos el string para poder revisar si es nulo
+            	// es nulo en caso de que se pulse "cancel" en el 
+            	// showInputDialog
+                input = JOptionPane.showInputDialog(textoInput);
+                
+                if (input == null)
+                {
+                	return -1;
+                }
+                
+                // ahora si hacemos el parse a entero para poder atrapar
+                // una posible NumberFormatException
+                inputParsed = Integer.parseInt(input);
 
-                if (input < 0)
+                if (inputParsed < 0)
                 {
                     JOptionPane.showMessageDialog(null, "Ingrese un valor no negativo.");
                 }
 
-            } catch (NullPointerException e){
-                break;
-                //return -1; // regresamos -1 en caso de que pulse cancelar
-
-            } catch (NumberFormatException e) {
+            }catch (NumberFormatException e) {
 
                 JOptionPane.showMessageDialog(null, "Ingrese un valor numerico.");
-                input = -1;
+                inputParsed = -1;
             }
 
-        } while(input < 0);
+        } while(inputParsed < 0);
 
-        return input;
+        return inputParsed;
     }
 
     public float scanUnsignedFloat(String textoInput)
     {
-        float input = 0;
-
+    	String input = null;
+        float inputParsed = -1;
+        
         do {
             try {
-                input = Float.parseFloat(JOptionPane.showInputDialog(textoInput));
+            	// recibimos el string para poder revisar si es nulo
+            	// es nulo en caso de que se pulse "cancel" en el 
+            	// showInputDialog
+                input = JOptionPane.showInputDialog(textoInput);
+                
+                if (input == null)
+                {
+                	return -1;
+                }
+                
+                // ahora si hacemos el parse a entero para poder atrapar
+                // una posible NumberFormatException
+                inputParsed = Float.parseFloat(input);
 
-                if (input < 0.0)
+                if (inputParsed < 0)
                 {
                     JOptionPane.showMessageDialog(null, "Ingrese un valor no negativo.");
                 }
 
-            } catch(NullPointerException e) {
-                //input = -1;
-                //return (float) -1;
-                break;
+            }catch (NumberFormatException e) {
 
-            } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Ingrese un valor numerico.");
-                input = -1;
+                inputParsed = -1;
             }
 
-        } while(input < 0);
+        } while(inputParsed < 0);
 
-        return input;
+        return inputParsed;
     }
 
     public void altaMaestro()
@@ -918,6 +936,7 @@ public class Main
 
             //busquedaMatriculaAlumno(diccionarioAuxiliar);
         }
+        
         else if(criterioBusqueda.equals("maestro"))
         {
             Integer matFiltro = scanUnsignedInteger("Ingrese la matricula del maestro al cual\n" +
