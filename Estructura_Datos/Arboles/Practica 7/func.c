@@ -1,6 +1,7 @@
 #include "header.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 Nodo* crearNodo(char valor, int index)
 {
@@ -114,4 +115,114 @@ void printSpaces(int n)
     return;
 }
 
-//bool esValida(const char* expresion); // implementar funcion que evalua una expresion
+NodoST* pop(Stack* st)
+{
+    if (st->cantidadNodos == 0) 
+    {   
+        printf("ERROR:underflow\n");
+        return null; 
+    }
+
+    NodoST* out = st->cima;
+    st->cima = st->cima->siguiente;
+    st->cantidadNodos--;
+
+    return out;
+}
+
+void push(Stack* st, char valor)
+{
+    if (st->cantidadNodos == st->maxTam)
+    {
+        printf("ERROR:overflow\n");
+        return;
+    }
+
+    NodoST* nuevo = initNodo(valor);
+    nuevo->siguiente = st->cima;
+    st->cima = nuevo;
+    st->cantidadNodos++;
+
+    return;
+}
+
+NodoST* initNodo(char valor)
+{
+    NodoST* nuevo = malloc(sizeof(NodoST));
+    nuevo->valor = valor;
+    nuevo->siguiente = null;
+
+    return nuevo;
+}
+
+void vaciarStack(Stack* st)
+{
+    while (st->cima != null)
+    {
+        NodoST* temp = pop(st);
+        free(temp);
+    }
+
+    return;
+}
+
+Stack initStack(int maxTam)
+{
+    Stack nuevo;
+    nuevo.cima = null;
+    nuevo.cantidadNodos = 0;
+    nuevo.maxTam = maxTam;
+
+    return nuevo;
+}
+
+bool esValida(char* expresion) // implementar funcion que evalua una expresion
+{
+    /*
+    if (expresion == null)
+    { 
+        printf("ERROR: expresion nula\n");
+        return false; 
+    }
+    */
+    Stack st = initStack(-1); // stack sin limite
+
+    int ch = 0;
+    while (ch != '\0')
+    {
+        printf("Enters while\n");
+        if (esOperador(expresion[ch]))
+        { 
+            pop(&st);
+            printf("pop\n");
+        }
+
+        else
+        { 
+            push(&st, expresion[ch]); 
+            printf("push\n");
+        }
+
+        ch++;
+    }
+    /*
+    for (int i = 0 ; i < strlen(expresion) ; i++)
+    {
+        if (esOperador(expresion[i]))
+        { pop(&st); }
+
+        else
+        { push(&st, expresion[i]); }    
+    }
+    */
+    int cantidadNodos = st.cantidadNodos;
+    vaciarStack(&st);
+
+    // si solo queda un nodo entonces la expresion es valida
+    return (cantidadNodos == 1);
+}
+
+bool esOperador(char ch)
+{
+    return (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^');
+}

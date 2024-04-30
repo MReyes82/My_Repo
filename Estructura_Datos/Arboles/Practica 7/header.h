@@ -12,6 +12,21 @@ typedef struct Nodo
 
 } Nodo;
 
+typedef struct nodoST
+{
+    char valor;
+    struct nodoST* siguiente;
+} NodoST;
+
+
+typedef struct Stack
+{
+    NodoST* cima;
+    int cantidadNodos;
+    int maxTam;
+
+} Stack;
+
 Nodo* crearNodo(char valor, int index);
 void insertarNodo(Nodo** raiz, char valor, int index);
 void imprimirArbol(Nodo* raiz, int nivel);
@@ -20,7 +35,14 @@ void imprimirCharNodo(char caracterDelNodo);
 void recorridoEnOrden(Nodo* raiz);
 // util
 void printSpaces(int n);
-//bool esValida(const char* expresion);
+NodoST* pop(Stack* st);
+void push(Stack* st, char valor);
+NodoST* initNodo(char valor);
+Stack initStack(int maxTam);
+
+void vaciarStack(Stack* st);
+bool esValida(char* expresion);
+bool esOperador(char ch);
 
 /*
 * ( X + Y / A + B * C ^ D )
