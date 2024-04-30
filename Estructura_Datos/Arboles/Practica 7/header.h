@@ -43,6 +43,7 @@ Stack initStack(int maxTam);
 void vaciarStack(Stack* st);
 bool esValida(char* expresion);
 bool esOperador(char ch);
+void limpiarBufferDeEntrada(void);
 
 /*
 * ( X + Y / A + B * C ^ D )

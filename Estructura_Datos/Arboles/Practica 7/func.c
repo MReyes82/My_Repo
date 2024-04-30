@@ -178,43 +178,29 @@ Stack initStack(int maxTam)
 
 bool esValida(char* expresion) // implementar funcion que evalua una expresion
 {
-    /*
     if (expresion == null)
     { 
         printf("ERROR: expresion nula\n");
         return false; 
     }
-    */
+
     Stack st = initStack(-1); // stack sin limite
 
     int ch = 0;
-    while (ch != '\0')
+    while (expresion[ch] != '\0')
     {
-        printf("Enters while\n");
         if (esOperador(expresion[ch]))
         { 
             pop(&st);
-            printf("pop\n");
         }
-
         else
         { 
             push(&st, expresion[ch]); 
-            printf("push\n");
         }
 
         ch++;
     }
-    /*
-    for (int i = 0 ; i < strlen(expresion) ; i++)
-    {
-        if (esOperador(expresion[i]))
-        { pop(&st); }
 
-        else
-        { push(&st, expresion[i]); }    
-    }
-    */
     int cantidadNodos = st.cantidadNodos;
     vaciarStack(&st);
 
@@ -225,4 +211,18 @@ bool esValida(char* expresion) // implementar funcion que evalua una expresion
 bool esOperador(char ch)
 {
     return (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^');
+}
+
+void limpiarBufferDeEntrada(void)
+{
+    /*
+    * esta funcion solo limpia el buffer de entrada para poder 
+    * usar fgets despues de un scanf, aparantemente
+    * no se puede usar fgets despues de un scanf
+    * debido a que scanf deja un caracter de nueva linea '\n' en el buffer
+    */
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF);
+
+    return;
 }

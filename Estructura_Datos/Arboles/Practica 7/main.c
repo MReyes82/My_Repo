@@ -4,14 +4,17 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define size_exp 16
+
 int main(void)
 {
-    // TODO: implementar funciones del menu
+    // TODO: implementar parser para la expresion, y luego evaluarla
     // TODO: progreso de la practica = 30%
 
     // TODO: PS: este orden es el correcto para obtener el arbol de expresion indicado en el documento
     /*
     Nodo* arbolExpresion = null;
+    const char expresion[] = "x+y/a+b*c^d";
 
     insertarNodo(&arbolExpresion, expresion[5], 5);
     insertarNodo(&arbolExpresion, expresion[1], 1);
@@ -26,16 +29,19 @@ int main(void)
     insertarNodo(&arbolExpresion, expresion[10], 10);
 
     printSpaces(3);
+    //imprimirArbol(arbolExpresion, 0);
+    recorridoEnOrden(arbolExpresion);
+    printSpaces(3);
     imprimirArbol(arbolExpresion, 0);
     printSpaces(3);
     borrarArbol(&arbolExpresion);
+    
+    x+y/a+b*c^d
     */
     bool runs = true;
     int opcion;
+    char exp[size_exp];
     //int i;
-
-    // = "X+Y/A+B*C^D";
-    //printf("\n%s\n", expresion);
 
     while (runs)
     {
@@ -46,26 +52,24 @@ int main(void)
         printf("[2] TERMINAR PROGRAMA\n");
         printf("\nElige una opcion > ");
         scanf("\n%d", &opcion);
+        limpiarBufferDeEntrada(); // limpiar buffer de entrada
 
         switch (opcion)
         {
         case 0:
             printSpaces(1);
-            char expresion[] = {'X', '+', 'Y', '/', 'A', '+', 'B', '*', 'C', '^', 'D', '\0'};
-
-            /*
-            * me da un error de buffer
-            char expresion[16];                       
             printf("Ingresa la expresion: ");
-            scanf("\n%s", expresion);
-            fgets(expresion, sizeof(expresion), stdin);
-            
-            printf("\nInput: %s\n", expresion);
-            */
+            fgets(exp, size_exp, stdin);
+            //system("pause");
 
-            bool call = esValida(expresion);
+            size_t len = strlen(exp);
 
-            if (call)
+            if (len > 0 && exp[len - 1] == '\n')
+            { exp[len - 1] = '\0'; }
+
+            bool check = esValida(exp);
+
+            if (check)
             {
                 printf("Bien hecho papu\n");
 
