@@ -6,7 +6,7 @@
 Pila *inicializarCaja(void)
 {
     Pila *caja;
-    static Libro libros[45] = 
+    static Libro libros[44] = 
     {
         {"Cell","Horror",2006},
         {"The Street Lawyer","Thriller",1998},
@@ -51,19 +51,17 @@ Pila *inicializarCaja(void)
         {"Book of the Dead ","Crime",2007},
         {"The Dark Tower VI: Song of Susannah","Fantasy",2004},
         {"Cold Mountain","Historical novel",1997},
-        {"A Feast for Crows","Fantasy",2005}, 
-        {"Hola" , "papu", 2047},
+        {"A Feast for Crows","Fantasy",2005},
     };
 
     caja = (Pila *)malloc(sizeof(Pila));
-    inicializarPila(caja, 45);
+    inicializarPila(caja, 44);
     
-    for (int i = 0 ; i < 45 ; i++)
+    for (int i = 0 ; i < 44 ; i++)
     {
         push(caja, &libros[i]);
     }
     
-
     return caja;
 }
 
@@ -128,10 +126,20 @@ void push(Pila *stackLibro, Libro *nuevo)
         return;
     }
 
-    Elemento *nuevoElemento = alojarElemento(nuevo);
-    nuevoElemento->sig = stackLibro->cima;
-    stackLibro->cima = nuevoElemento;
-    stackLibro->numElementos++;
+    if (stackLibro->cima == NULL)
+    {
+        stackLibro->cima = alojarElemento(nuevo);
+        stackLibro->numElementos++;
+        return;
+    }
+
+    else
+    {
+        Elemento *nuevoElemento = alojarElemento(nuevo);
+        nuevoElemento->sig = stackLibro->cima;
+        stackLibro->cima = nuevoElemento;
+        stackLibro->numElementos++;
+    }
 
     return;
 }
@@ -178,14 +186,15 @@ void apilarPorGenero(StackArray *elementoArray, Libro *elementoLibro)
     int indice;
     for (indice = 0 ; indice < elementoArray->numStacks ; indice++)
     {   
-        char *temp = elementoArray->stackLibros[indice].cima->elementoLibro->genero; // para mas legibilidad
+        char* temp = elementoArray->stackLibros[indice].cima->elementoLibro->genero; // para mas legibilidad
+        //strcpy(temp, elementoArray->stackLibros[indice].cima->elementoLibro->genero);
+
         if (strcmp(temp, elementoLibro->genero) == 0)
         {
             push(&elementoArray->stackLibros[indice], elementoLibro);
             return;
         }
     }
-    //printf("[%d]\n", indice);
 
     /* 
     realojamos el tamaño en caso que el genero no sea el deseado
@@ -209,6 +218,12 @@ void apilarPorFecha(StackArray *elementoArray, Libro *elementoLibro)
     int indice;
     for (indice = 0 ; indice < elementoArray->numStacks ; indice++)
     {
+        if (elementoArray->stackLibros[indice].cima == NULL)
+        {
+            printf("ERROR: cima es NULL.\n");
+            return;
+        }
+
         int temp = elementoArray->stackLibros[indice].cima->elementoLibro->releaseDate;
         if (temp == elementoLibro->releaseDate)
         {
@@ -216,7 +231,6 @@ void apilarPorFecha(StackArray *elementoArray, Libro *elementoLibro)
             return;
         }
     }
-    //printf("[%d]\n", indice);
 
     Pila *auxiliar = NULL;
     while(auxiliar == NULL)

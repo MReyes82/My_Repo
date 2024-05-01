@@ -16,17 +16,17 @@ int main(void)
     Nodo* arbolExpresion = null;
     const char expresion[] = "x+y/a+b*c^d";
 
-    insertarNodo(&arbolExpresion, expresion[5], 5);
-    insertarNodo(&arbolExpresion, expresion[1], 1);
-    insertarNodo(&arbolExpresion, expresion[7], 7);
-    insertarNodo(&arbolExpresion, expresion[0], 0);
-    insertarNodo(&arbolExpresion, expresion[3], 3);
-    insertarNodo(&arbolExpresion, expresion[2], 2);
-    insertarNodo(&arbolExpresion, expresion[4], 4);
-    insertarNodo(&arbolExpresion, expresion[6], 6);
-    insertarNodo(&arbolExpresion, expresion[9], 9);
-    insertarNodo(&arbolExpresion, expresion[8], 8);
-    insertarNodo(&arbolExpresion, expresion[10], 10);
+    insertarNodo(&arbolExpresion, expresion[5], 5); +
+    insertarNodo(&arbolExpresion, expresion[1], 1); + 
+    insertarNodo(&arbolExpresion, expresion[7], 7); *
+    insertarNodo(&arbolExpresion, expresion[0], 0); x 
+    insertarNodo(&arbolExpresion, expresion[3], 3); /
+    insertarNodo(&arbolExpresion, expresion[2], 2); y
+    insertarNodo(&arbolExpresion, expresion[4], 4); a
+    insertarNodo(&arbolExpresion, expresion[6], 6); b
+    insertarNodo(&arbolExpresion, expresion[9], 9); ^
+    insertarNodo(&arbolExpresion, expresion[8], 8); c
+    insertarNodo(&arbolExpresion, expresion[10], 10); d
 
     printSpaces(3);
     //imprimirArbol(arbolExpresion, 0);
@@ -37,6 +37,7 @@ int main(void)
     borrarArbol(&arbolExpresion);
     
     x+y/a+b*c^d
+    (x+(y/a))+(b*(c^d))
     */
     bool runs = true;
     int opcion;
@@ -67,16 +68,23 @@ int main(void)
             if (len > 0 && exp[len - 1] == '\n')
             { exp[len - 1] = '\0'; }
 
-            bool check = esValida(exp);
+            bool expresionEsValida = esValida(exp);
 
-            if (check)
+            if (!expresionEsValida)
             {
-                printf("Bien hecho papu\n");
+                printf("La expresion no es valida.\n");
+                limpiarBufferDeEntrada(); 
+                break; // salimos.                    
 
             }else{
-                printf("Hasta la proximaaaa\n");
+                printf("La expresion es valida.\n");
             }
-            
+
+            char* expPostfija = infixToPostfix(exp);
+
+            printf("Postfix: %s\n", expPostfija);
+            free(expPostfija);
+
             break;
         
         case 1:

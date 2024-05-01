@@ -138,11 +138,20 @@ void push(Stack* st, char valor)
         return;
     }
 
-    NodoST* nuevo = initNodo(valor);
-    nuevo->siguiente = st->cima;
-    st->cima = nuevo;
-    st->cantidadNodos++;
-
+    if (st->cima == null)
+    {
+        st->cima = initNodo(valor);
+        st->cantidadNodos++;
+        //return;
+    }
+    else
+    {
+        NodoST* nuevo = initNodo(valor);
+        nuevo->siguiente = st->cima;
+        st->cima = nuevo;
+        st->cantidadNodos++;
+    }
+    
     return;
 }
 
@@ -176,6 +185,11 @@ Stack initStack(int maxTam)
     return nuevo;
 }
 
+bool esParBalanceado(char apertura, char cierre)
+{
+    return (apertura == '(' && cierre == ')');
+}
+
 bool esValida(char* expresion) // implementar funcion que evalua una expresion
 {
     if (expresion == null)
@@ -184,19 +198,66 @@ bool esValida(char* expresion) // implementar funcion que evalua una expresion
         return false; 
     }
 
+    
     Stack st = initStack(-1); // stack sin limite
 
-    int ch = 0;
+    char chActual;
+
+    for (int i = 0 ; i < strlen(expresion) ; i++)
+    {
+        chActual = expresion[i];
+
+        if (chActual == '(')
+        {
+            push(&st, chActual);
+            continue;
+        }
+
+        if (chActual == ')')
+        {
+            if (estaVacio(&st))
+            {
+                vaciarStack(&st);
+                return false;
+            }
+
+            char chApertura = pop(&st)->valor;
+
+            if (!esParBalanceado(chApertura, chActual))
+            {
+                vaciarStack(&st);
+                return false;
+            }
+        }
+    }
+
+    int cantidadNodos = st.cantidadNodos;
+    vaciarStack(&st);
+
+    return (cantidadNodos == 0);
+
+    /*
     while (expresion[ch] != '\0')
     {
-        if (esOperador(expresion[ch]))
-        { 
-            pop(&st);
+        if (expresion[ch] == '(')
+        {
+            push(&st, expresion[ch]);
         }
-        else
-        { 
-            push(&st, expresion[ch]); 
+        else if (expresion[ch] == ')')
+        {
+            while (!estaVacio(&st) && st.cima->valor != '(')
+            {
+                pop(&st);
+            }
+            if (!estaVacio(&st))
+            {
+                pop(&st);
+            }
         }
+        else if (esOperador(expresion[ch]))
+        { pop(&st); }
+
+        else { push(&st, expresion[ch]); }
 
         ch++;
     }
@@ -206,11 +267,18 @@ bool esValida(char* expresion) // implementar funcion que evalua una expresion
 
     // si solo queda un nodo entonces la expresion es valida
     return (cantidadNodos == 1);
+    */
+
 }
 
 bool esOperador(char ch)
 {
     return (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^');
+}
+
+bool estaVacio(Stack* st)
+{
+    return (st->cantidadNodos == 0);
 }
 
 void limpiarBufferDeEntrada(void)
@@ -225,4 +293,68 @@ void limpiarBufferDeEntrada(void)
     while ((ch = getchar()) != '\n' && ch != EOF);
 
     return;
+}
+
+char* infixToPostfix(char* infix)
+{
+   if (infix == null)
+   { return null; }
+
+   int tamExp = strlen(infix);
+
+    Stack st = initStack(-1); // stack sin limite
+
+    char* postfix = malloc(tamExp + 1);
+    int j = 0;
+
+    for (int i = 0 ; i < tamExp ; i++)
+    {
+        if (!esOperador(infix[i]))
+        {
+            postfix[j++] = infix[i];
+        }
+        else if (infix[i] == '(')
+        {
+            push(&st, infix[i]);
+        }
+        else if (infix[i] == ')')
+        {
+            while (st.cima != null && st.cima->valor != '(')
+            {
+                postfix[j++] = pop(&st)->valor;
+            }
+            pop(&st);
+        }
+        else
+        {
+            while (st.cima != null && st.cima->valor != '(' && precedencia(infix[i]) <= precedencia(st.cima->valor))
+            {
+                postfix[j++] = pop(&st)->valor;
+            }
+            push(&st, infix[i]);
+        }
+    }
+
+    while (st.cima != null)
+    {
+        postfix[j++] = pop(&st)->valor;
+    }
+
+    postfix[j] = '\0';
+
+    return postfix;
+}
+
+int precedencia(char ch)
+{
+    if (ch == '^') 
+    { return 3; }
+
+    if (ch == '*' || ch == '/') 
+    { return 2; }
+    
+    if (ch == '+' || ch == '-') 
+    { return 1; }
+
+    return -1;
 }

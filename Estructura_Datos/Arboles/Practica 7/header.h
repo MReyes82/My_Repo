@@ -12,7 +12,7 @@ typedef struct Nodo
 
 } Nodo;
 
-typedef struct nodoST
+typedef struct nodoST // nodo de Stack
 {
     char valor;
     struct nodoST* siguiente;
@@ -27,6 +27,7 @@ typedef struct Stack
 
 } Stack;
 
+// modulos de arboles
 Nodo* crearNodo(char valor, int index);
 void insertarNodo(Nodo** raiz, char valor, int index);
 void imprimirArbol(Nodo* raiz, int nivel);
@@ -35,15 +36,20 @@ void imprimirCharNodo(char caracterDelNodo);
 void recorridoEnOrden(Nodo* raiz);
 // util
 void printSpaces(int n);
+// modulos de stack
 NodoST* pop(Stack* st);
 void push(Stack* st, char valor);
 NodoST* initNodo(char valor);
 Stack initStack(int maxTam);
-
 void vaciarStack(Stack* st);
+bool estaVacio(Stack* st);
+// modulos de expresion
+bool esParBalanceado(char apertura, char cierre);
 bool esValida(char* expresion);
+int precedencia(char ch);
 bool esOperador(char ch);
 void limpiarBufferDeEntrada(void);
+char* infixToPostfix(char* infix);
 
 /*
 * ( X + Y / A + B * C ^ D )
