@@ -36,6 +36,7 @@ void imprimirCharNodo(char caracterDelNodo);
 void recorridoEnOrden(Nodo* raiz);
 // util
 void printSpaces(int n);
+void limpiarBufferDeEntrada(void);
 // modulos de stack
 NodoST* pop(Stack* st);
 void push(Stack* st, char valor);
@@ -48,8 +49,8 @@ bool esParBalanceado(char apertura, char cierre);
 bool esValida(char* expresion);
 int precedencia(char ch);
 bool esOperador(char ch);
-void limpiarBufferDeEntrada(void);
 char* infixToPostfix(char* infix);
+int* obtenerIndice(char* infix, char* postfix);
 
 /*
 * ( X + Y / A + B * C ^ D )
@@ -57,4 +58,6 @@ char* infixToPostfix(char* infix);
 *
 *   orden necesario:
 *   5 1 7 0 3 2 4 6 9 8 10
+*   orden obtenido:
+*   0 2 4 3 1 6 8 10 9 7 5
 */

@@ -166,7 +166,7 @@ NodoST* initNodo(char valor)
 
 void vaciarStack(Stack* st)
 {
-    while (st->cima != null)
+    while (!estaVacio(st))
     {
         NodoST* temp = pop(st);
         free(temp);
@@ -190,7 +190,7 @@ bool esParBalanceado(char apertura, char cierre)
     return (apertura == '(' && cierre == ')');
 }
 
-bool esValida(char* expresion) // implementar funcion que evalua una expresion
+bool esValida(char* expresion) // acepta expresions con o sin parentesis
 {
     if (expresion == null)
     { 
@@ -198,7 +198,6 @@ bool esValida(char* expresion) // implementar funcion que evalua una expresion
         return false; 
     }
 
-    
     Stack st = initStack(-1); // stack sin limite
 
     char chActual;
@@ -221,7 +220,8 @@ bool esValida(char* expresion) // implementar funcion que evalua una expresion
                 return false;
             }
 
-            char chApertura = pop(&st)->valor;
+            NodoST* temp = pop(&st);
+            char chApertura = temp->valor;
 
             if (!esParBalanceado(chApertura, chActual))
             {
@@ -235,40 +235,6 @@ bool esValida(char* expresion) // implementar funcion que evalua una expresion
     vaciarStack(&st);
 
     return (cantidadNodos == 0);
-
-    /*
-    while (expresion[ch] != '\0')
-    {
-        if (expresion[ch] == '(')
-        {
-            push(&st, expresion[ch]);
-        }
-        else if (expresion[ch] == ')')
-        {
-            while (!estaVacio(&st) && st.cima->valor != '(')
-            {
-                pop(&st);
-            }
-            if (!estaVacio(&st))
-            {
-                pop(&st);
-            }
-        }
-        else if (esOperador(expresion[ch]))
-        { pop(&st); }
-
-        else { push(&st, expresion[ch]); }
-
-        ch++;
-    }
-
-    int cantidadNodos = st.cantidadNodos;
-    vaciarStack(&st);
-
-    // si solo queda un nodo entonces la expresion es valida
-    return (cantidadNodos == 1);
-    */
-
 }
 
 bool esOperador(char ch)
@@ -297,10 +263,10 @@ void limpiarBufferDeEntrada(void)
 
 char* infixToPostfix(char* infix)
 {
-   if (infix == null)
-   { return null; }
+    if (infix == null)
+    { return null; }
 
-   int tamExp = strlen(infix);
+    int tamExp = strlen(infix);
 
     Stack st = initStack(-1); // stack sin limite
 
@@ -357,4 +323,45 @@ int precedencia(char ch)
     { return 1; }
 
     return -1;
+}
+
+int* obtenerIndice(char* infix, char* postfix)
+{
+    // TODO: arreglar problema con caracter '+' repetido
+    if (infix == null || postfix == null)
+    { return null; }
+
+    int* indices = malloc((strlen(postfix)) * sizeof(int));
+    bool chRepetidoEncontrado = true;
+
+    int i = 0;
+
+    while (postfix[i] != '\0')
+    {
+        char chActual = postfix[i];
+        int j = 0;
+
+        while (infix[j] != '\0')
+        {
+            if (chActual == infix[j])
+            {
+                if (chActual == '+' && chRepetidoEncontrado)
+                {
+                    j++;
+                    chRepetidoEncontrado = false;
+                    continue;
+                }
+
+                if (chActual == '+' && i < strlen(postfix) && !chRepetidoEncontrado)
+                { chRepetidoEncontrado = true; }
+
+                indices[i] = j;
+                break;
+            }
+            j++;
+        }
+        i++;
+    }
+
+    return indices;
 }
