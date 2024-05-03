@@ -41,19 +41,19 @@ typedef struct ColaImpresion // una sola
 
 // archivos
 Archivo* crearDocumento(char* nombre, int numeroPaginas);
-void imprimirDocumento(Archivo* doc);
+void imprimirDocumento(Archivo* doc, int iterador);
 Nodo* crearNodo(Archivo* doc);
 // cola archivos
 ColaArchivos* crearColaArchivos(int paginasDeLosArchivos);
-void encolarArchivo(ColaArchivos* colaArchivos, Archivo* doc);
+void encolarArchivo(ColaArchivos* colaArchivos, Archivo* doc, int tipoDePrioridad);
 Archivo* desencolarArchivo(ColaArchivos* colaArchivos);
 int obtenerNumeroDocumentos(ColaArchivos* colaDeDocumentos);
-void imprimirColaArchivos(ColaArchivos* colaArchivos);
+void imprimirColaArchivos(ColaArchivos* colaArchivos, int tipoDePrioridad, int* iterador);
 bool estaVacia(ColaArchivos* colaArchivos);
 // cola impresion
 void imprimirColaImpresion(ColaImpresion* colaImpresion);
 ColaImpresion crearColaImpresion(int tipoDePrioridad);
-Archivo* desencolarArchivoPrioridad(ColaImpresion* colaPrincipal, int prioridad);
+Archivo* procesarArchivoPrioridad(ColaImpresion* colaPrincipal, int prioridad);
 void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int prioridad);
 void vaciarColaImpresion(ColaImpresion* colaImpresion);
 void cambiarPrioridad(ColaImpresion* colaImpresion, int prioridad);

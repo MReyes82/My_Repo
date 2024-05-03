@@ -6,10 +6,12 @@
 
 int main (void)
 {
-    int i, opcion, prioridadActual = _MAX_;
+    int i, opcion, prioridadActual = _MAX_; // la prioridad por defecto es para los elementos de mayor cantidad de paginas
 
     bool corre = true;
     ColaImpresion colaPrincipal = crearColaImpresion(prioridadActual);
+    //ColaArchivos* colaPrincipal = crearColaArchivos(0);
+    Archivo* nuevo = null;
 
     while (corre)
     {
@@ -28,16 +30,17 @@ int main (void)
         {
             case 0:
                 break;
-            case 1:
+            case 1: // caso 1 listo
                 printf("\n-----Mostrando cola de impresion------\n");
 
                 imprimirColaImpresion(&colaPrincipal);
+                //imprimirColaArchivos(colaPrincipal, prioridadActual);
 
                 break;
                 
-            case 2:
+            case 2: // caso 2 listo
                 printf("\n-----Agregando archivo------\n");
-                char nombre[32];
+                char* nombre = malloc(12 * sizeof(char));
                 int paginas;
 
                 printf("Ingrese el nombre del archivo > ");
@@ -45,13 +48,8 @@ int main (void)
                 printf("Ingrese el numero de paginas > ");
                 scanf("%d", &paginas);
                 
-                Archivo* doc = crearDocumento(nombre, paginas);
-
-                encolarArchivoPrioridad(&colaPrincipal, doc, prioridadActual);
-                /*
-                colaPrincipal.inicio = crearColaArchivos();
-                encolarArchivo(colaPrincipal.inicio, doc);
-                */
+                nuevo = crearDocumento(nombre, paginas);
+                encolarArchivoPrioridad(&colaPrincipal, nuevo, prioridadActual);
 
                 break;
 
@@ -60,6 +58,20 @@ int main (void)
             case 4:
                 break;
             case 5:
+                printf("\n-----Procesando archivo------\n");
+
+                printf("Archivo procesado: \n");
+                Archivo* archivo = procesarArchivoPrioridad(&colaPrincipal, prioridadActual);
+
+                if (archivo == null) // evitar segfault
+                {
+                    printf("No hay archivos para procesar.\n");
+                    break;
+                }
+
+                imprimirDocumento(archivo, -77);
+
+
                 break;
             case 6:
                 corre = false;
@@ -68,11 +80,10 @@ int main (void)
                 break;
         }
     }
-    
-    i = 0;
-    printf("%d\n", i);
-    
     vaciarColaImpresion(&colaPrincipal);
+
+    i = 0;
+    printf("\n%d\n", i); // solo para checar que el programa termina sin problemas
 
     return 0;
 }   
