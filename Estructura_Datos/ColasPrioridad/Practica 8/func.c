@@ -41,63 +41,20 @@ ColaArchivos* crearColaArchivos(int paginasDeLosArchivos)
 
     return colaArchivos;
 }
-
-void encolarArchivo(ColaArchivos* colaArchivos, Archivo* doc, int tipoDePrioridad) 
+// recibe el apuntador a la cola correcta a insertar el archivo y el archivo a insertar
+void encolarArchivo(ColaArchivos* colaArchivos, Archivo* doc) 
 {                                                                                  
     Nodo* nuevo = crearNodo(doc);
 
-    if (tipoDePrioridad == 0) // si es 0 de menor a mayor
+    if (colaArchivos->inicio == null)
     {
-
-        if (colaArchivos->inicio == null) // si la cola esta vacia
-        {
-            colaArchivos->inicio = nuevo; // el inicio sera el nuevo nodo
-            colaArchivos->fin = nuevo; // el fin sera el nuevo nodo tambien
-        }
-        else if (doc->paginas < colaArchivos->inicio->documento->paginas) // si el documento a encolar tiene menos 
-        {                                                                // paginas que el primer documento de la cola
-            nuevo->siguiente = colaArchivos->inicio;                    // el nuevo nodo sera el inicio
-            colaArchivos->inicio = nuevo;
-        }
-        else // si no es el caso anterior, se recorre la cola hasta encontrar el lugar donde se debe insertar el nuevo nodo
-        {
-            Nodo* actual = colaArchivos->inicio;
-
-            while (actual->siguiente != null && actual->siguiente->documento->paginas <= doc->paginas)
-            { actual = actual->siguiente; }
-
-            nuevo->siguiente = actual->siguiente;
-            actual->siguiente = nuevo;
-
-            if (nuevo->siguiente == null)
-            { colaArchivos->fin = nuevo; }
-        }
+        colaArchivos->inicio = nuevo;
+        colaArchivos->fin = nuevo;
     }
-    else if (tipoDePrioridad == 1) // si prioridad es 1 se ordena de mayor a menor, 
+    else
     {
-        if (colaArchivos->inicio == null)
-        {
-            colaArchivos->inicio = nuevo;
-            colaArchivos->fin = nuevo;
-        }
-        else if (doc->paginas > colaArchivos->inicio->documento->paginas)
-        {   
-            nuevo->siguiente = colaArchivos->inicio;
-            colaArchivos->inicio = nuevo;
-        }
-        else
-        {
-            Nodo* actual = colaArchivos->inicio;
-
-            while (actual->siguiente != null && actual->siguiente->documento->paginas >= doc->paginas)
-            { actual = actual->siguiente; }
-
-            nuevo->siguiente = actual->siguiente;
-            actual->siguiente = nuevo;
-
-            if (nuevo->siguiente == null)
-            { colaArchivos->fin = nuevo; }
-        }
+        colaArchivos->fin->siguiente = nuevo;
+        colaArchivos->fin = nuevo;
     }
 
     colaArchivos->cantidadArchivos++;
@@ -149,11 +106,11 @@ Archivo* procesarArchivoPrioridad(ColaImpresion* colaPrincipal, int prioridad)
     ColaArchivos* colaActual = null;
     ColaArchivos* colaAnterior = null;
 
-    if (prioridad == 0)
+    if (prioridad == _MIN_)
     {
         colaActual = colaPrincipal->inicio;
 
-    }else if (prioridad == 1) {
+    }else if (prioridad == _MAX_) {
         colaActual = colaPrincipal->fin;
 
     }else {
@@ -164,10 +121,10 @@ Archivo* procesarArchivoPrioridad(ColaImpresion* colaPrincipal, int prioridad)
     while (colaActual != null && ((prioridad == 0 && colaActual->inicio == null) 
                                 || (prioridad == 1 && colaActual->fin == null))) {
         colaAnterior = colaActual;
-        if (prioridad == 0)
+        if (prioridad == _MIN_)
         { colaActual = colaActual->siguiente; }
 
-        else if (prioridad == 1)
+        else if (prioridad == _MAX_)
         { colaActual = colaAnterior; }
     }
 
@@ -213,8 +170,8 @@ void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int pri
     ColaArchivos* colaActual = colaPrincipal->inicio;
     //ColaArchivos* colaAnterior = null;
 
-    while (colaActual != null && ((prioridad == 0 && doc->paginas < colaActual->paginasDeLosArchivos)  
-                                  || (prioridad == 1 && doc->paginas > colaActual->paginasDeLosArchivos))) {
+    while (colaActual != null && ((prioridad == _MIN_ && doc->paginas <= colaActual->paginasDeLosArchivos)  
+                                  || (prioridad == _MAX_ && doc->paginas >= colaActual->paginasDeLosArchivos))) {
         //colaAnterior = colaActual;
         colaActual = colaActual->siguiente;
     }
@@ -222,7 +179,9 @@ void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int pri
     if (colaActual == null)
     {
         colaActual = crearColaArchivos(doc->paginas);
-        //colaActual->siguiente = null;
+        //colaPrincipal->cantidadColas++;
+
+        colaActual->siguiente = null;
 
         if (colaPrincipal->inicio == null)
         {
@@ -231,12 +190,12 @@ void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int pri
         }
         else
         {
-            if (prioridad == 0)
+            if (prioridad == _MIN_)
             {
                 colaPrincipal->fin->siguiente = colaActual;
                 colaPrincipal->fin = colaActual;
             }
-            else if (prioridad == 1)
+            else if (prioridad == _MAX_)
             {
                 colaActual->siguiente = colaPrincipal->inicio;
                 colaPrincipal->inicio = colaActual;
@@ -244,13 +203,13 @@ void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int pri
         }
     }
 
-    encolarArchivo(colaActual, doc, prioridad);
+    encolarArchivo(colaActual, doc);
     colaPrincipal->cantidadColas++;
 
     return;
 }
 
-void imprimirColaArchivos(ColaArchivos* colaArchivos, int tipoDePrioridad, int* iterador)
+void imprimirColaArchivos(ColaArchivos* colaArchivos, int* iterador)
 {
     if (estaVacia(colaArchivos))
     { return; }
@@ -261,14 +220,14 @@ void imprimirColaArchivos(ColaArchivos* colaArchivos, int tipoDePrioridad, int* 
     {
         Archivo* doc = desencolarArchivo(colaArchivos);
         imprimirDocumento(doc, (*iterador));
-        encolarArchivo(auxiliar, doc, tipoDePrioridad);
+        encolarArchivo(auxiliar, doc);
         (*iterador)++;
     }
 
     while (!estaVacia(auxiliar)) // regresamos a la cola principal
     {
         Archivo* doc = desencolarArchivo(auxiliar);
-        encolarArchivo(colaArchivos, doc, tipoDePrioridad);
+        encolarArchivo(colaArchivos, doc);
     }
 
     free(auxiliar);
@@ -278,7 +237,7 @@ void imprimirColaArchivos(ColaArchivos* colaArchivos, int tipoDePrioridad, int* 
 
 // cola impresion
 void imprimirColaImpresion(ColaImpresion* colaImpresion)
-{ // falta
+{ 
     if (colaImpresion->inicio == null)
     { 
         printf("\nNo hay archivos en la cola de impresion.\n");
@@ -287,10 +246,11 @@ void imprimirColaImpresion(ColaImpresion* colaImpresion)
 
     ColaArchivos* colaActual = colaImpresion->inicio;
 
-    int i = 0;
+    int i = 1;
     while (colaActual != null)
     {
-        imprimirColaArchivos(colaActual, colaImpresion->tipoDePrioridad, &i);
+        printf("\n---Archivos de {%d} paginas:---\n", colaActual->paginasDeLosArchivos);
+        imprimirColaArchivos(colaActual, &i);
         colaActual = colaActual->siguiente;
     }
     
@@ -307,7 +267,7 @@ ColaImpresion crearColaImpresion(int tipoDePrioridad)
     
     return colaImpresion;
 }
-// falta
+
 void vaciarColaImpresion(ColaImpresion* colaImpresion)
 {
     if (colaImpresion->inicio == null)
@@ -325,8 +285,52 @@ void vaciarColaImpresion(ColaImpresion* colaImpresion)
 
     return;
 }   
-// falta
-void cambiarPrioridad(ColaImpresion* colaImpresion, int prioridad)
-{
 
+void cambiarPrioridad(ColaImpresion* colaImpresion, int* prioridad)
+{
+    if (colaImpresion->inicio == null)
+    { return; }
+
+    int prioridadAnterior = colaImpresion->tipoDePrioridad;
+
+    // cambiamos la prioridad   
+    if (*prioridad == _MIN_)
+    { 
+        *prioridad = _MAX_;
+        colaImpresion->tipoDePrioridad = _MAX_;
+    }
+    else if (*prioridad == _MAX_)
+    {
+        *prioridad = _MIN_;
+        colaImpresion->tipoDePrioridad = _MIN_;
+    }
+    // vaciamos a la cola auxiliar 
+    Archivo* tmp = null;
+    ColaImpresion auxiliar = crearColaImpresion(*prioridad);
+
+    do
+    {
+        tmp = procesarArchivoPrioridad(colaImpresion, prioridadAnterior);
+
+        if (tmp == null)
+        { break; }
+
+        encolarArchivoPrioridad(&auxiliar, tmp, *prioridad);
+
+    }  while (tmp != null);
+
+    // regresamos a la cola prinicpal, ya ordenado con la nueva prioridad.
+    tmp = null;
+    do 
+    {
+        tmp = procesarArchivoPrioridad(&auxiliar, *prioridad);
+
+        if (tmp == null)
+        { break; }
+
+        encolarArchivoPrioridad(colaImpresion, tmp, *prioridad);
+
+    }  while (tmp != null);
+    
+    return;
 }  

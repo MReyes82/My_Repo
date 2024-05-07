@@ -45,10 +45,10 @@ void imprimirDocumento(Archivo* doc, int iterador);
 Nodo* crearNodo(Archivo* doc);
 // cola archivos
 ColaArchivos* crearColaArchivos(int paginasDeLosArchivos);
-void encolarArchivo(ColaArchivos* colaArchivos, Archivo* doc, int tipoDePrioridad);
+void encolarArchivo(ColaArchivos* colaArchivos, Archivo* doc);
 Archivo* desencolarArchivo(ColaArchivos* colaArchivos);
 int obtenerNumeroDocumentos(ColaArchivos* colaDeDocumentos);
-void imprimirColaArchivos(ColaArchivos* colaArchivos, int tipoDePrioridad, int* iterador);
+void imprimirColaArchivos(ColaArchivos* colaArchivos, int* iterador);
 bool estaVacia(ColaArchivos* colaArchivos);
 // cola impresion
 void imprimirColaImpresion(ColaImpresion* colaImpresion);
@@ -56,5 +56,6 @@ ColaImpresion crearColaImpresion(int tipoDePrioridad);
 Archivo* procesarArchivoPrioridad(ColaImpresion* colaPrincipal, int prioridad);
 void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int prioridad);
 void vaciarColaImpresion(ColaImpresion* colaImpresion);
-void cambiarPrioridad(ColaImpresion* colaImpresion, int prioridad);
+void cambiarPrioridad(ColaImpresion* colaImpresion, int* prioridad);
+
 

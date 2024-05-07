@@ -29,9 +29,16 @@ int main (void)
         switch (opcion)
         {
             case 0:
+                printf("\n\n-----Cambiando prioridad------\n\n");
+
+                cambiarPrioridad(&colaPrincipal, &prioridadActual);
+
+                printf("Nueva prioridad: %s\n", prioridadActual == _MAX_ ?  "Mayor" : "Menor");
+
                 break;
+            
             case 1: // caso 1 listo
-                printf("\n-----Mostrando cola de impresion------\n");
+                printf("\n\n-----Mostrando cola de impresion------\n\n");
 
                 imprimirColaImpresion(&colaPrincipal);
                 //imprimirColaArchivos(colaPrincipal, prioridadActual);
@@ -39,7 +46,7 @@ int main (void)
                 break;
                 
             case 2: // caso 2 listo
-                printf("\n-----Agregando archivo------\n");
+                printf("\n\n-----Agregando archivo------\n\n");
                 char* nombre = malloc(12 * sizeof(char));
                 int paginas;
 
@@ -54,11 +61,35 @@ int main (void)
                 break;
 
             case 3:
+
                 break;
+
             case 4:
+                printf("\n\n-----Eliminando todos los archivos------\n\n");
+                // 
+                Archivo* tmp = procesarArchivoPrioridad(&colaPrincipal, prioridadActual);
+
+                if (tmp == null)
+                {
+                    //printf("Cola vacia.\n");
+                    break;
+                }
+
+                i = 1;
+                while (tmp != null)
+                {
+                    printf("Archivo eliminado: ");
+                    imprimirDocumento(tmp, i);
+                    free(tmp->nombre);
+                    free(tmp);
+                    i++;
+                    tmp = procesarArchivoPrioridad(&colaPrincipal, prioridadActual);
+                }
+
                 break;
+
             case 5:
-                printf("\n-----Procesando archivo------\n");
+                printf("\n\n-----Procesando archivo------\n\n");
 
                 printf("Archivo procesado: \n");
                 Archivo* archivo = procesarArchivoPrioridad(&colaPrincipal, prioridadActual);
@@ -69,10 +100,12 @@ int main (void)
                     break;
                 }
 
-                imprimirDocumento(archivo, -77);
-
+                imprimirDocumento(archivo, 0);
+                free(archivo->nombre);
+                free(archivo);
 
                 break;
+
             case 6:
                 corre = false;
                 break;
@@ -82,8 +115,7 @@ int main (void)
     }
     vaciarColaImpresion(&colaPrincipal);
 
-    i = 0;
-    printf("\n%d\n", i); // solo para checar que el programa termina sin problemas
+    printf("\nADIOS PAPU\n"); // solo para checar que el programa termina sin problemas
 
     return 0;
 }   
