@@ -47,7 +47,6 @@ Nodo* crearNodo(Archivo* doc);
 ColaArchivos* crearColaArchivos(int paginasDeLosArchivos);
 void encolarArchivo(ColaArchivos* colaArchivos, Archivo* doc);
 Archivo* desencolarArchivo(ColaArchivos* colaArchivos);
-int obtenerNumeroDocumentos(ColaArchivos* colaDeDocumentos);
 void imprimirColaArchivos(ColaArchivos* colaArchivos, int* iterador);
 bool estaVacio(ColaArchivos* colaArchivos);
 ColaArchivos* encontrarColaArchivos(ColaImpresion* colaImpresion, int paginas);
@@ -60,6 +59,7 @@ ColaArchivos* desencolarColaArchivos(ColaImpresion* colaPrincipal);
 void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int prioridad);
 void vaciarColaImpresion(ColaImpresion* colaImpresion);
 void cambiarPrioridad(ColaImpresion* colaImpresion, int* prioridadNueva);
+void eliminarArchivoPos(ColaImpresion* colaPrincipal, int posicion);
 
 
 

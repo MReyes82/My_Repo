@@ -86,20 +86,12 @@ bool estaVacio(ColaArchivos* colaArchivos)
     //return (colaArchivos->cantidadArchivos == 0);
     return (colaArchivos->inicio == null);
 }
-// tal vez se borra
-int obtenerNumeroDocumentos(ColaArchivos* colaDeDocumentos)
-{
-    if (estaVacio(colaDeDocumentos))
-    { return 0; }
-
-    return colaDeDocumentos->cantidadArchivos;
-}
 // falta
 Archivo* procesarArchivoPrioridad(ColaImpresion* colaPrincipal, int prioridad)
 {
     if (colaPrincipal == null || colaPrincipal->inicio == null)
     {
-        printf("\nNo hay archivos en la cola de impresion.\n");
+        //printf("\nNo hay archivos en la cola de impresion.\n");
         return null;
     }
 
@@ -129,7 +121,7 @@ void encolarColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaActual,
 {
     if (colaPrincipal == null || colaActual == null)
     {
-        printf("\nApuntador nulo.\n");
+        //printf("\nApuntador nulo.\n");
         return;
     }
 
@@ -193,12 +185,12 @@ ColaArchivos* desencolarColaArchivos(ColaImpresion* colaPrincipal)
 {
     if (colaPrincipal == null)
     {
-        printf("ERROR: cola de impresion no iniciada.\n");
+        //printf("ERROR: cola de impresion no iniciada.\n");
         return null;
     }
     if (estaVacio(colaPrincipal->inicio))
     {
-        printf("ERROR: cola vacia.\n");
+        //printf("ERROR: cola vacia.\n");
         return null;
     }
 
@@ -218,7 +210,7 @@ ColaArchivos* encontrarColaArchivos(ColaImpresion* colaImpresion, int paginas)
 {
     if (colaImpresion == null)
     {
-        printf("\nNo se ha creado la cola de impresion.\n");
+        //printf("\nNo se ha creado la cola de impresion.\n");
         return null;
     }
 
@@ -241,7 +233,7 @@ void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int pri
 {
     if (colaPrincipal == null || doc == null)
     {
-        printf("\nApuntador nulo.\n");
+        //printf("\nApuntador nulo.\n");
         return;
     }
 
@@ -378,4 +370,44 @@ void cambiarPrioridad(ColaImpresion* colaImpresion, int* prioridadNueva)
     }
 
     return;
-}  
+} 
+
+void eliminarArchivoPos(ColaImpresion* colaPrincipal, int posicion)
+{
+    if (colaPrincipal == null || colaPrincipal->inicio == null)
+    {
+        return;
+    }
+
+    if (posicion < 1) // solo validamos que sea mayor a 1, si el indice elegido es mayor 
+    {                  // a la cantidad de archivos total, simplemente no se eliminara nada
+        return;
+    }
+
+    ColaImpresion auxiliar = crearColaImpresion(colaPrincipal->tipoDePrioridad);
+    Archivo* tmp = null;
+
+    int iterador = 1;
+
+    tmp = procesarArchivoPrioridad(colaPrincipal, colaPrincipal->tipoDePrioridad);
+
+    while (tmp != null)
+    {
+        if (iterador != posicion) // si no es el archivo a eliminar, lo encolamos en la cola auxiliar
+        {
+            encolarArchivoPrioridad(&auxiliar, tmp, colaPrincipal->tipoDePrioridad);
+        }
+
+        tmp = procesarArchivoPrioridad(colaPrincipal, colaPrincipal->tipoDePrioridad);
+        iterador++;
+    }
+    // regresamos de la cola auxiliar a la cola principal, ya sin el archivo a eliminar
+    tmp = procesarArchivoPrioridad(&auxiliar, colaPrincipal->tipoDePrioridad);
+    while (tmp != null)
+    {
+        encolarArchivoPrioridad(colaPrincipal, tmp, colaPrincipal->tipoDePrioridad);
+        tmp = procesarArchivoPrioridad(&auxiliar, colaPrincipal->tipoDePrioridad);
+    } 
+
+    return;
+}

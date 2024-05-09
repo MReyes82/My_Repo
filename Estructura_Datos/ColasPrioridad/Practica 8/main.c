@@ -4,9 +4,21 @@
 #include <stdbool.h>
 
 
-int main (void)
+int main (int argc, char* argv[])
 {
-    int i, opcion, prioridadActual = _MIN_; // la prioridad por defecto es para los elementos de mayor cantidad de paginas
+    if (argc != 2)
+    {
+        return 1;
+    }
+
+    int prioridadActual = atoi(argv[1]);
+
+    if (prioridadActual != _MIN_ && prioridadActual != _MAX_)
+    {
+        return 1;
+    }
+
+    int i, opcion; // la prioridad por defecto es para los elementos de mayor cantidad de paginas
 
     bool corre = true;
     ColaImpresion colaPrincipal = crearColaImpresion(prioridadActual);
@@ -36,15 +48,14 @@ int main (void)
 
                 break;
             
-            case 1: // caso 1 listo
+            case 1:
                 printf("\n\n-----Mostrando cola de impresion------\n\n");
 
                 imprimirColaImpresion(&colaPrincipal);
-                //imprimirColaArchivos(colaPrincipal, prioridadActual);
 
                 break;
                 
-            case 2: // caso 2 listo
+            case 2:
                 printf("\n\n-----Agregando archivo------\n\n");
                 char* nombre = malloc(12 * sizeof(char));
                 int paginas;
@@ -60,6 +71,17 @@ int main (void)
                 break;
 
             case 3:
+                printf("\n\n-----Eliminando archivo------\n\n");
+                
+                if (colaPrincipal.cantidadColas == 0)
+                {
+                    break;
+                }
+                imprimirColaImpresion(&colaPrincipal);
+                printf("\nElige el archivo a eliminar > ");
+                scanf("%d", &i);
+
+                eliminarArchivoPos(&colaPrincipal, i);
 
                 break;
 
@@ -70,7 +92,6 @@ int main (void)
 
                 if (tmp == null)
                 {
-                    //printf("Cola vacia.\n");
                     break;
                 }
 
