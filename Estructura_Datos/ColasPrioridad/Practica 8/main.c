@@ -6,11 +6,10 @@
 
 int main (void)
 {
-    int i, opcion, prioridadActual = _MAX_; // la prioridad por defecto es para los elementos de mayor cantidad de paginas
+    int i, opcion, prioridadActual = _MIN_; // la prioridad por defecto es para los elementos de mayor cantidad de paginas
 
     bool corre = true;
     ColaImpresion colaPrincipal = crearColaImpresion(prioridadActual);
-    //ColaArchivos* colaPrincipal = crearColaArchivos(0);
     Archivo* nuevo = null;
 
     while (corre)
