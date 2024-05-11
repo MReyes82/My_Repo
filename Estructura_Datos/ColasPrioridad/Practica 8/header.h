@@ -50,11 +50,14 @@ Archivo* desencolarArchivo(ColaArchivos* colaArchivos);
 void imprimirColaArchivos(ColaArchivos* colaArchivos, int* iterador);
 bool estaVacio(ColaArchivos* colaArchivos);
 ColaArchivos* encontrarColaArchivos(ColaImpresion* colaImpresion, int paginas);
+void vaciarColaArchivos(ColaArchivos* cola);
 // cola impresion
 void imprimirColaImpresion(ColaImpresion* colaImpresion);
+bool colaImpresionVacia(ColaImpresion* colaImpresion);
 ColaImpresion crearColaImpresion(int tipoDePrioridad);
 Archivo* procesarArchivoPrioridad(ColaImpresion* colaPrincipal, int prioridad);
 void encolarColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaActual, int prioridad);
+void enqueueColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaNueva);
 ColaArchivos* desencolarColaArchivos(ColaImpresion* colaPrincipal);
 void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int prioridad);
 void vaciarColaImpresion(ColaImpresion* colaImpresion);

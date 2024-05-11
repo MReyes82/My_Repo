@@ -65,7 +65,9 @@ void encolarArchivo(ColaArchivos* colaArchivos, Archivo* doc)
 Archivo* desencolarArchivo(ColaArchivos* colaArchivos)
 {
     if (estaVacio(colaArchivos)) // si la cola esta vacia, regresamos nulo
-    { return null; }
+    { 
+        return null; 
+    }
 
     Nodo* nodoOut = colaArchivos->inicio; // nodo a desencolar es el del inicio
     Archivo* doc = nodoOut->documento;    // por defecto, el nodo a desencolar es el de mayor prioridad
@@ -74,16 +76,37 @@ Archivo* desencolarArchivo(ColaArchivos* colaArchivos)
     free(nodoOut); // liberamos el nodo a eliminar
 
     if (colaArchivos->inicio == null) // si se vacia la cola, actualizamos el apuntador de fin
-    { colaArchivos->fin = null; }    // para que apunte a nulo
+    {                                 // para que apunte a nulo
+        colaArchivos->fin = null; 
+    }    
 
     colaArchivos->cantidadArchivos--;
 
     return doc;
 }
-// tal vez se borra
+
+void vaciarColaArchivos(ColaArchivos* cola)
+{
+    if (estaVacio(cola))
+    {
+        return;
+    }
+
+    Archivo* temp = desencolarArchivo(cola);
+
+    while (temp != null)
+    {
+        free(temp->nombre); // liberamos la memoria que alojamos en main.
+        free(temp);
+        cola->cantidadArchivos--;
+        temp = desencolarArchivo(cola);
+    }
+
+    return;
+}
+
 bool estaVacio(ColaArchivos* colaArchivos)
 {
-    //return (colaArchivos->cantidadArchivos == 0);
     return (colaArchivos->inicio == null);
 }
 // falta
@@ -181,6 +204,27 @@ void encolarColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaActual,
     colaPrincipal->cantidadColas++;
 }
 
+void enqueueColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaNueva)
+{
+    if (colaPrincipal == null || colaNueva == null)
+    { return; }
+
+    if (colaPrincipal->inicio == null)
+    {
+        colaPrincipal->inicio = colaNueva;
+        colaPrincipal->fin = colaNueva;
+    }
+    else
+    {
+        colaPrincipal->fin->siguiente = colaNueva;
+        colaPrincipal->fin = colaNueva;
+    }
+
+    colaPrincipal->cantidadColas++;
+
+    return;
+}
+
 ColaArchivos* desencolarColaArchivos(ColaImpresion* colaPrincipal)
 {
     if (colaPrincipal == null)
@@ -188,12 +232,18 @@ ColaArchivos* desencolarColaArchivos(ColaImpresion* colaPrincipal)
         //printf("ERROR: cola de impresion no iniciada.\n");
         return null;
     }
-    if (estaVacio(colaPrincipal->inicio))
+    if (colaPrincipal->inicio == null) 
     {
         //printf("ERROR: cola vacia.\n");
         return null;
     }
-
+    /*      
+    *           ^^^^^^^^^^^
+    * nota: no usamos estaVacio ya que esta necesita acceder al valor "inicio"
+    * de la cola, y si la cola esta vacia, acceder a este valor nos daria un
+    * segmentation fault
+    */
+    
     ColaArchivos* colaOut = colaPrincipal->inicio;
     colaPrincipal->inicio = colaPrincipal->inicio->siguiente;
     colaPrincipal->cantidadColas--;
@@ -225,7 +275,7 @@ ColaArchivos* encontrarColaArchivos(ColaImpresion* colaImpresion, int paginas)
 
         colaActual = colaActual->siguiente;
     }
-
+    
     return null;
 }
 
@@ -269,7 +319,6 @@ void imprimirColaArchivos(ColaArchivos* colaArchivos, int* iterador)
         Archivo* doc = desencolarArchivo(auxiliar);
         encolarArchivo(colaArchivos, doc);
     }
-
     free(auxiliar);
 
     return;
@@ -284,16 +333,26 @@ void imprimirColaImpresion(ColaImpresion* colaImpresion)
         return; 
     }
 
-    ColaArchivos* colaActual = colaImpresion->inicio;
-
+    ColaImpresion auxiliar = crearColaImpresion(colaImpresion->tipoDePrioridad);
+    ColaArchivos* colaActual = desencolarColaArchivos(colaImpresion);
+    
     int i = 1;
     while (colaActual != null)
     {
         printf("\n---Archivos de {%d} paginas:---\n", colaActual->paginasDeLosArchivos);
         imprimirColaArchivos(colaActual, &i);
-        colaActual = colaActual->siguiente;
+
+        enqueueColaArchivos(&auxiliar, colaActual);
+        colaActual = desencolarColaArchivos(colaImpresion);   
     }
     
+    colaActual = desencolarColaArchivos(&auxiliar);
+    while (colaActual != null)
+    {
+        enqueueColaArchivos(colaImpresion, colaActual);
+        colaActual = desencolarColaArchivos(&auxiliar);   
+    }
+
     return;
 }
 
@@ -313,14 +372,14 @@ void vaciarColaImpresion(ColaImpresion* colaImpresion)
     if (colaImpresion->inicio == null)
     { return; }
 
-    ColaArchivos* colaActual = colaImpresion->inicio;
-    ColaArchivos* colaSiguiente = null;
+    ColaArchivos* colaActual = desencolarColaArchivos(colaImpresion);
 
     while (colaActual != null)
     {
-        colaSiguiente = colaActual->siguiente;
-        free(colaActual);
-        colaActual = colaSiguiente;
+        vaciarColaArchivos(colaActual);
+        colaImpresion->cantidadColas--;
+
+        colaActual = desencolarColaArchivos(colaImpresion);
     }
 
     return;
@@ -411,3 +470,18 @@ void eliminarArchivoPos(ColaImpresion* colaPrincipal, int posicion)
 
     return;
 }
+
+bool colaImpresionVacia(ColaImpresion* colaImpresion)
+{
+    return (colaImpresion->inicio == null);
+}
+
+
+
+
+
+
+
+
+
+

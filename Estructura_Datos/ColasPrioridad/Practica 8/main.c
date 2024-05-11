@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+/*
+^ PROBLEMA ACTUAL "APARENTE": FREEZED OUT CUANDO MAS 
+^ DE UNA COLA DE ARCHIVOS TIENE 2 ELEMENTOS O MAS
+^ SI NO SE BORRA, SE BORRA LA COLA DE ARCHIVOS
+*/
 
 int main (int argc, char* argv[])
 {
@@ -34,7 +39,7 @@ int main (int argc, char* argv[])
         printf("[4] ELIMINAR TODOS LOS ARCHIVOS.\n");
         printf("[5] PROCESAR/IMPRIMIR ARCHIVO.\n");
         printf("[6] TERMINAR PROGRAMA.\n");
-        printf("Ingrese una opcion > ");
+        printf("\nIngrese una opcion > ");
         scanf("%d", &opcion);
 
         switch (opcion)
@@ -57,6 +62,7 @@ int main (int argc, char* argv[])
                 
             case 2:
                 printf("\n\n-----Agregando archivo------\n\n");
+
                 char* nombre = malloc(12 * sizeof(char));
                 int paginas;
 
