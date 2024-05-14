@@ -147,7 +147,52 @@ void encolarColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaActual,
         //printf("\nApuntador nulo.\n");
         return;
     }
+    
+    if (colaPrincipal->inicio == null) 
+    {
+        enqueueColaArchivos(colaPrincipal, colaActual);
+    }
+    else
+    {
+        ColaImpresion auxiliar = crearColaImpresion(colaPrincipal->tipoDePrioridad);
 
+        if (prioridad == _MIN_) // si la prioridad es de menor a mayor
+        {
+            // desencolamos hasta estar en la posicion correcta
+            while (colaPrincipal->inicio != null && colaPrincipal->inicio->paginasDeLosArchivos < colaActual->paginasDeLosArchivos)
+            {
+                ColaArchivos* actual = desencolarColaArchivos(colaPrincipal);
+                enqueueColaArchivos(&auxiliar, actual);
+            }
+            enqueueColaArchivos(&auxiliar, colaActual); // insertamos en orden en la cola auxiliar
+
+            while (colaPrincipal->inicio != null) // terminamos de vaciar la cola principal si es que faltan elementos
+            {
+                ColaArchivos* actual = desencolarColaArchivos(colaPrincipal);
+                enqueueColaArchivos(&auxiliar, actual);
+            }            
+        }
+        else if (prioridad == _MAX_)
+        {
+            while (colaPrincipal->inicio != null && colaPrincipal->inicio->paginasDeLosArchivos > colaActual->paginasDeLosArchivos)
+            {
+                ColaArchivos* actual = desencolarColaArchivos(colaPrincipal);
+                enqueueColaArchivos(&auxiliar, actual);
+            }
+            enqueueColaArchivos(&auxiliar, colaActual);
+
+            while (colaPrincipal->inicio != null)
+            {
+                ColaArchivos* actual = desencolarColaArchivos(colaPrincipal);
+                enqueueColaArchivos(&auxiliar, actual);
+            }
+        }
+
+        *colaPrincipal = auxiliar; // actualizamos la cola principal con la cola auxiliar
+    }
+
+    colaPrincipal->cantidadColas++; 
+    /*
     if (colaPrincipal->inicio == null)
     {
         colaPrincipal->inicio = colaActual;
@@ -201,7 +246,7 @@ void encolarColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaActual,
         }
     }
     
-    colaPrincipal->cantidadColas++;
+    colaPrincipal->cantidadColas++;*/
 }
 
 void enqueueColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaNueva)
@@ -264,6 +309,26 @@ ColaArchivos* encontrarColaArchivos(ColaImpresion* colaImpresion, int paginas)
         return null;
     }
 
+    ColaImpresion auxiliar = crearColaImpresion(colaImpresion->tipoDePrioridad);
+    ColaArchivos* colaEncontrada = null;
+
+    while (colaImpresion->inicio != null)
+    {
+        ColaArchivos* actual = desencolarColaArchivos(colaImpresion);
+
+        if (actual->paginasDeLosArchivos == paginas)
+        {
+            colaEncontrada = actual;
+        }
+
+        enqueueColaArchivos(&auxiliar, actual);
+    }
+
+    *colaImpresion = auxiliar;
+
+    return colaEncontrada;
+
+    /*
     ColaArchivos* colaActual = colaImpresion->inicio;
 
     while (colaActual != null)
@@ -277,6 +342,7 @@ ColaArchivos* encontrarColaArchivos(ColaImpresion* colaImpresion, int paginas)
     }
     
     return null;
+    */
 }
 
 void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int prioridad)
