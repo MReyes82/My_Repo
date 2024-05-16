@@ -6,6 +6,13 @@
 #define _MIN_ 0
 #define _MAX_ 1
 
+typedef enum
+{
+    HEAP_MINIMO,
+    HEAP_MAXIMO
+
+} TipoDeHeap;
+
 typedef struct Archivo
 {
     char* nombre;
@@ -27,7 +34,17 @@ typedef struct Heap
     Nodo* raiz; // referencia al nodo raiz para funciones como recorridos
     Nodo** nodos; // arreglo de referencias de nodos para funciones como heapify
 
-    short int tamMaximo; // tamaño maximo del heap, si es -1 no tiene limite
-    short int tipoDeHeap;
+    int cantidadNodos;
+    short int capacidad; // tamaño maximo del heap, si es -1 no tiene limite
+    TipoDeHeap tipo;
 
 } Heap;
+
+Archivo* crearDocumento(char* nombre, int numeroPaginas);
+void imprimirDocumento(Archivo* doc, int iterador);
+Nodo* crearNodo(Archivo* doc);
+Heap* crearHeap(int tamMaximo, TipoDeHeap tipoDeHeap);
+void recorridoEnOrden(Nodo* raiz, int* iterador);
+void imprimirColaImpresion(Heap* mainHeap);
+int nodoPadre(Heap* heap, int indice);
+void realojarMemoria(Heap* heap);
