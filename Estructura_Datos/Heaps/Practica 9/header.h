@@ -20,7 +20,7 @@ typedef struct Archivo
 
 } Archivo;
 
-typedef struct Nodo // ahora es un nodo de arbol binario,
+typedef struct Nodo // ahora es un nodo de arbol binario
 {
     Archivo* documento;
     //struct Nodo* siguiente;
@@ -48,3 +48,9 @@ void recorridoEnOrden(Nodo* raiz, int* iterador);
 void imprimirColaImpresion(Heap* mainHeap);
 int nodoPadre(Heap* heap, int indice);
 void realojarMemoria(Heap* heap);
+void filtrar(Heap* mainHeap, int indice);
+void insertar(Heap* mainHeap, Archivo* doc);
+Nodo* extraer(Heap* mainHeap);
+void liberarNodos(Nodo* raiz);
+void liberarHeap(Heap* mainHeap);
+void construirHeap(Heap* mainHeap);

@@ -111,3 +111,113 @@ void realojarMemoria(Heap* heap)
     return;
 }
 
+void filtrar(Heap* mainHeap, int indice)
+{   
+    int izquierdo, derecho, max;
+    Nodo* temporal;
+
+    izquierdo = nodoIzquierdo(mainHeap, indice);
+    derecho = nodoDerecho(mainHeap, indice);
+
+    if (izquierdo != -1 
+        && mainHeap->nodos[izquierdo]->documento->paginas 
+                                > 
+           mainHeap->nodos[indice]->documento->paginas)
+    {
+        max = izquierdo;
+    }
+    else
+    {
+        max = indice;
+    }
+
+    if (
+        derecho != -1 
+        && mainHeap->nodos[derecho]->documento->paginas 
+                                > 
+           mainHeap->nodos[max]->documento->paginas
+       ){
+        max = derecho;
+    }
+
+    if (max != indice)
+    {
+        temporal = mainHeap->nodos[indice];
+        mainHeap->nodos[indice] = mainHeap->nodos[max];
+        mainHeap->nodos[max] = temporal;
+    }
+
+    filtrar(mainHeap, max);
+
+    return;
+}
+
+void insertar(Heap* mainHeap, Archivo* doc)
+{
+    if (mainHeap->cantidadNodos >= mainHeap->capacidad)
+    {
+        realojarMemoria(mainHeap);
+    }
+
+    mainHeap->cantidadNodos++;
+    int i = mainHeap->cantidadNodos - 1;
+
+    int documentoNuevo = doc->paginas; 
+    int documentoPadre = mainHeap->nodos[(i - 1) / 2]->documento->paginas;
+
+    while (i >= 0 && documentoNuevo > documentoPadre)
+    {
+        mainHeap->nodos[i] = mainHeap->nodos[(i - 1) / 2];
+        i = (i - 1) / 2;
+    }
+    mainHeap->nodos[i] = crearNodo(doc);
+
+    return;
+}
+
+Nodo* extraer(Heap* mainHeap)
+{
+    Nodo* nodoOut;
+
+    if (mainHeap->cantidadNodos < 1)
+    {
+        return null;
+    }
+
+    nodoOut = mainHeap->nodos[0];
+    mainHeap->nodos[0] = mainHeap->nodos[mainHeap->cantidadNodos - 1];
+    mainHeap->cantidadNodos--;
+
+    filtrar(mainHeap, 0);
+
+    return nodoOut;
+}
+
+void liberarNodos(Nodo* raiz)
+{
+    if (raiz == null)
+    {
+        return;
+    }
+
+    liberarNodos(raiz->izquierda);
+    liberarNodos(raiz->derecha);
+
+    free(raiz->documento);
+    free(raiz);
+
+    return;
+}
+
+void liberarHeap(Heap* mainHeap)
+{
+    if (mainHeap == null)
+    {
+        return;
+    }
+    liberarNodos(mainHeap->raiz);
+    free(mainHeap);
+    mainHeap = null;
+
+    return;
+}
