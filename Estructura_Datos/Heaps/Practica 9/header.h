@@ -55,8 +55,6 @@ void insertarNodo(Heap* mainHeap, Archivo* doc);
 bool estaVacioHeap(Heap* h);
 void heapifyArriba(Heap* mainHeap, int indice);
 void heapifyAbajo(Heap* mainHeap, int indice);
-//void realojarMemoria(Heap* heap);
-void insertar(Heap* mainHeap, Archivo* doc);
 Archivo* extraerMaxMin(Heap* mainHeap);
 
 //* Funciones auxiliares
@@ -69,5 +67,3 @@ void imprimirColaImpresion(Heap* mainHeap);
 
 //* Funciones de liberacion de memoria
 void liberarHeap(Heap* mainHeap);
-//void liberarNodos(Nodo* raiz);
-//void freeNodo(Nodo* node);

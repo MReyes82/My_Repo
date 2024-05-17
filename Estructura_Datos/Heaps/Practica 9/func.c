@@ -57,7 +57,7 @@ void insertarEnArbol(Nodo** raiz, Nodo* nuevo, TipoDeHeap prioridadActual)
     else
     {
         Nodo* actual = *raiz;
-
+        /*   
         if (nuevo->documento->paginas < actual->documento->paginas)
         {
             insertarEnArbol(&actual->izquierda, nuevo, prioridadActual);
@@ -66,31 +66,30 @@ void insertarEnArbol(Nodo** raiz, Nodo* nuevo, TipoDeHeap prioridadActual)
         {
             insertarEnArbol(&actual->derecha, nuevo, prioridadActual);
         }
+        */
+        if (prioridadActual == HEAP_MINIMO)
+        {
+            if (nuevo->documento->paginas < actual->documento->paginas)
+            {   
+                insertarEnArbol(&actual->izquierda, nuevo, prioridadActual);
+            }
+            else
+            {
+                insertarEnArbol(&actual->derecha, nuevo, prioridadActual);
+            }
+        }
+        else if (prioridadActual == HEAP_MAXIMO)
+        {
+            if (nuevo->documento->paginas > actual->documento->paginas)
+            {
+                insertarEnArbol(&actual->izquierda, nuevo, prioridadActual);
+            }
+            else
+            {
+                insertarEnArbol(&actual->derecha, nuevo, prioridadActual);
+            }
+        }
     }
-    /*
-    if (prioridadActual == HEAP_MINIMO)
-    {
-        if (nuevo->documento->paginas < actual->documento->paginas)
-        {
-            insertarEnArbol(&actual->izquierda, nuevo, prioridadActual);
-        }
-        else
-        {
-            insertarEnArbol(&actual->derecha, nuevo, prioridadActual);
-        }
-    }
-    else if (prioridadActual == HEAP_MAXIMO)
-    {
-        if (nuevo->documento->paginas > actual->documento->paginas)
-        {
-            insertarEnArbol(&actual->izquierda, nuevo, prioridadActual);
-        }
-        else
-        {
-            insertarEnArbol(&actual->derecha, nuevo, prioridadActual);
-        }
-    }
-    */
 }
 
 //* Funciones para el heap
@@ -192,17 +191,11 @@ void heapifyAbajo(Heap* mainHeap, int indice)
     return;
 }
 
-//void realojarMemoria(Heap* heap);
-void insertar(Heap* mainHeap, Archivo* doc)
-{
-
-}
-
 Archivo* extraerMaxMin(Heap* mainHeap)
 {
     if (estaVacioHeap(mainHeap))
     {
-        printf("Regresa nulo por estar vacio.");
+        printf("Heap vacio\n.");
         return null;
     }
 
@@ -215,7 +208,6 @@ Archivo* extraerMaxMin(Heap* mainHeap)
     heapifyAbajo(mainHeap, 0);
 
     Archivo* doc = raiz->documento;
-
     free(raiz);
 
     return doc;
@@ -260,12 +252,15 @@ void cambiarPrioridad(Heap* heap, TipoDeHeap nuevoTipo)
     {
         heapifyAbajo(heap, i);
     }
-
+    
+    heap->raiz = null;
+    
     for (i = 0 ; i < heap->cantidadNodos ; i++)
     {
         insertarEnArbol(&heap->raiz, heap->nodos[i], heap->tipo);
+        printf("Se inserto %d en el arbol.\n", i);
     }
-
+    
     return;
 }
 
@@ -276,11 +271,11 @@ void imprimirColaImpresion(Heap* mainHeap)
     {
         imprimirDocumento(mainHeap->nodos[i]->documento, i);
     }
-
+    
     printf("------Heap binario------\n");
     i = 0;
     recorridoEnOrden(mainHeap->raiz, &i);
-
+    
     return;
 }
 
@@ -299,10 +294,6 @@ void liberarHeap(Heap* mainHeap)
 
     return;
 }
-/*
-void liberarNodos(Nodo* raiz);
-void freeNodo(Nodo* node);
-*/
 
 
 

@@ -22,9 +22,9 @@ int main (int argc, char* argv[])
     int opcion;
 
     bool corre = true;
-    Heap* colaImpresion = crearHeap(100, prioridadActual);
+    Heap* colaImpresion = crearHeap(25, prioridadActual);
     Archivo* nuevo = null;
-
+ 
     while (corre)
     {
         printf("\n------MENU------\n");
@@ -64,12 +64,11 @@ int main (int argc, char* argv[])
                 int paginas;
 
                 printf("Ingrese el nombre del archivo > ");
-                scanf("%s", nombre);
+                scanf("\n%s", nombre);
                 printf("Ingrese el numero de paginas > ");
-                scanf("%d", &paginas);
+                scanf("\n%d", &paginas);
                 
                 nuevo = crearDocumento(nombre, paginas);
-                
                 insertarNodo(colaImpresion, nuevo);
 
                 break;
@@ -106,7 +105,7 @@ int main (int argc, char* argv[])
                 }
 
                 printf("Archivo procesado: \n");
-                imprimirDocumento(archivo, 69);
+                imprimirDocumento(archivo, -1);
                 free(archivo->nombre);
                 free(archivo);
                 
