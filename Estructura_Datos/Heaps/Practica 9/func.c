@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+//* Funciones para archivos
 Archivo* crearDocumento(char* nombre, int numeroPaginas)
 {
     Archivo* nuevo = malloc(sizeof(Archivo));
@@ -15,15 +17,17 @@ void imprimirDocumento(Archivo* doc, int iterador)
 {
     printf(
     "[%d] Nombre: %s | Paginas: %d\n", 
-    doc->nombre, doc->paginas
+    iterador, doc->nombre, doc->paginas
     );
 
     return;
 }
 
+//* Funciones para nodos y arboles
 Nodo* crearNodo(Archivo* doc)
 {
     Nodo* nuevo = malloc(sizeof(Nodo));
+    
     nuevo->documento = doc;
     nuevo->izquierda = null;
     nuevo->derecha = null;
@@ -31,6 +35,65 @@ Nodo* crearNodo(Archivo* doc)
     return nuevo;
 }
 
+void recorridoEnOrden(Nodo* raiz, int* iterador)
+{   // * asume que se le pasa "0" como parametro incial del iterador.
+    if (raiz != null)
+    {
+        recorridoEnOrden(raiz->izquierda, iterador);
+
+        imprimirDocumento(raiz->documento, *iterador);
+        (*iterador)++;
+
+        recorridoEnOrden(raiz->derecha, iterador);
+    }
+}
+
+void insertarEnArbol(Nodo** raiz, Nodo* nuevo, TipoDeHeap prioridadActual)
+{
+    if (*raiz == null)
+    {
+        *raiz = nuevo;
+    }
+    else
+    {
+        Nodo* actual = *raiz;
+
+        if (nuevo->documento->paginas < actual->documento->paginas)
+        {
+            insertarEnArbol(&actual->izquierda, nuevo, prioridadActual);
+        }
+        else
+        {
+            insertarEnArbol(&actual->derecha, nuevo, prioridadActual);
+        }
+    }
+    /*
+    if (prioridadActual == HEAP_MINIMO)
+    {
+        if (nuevo->documento->paginas < actual->documento->paginas)
+        {
+            insertarEnArbol(&actual->izquierda, nuevo, prioridadActual);
+        }
+        else
+        {
+            insertarEnArbol(&actual->derecha, nuevo, prioridadActual);
+        }
+    }
+    else if (prioridadActual == HEAP_MAXIMO)
+    {
+        if (nuevo->documento->paginas > actual->documento->paginas)
+        {
+            insertarEnArbol(&actual->izquierda, nuevo, prioridadActual);
+        }
+        else
+        {
+            insertarEnArbol(&actual->derecha, nuevo, prioridadActual);
+        }
+    }
+    */
+}
+
+//* Funciones para el heap
 Heap* crearHeap(int tamMaximo, TipoDeHeap tipoDeHeap)
 {   // * asume que se le pasa un valor positivo mayor que 0 como tamMaximo.
     Heap* nuevo = malloc(sizeof(Heap));
@@ -45,179 +108,201 @@ Heap* crearHeap(int tamMaximo, TipoDeHeap tipoDeHeap)
     return nuevo;
 }
 
-void recorridoEnOrden(Nodo* raiz, int* iterador)
-{   // * asume que se le pasa "0" como parametro incial del iterador.
-    if (raiz != null)
+void insertarNodo(Heap* mainHeap, Archivo* doc)
+{
+    if (mainHeap->cantidadNodos == mainHeap->capacidad)
     {
-        recorridoEnOrden(raiz->izquierda, iterador);
-
-        imprimirDocumento(raiz->documento, iterador);
-        (*iterador)++;
-
-        recorridoEnOrden(raiz->derecha, iterador);
+        return;
     }
+
+    Nodo* nuevo = crearNodo(doc);
+
+    mainHeap->nodos[mainHeap->cantidadNodos] = nuevo;
+    //* re-ordenar
+    heapifyArriba(mainHeap, mainHeap->cantidadNodos);
+    insertarEnArbol(&mainHeap->raiz, nuevo, mainHeap->tipo);
+
+    mainHeap->cantidadNodos++;
+
+    return;   
+}
+
+bool estaVacioHeap(Heap* h)
+{
+    return (h->cantidadNodos == 0);
+}
+
+void heapifyArriba(Heap* mainHeap, int indice)
+{
+    if (indice == 0)
+    {
+        return;
+    }
+
+    int indicePadre = padre(indice);
+
+    if (
+        (mainHeap->tipo == HEAP_MINIMO && mainHeap->nodos[indice]->documento->paginas < mainHeap->nodos[indicePadre]->documento->paginas) 
+        ||
+        (mainHeap->tipo == HEAP_MAXIMO && mainHeap->nodos[indice]->documento->paginas > mainHeap->nodos[indicePadre]->documento->paginas)
+    ){
+        swapNodos(&mainHeap->nodos[indice], &mainHeap->nodos[indicePadre]);
+        heapifyArriba(mainHeap, indicePadre);
+    }
+
+    return;
+}
+
+void heapifyAbajo(Heap* mainHeap, int indice)
+{
+    int indiceIzquierdo = izquierdo(indice);
+    int indiceDerecho = derecho(indice);
+    int indiceExtremo = indice;
+
+    if (
+        indiceIzquierdo < mainHeap->cantidadNodos
+        && 
+        (
+            (mainHeap->tipo == HEAP_MINIMO && mainHeap->nodos[indiceIzquierdo]->documento->paginas < mainHeap->nodos[indiceExtremo]->documento->paginas)
+            ||
+            (mainHeap->tipo == HEAP_MAXIMO && mainHeap->nodos[indiceIzquierdo]->documento->paginas > mainHeap->nodos[indiceExtremo]->documento->paginas)
+        )
+    ){
+        indiceExtremo = indiceIzquierdo;
+    }
+
+    if (
+        indiceDerecho < mainHeap->cantidadNodos
+        &&
+        (
+            (mainHeap->tipo == HEAP_MINIMO && mainHeap->nodos[indiceDerecho]->documento->paginas < mainHeap->nodos[indiceExtremo]->documento->paginas)
+            ||
+            (mainHeap->tipo == HEAP_MAXIMO && mainHeap->nodos[indiceDerecho]->documento->paginas > mainHeap->nodos[indiceExtremo]->documento->paginas)
+        )
+    ){
+        indiceExtremo = indiceDerecho;
+    }
+
+    if (indiceExtremo != indice)
+    {
+        swapNodos(&mainHeap->nodos[indice], &mainHeap->nodos[indiceExtremo]);
+        heapifyAbajo(mainHeap, indiceExtremo);
+    }
+
+    return;
+}
+
+//void realojarMemoria(Heap* heap);
+void insertar(Heap* mainHeap, Archivo* doc)
+{
+
+}
+
+Archivo* extraerMaxMin(Heap* mainHeap)
+{
+    if (estaVacioHeap(mainHeap))
+    {
+        printf("Regresa nulo por estar vacio.");
+        return null;
+    }
+
+    Nodo* raiz = mainHeap->nodos[0];
+    Nodo* ultimo = mainHeap->nodos[mainHeap->cantidadNodos - 1];
+
+    mainHeap->nodos[0] = ultimo;
+    mainHeap->cantidadNodos--;
+
+    heapifyAbajo(mainHeap, 0);
+
+    Archivo* doc = raiz->documento;
+
+    free(raiz);
+
+    return doc;
+}
+
+//* Funciones auxiliares
+int padre(int i)
+{
+    return (i - 1) / 2;    
+}
+
+int izquierdo(int i)
+{
+    return 2 * i + 1;
+}
+
+int derecho(int i)
+{
+    return 2 * i + 2; 
+}
+
+void swapNodos(Nodo** nodoA, Nodo** nodoB)
+{
+    Nodo* temp = *nodoA;
+    *nodoA = *nodoB;
+    *nodoB = temp;
+
+    return;
+}
+
+void cambiarPrioridad(Heap* heap, TipoDeHeap nuevoTipo)
+{
+    if (heap->tipo == nuevoTipo)
+    {
+        return;
+    }
+
+    heap->tipo = nuevoTipo;
+
+    int i;
+    for (i = heap->cantidadNodos / 2 - 1 ; i >= 0 ; i--)
+    {
+        heapifyAbajo(heap, i);
+    }
+
+    for (i = 0 ; i < heap->cantidadNodos ; i++)
+    {
+        insertarEnArbol(&heap->raiz, heap->nodos[i], heap->tipo);
+    }
+
+    return;
 }
 
 void imprimirColaImpresion(Heap* mainHeap)
 {
-    int i = 0;
+    int i;
+    for (i = 0 ; i < mainHeap->cantidadNodos ; i++)
+    {
+        imprimirDocumento(mainHeap->nodos[i]->documento, i);
+    }
+
+    printf("------Heap binario------\n");
+    i = 0;
     recorridoEnOrden(mainHeap->raiz, &i);
 
     return;
 }
 
-int nodoPadre(Heap* heap, int indice)
-{
-    if (indice <= 0 || indice >= heap->cantidadNodos)
-        return -1; // * no tiene padre (raiz o fuera de rango)
-
-    return (indice - 1) / 2;
-}
-
-int nodoIzquierdo(Heap* heap, int indice)
-{
-    int izquierdo = 2 * indice + 1;
-
-    if (izquierdo >= heap->cantidadNodos)
-        return -1; // * no tiene hijo izquierdo
-
-    return izquierdo;
-}
-
-int nodoDerecho(Heap* heap, int indice)
-{
-    int derecho = 2 * indice + 2;
-
-    if (derecho >= heap->cantidadNodos)
-        return -1; // * no tiene hijo derecho
-
-    return derecho;
-}
-
-void realojarMemoria(Heap* heap)
-{
-    Nodo** referencias = heap->nodos;
-
-    heap->nodos = malloc(sizeof(Nodo*) * heap->capacidad * 2);
-
-    for (int i = 0; i < heap->capacidad; i++)
-    {
-        heap->nodos[i] = referencias[i];
-    }
-    heap->cantidadNodos *= 2;
-
-    free(referencias);
-
-    return;
-}
-
-void filtrar(Heap* mainHeap, int indice)
-{   
-    int izquierdo, derecho, max;
-    Nodo* temporal;
-
-    izquierdo = nodoIzquierdo(mainHeap, indice);
-    derecho = nodoDerecho(mainHeap, indice);
-
-    if (izquierdo != -1 
-        && mainHeap->nodos[izquierdo]->documento->paginas 
-                                > 
-           mainHeap->nodos[indice]->documento->paginas)
-    {
-        max = izquierdo;
-    }
-    else
-    {
-        max = indice;
-    }
-
-    if (
-        derecho != -1 
-        && mainHeap->nodos[derecho]->documento->paginas 
-                                > 
-           mainHeap->nodos[max]->documento->paginas
-       ){
-        max = derecho;
-    }
-
-    if (max != indice)
-    {
-        temporal = mainHeap->nodos[indice];
-        mainHeap->nodos[indice] = mainHeap->nodos[max];
-        mainHeap->nodos[max] = temporal;
-    }
-
-    filtrar(mainHeap, max);
-
-    return;
-}
-
-void insertar(Heap* mainHeap, Archivo* doc)
-{
-    if (mainHeap->cantidadNodos >= mainHeap->capacidad)
-    {
-        realojarMemoria(mainHeap);
-    }
-
-    mainHeap->cantidadNodos++;
-    int i = mainHeap->cantidadNodos - 1;
-
-    int documentoNuevo = doc->paginas; 
-    int documentoPadre = mainHeap->nodos[(i - 1) / 2]->documento->paginas;
-
-    while (i >= 0 && documentoNuevo > documentoPadre)
-    {
-        mainHeap->nodos[i] = mainHeap->nodos[(i - 1) / 2];
-        i = (i - 1) / 2;
-    }
-    mainHeap->nodos[i] = crearNodo(doc);
-
-    return;
-}
-
-Nodo* extraer(Heap* mainHeap)
-{
-    Nodo* nodoOut;
-
-    if (mainHeap->cantidadNodos < 1)
-    {
-        return null;
-    }
-
-    nodoOut = mainHeap->nodos[0];
-    mainHeap->nodos[0] = mainHeap->nodos[mainHeap->cantidadNodos - 1];
-    mainHeap->cantidadNodos--;
-
-    filtrar(mainHeap, 0);
-
-    return nodoOut;
-}
-
-void liberarNodos(Nodo* raiz)
-{
-    if (raiz == null)
-    {
-        return;
-    }
-
-    liberarNodos(raiz->izquierda);
-    liberarNodos(raiz->derecha);
-
-    free(raiz->documento);
-    free(raiz);
-
-    return;
-}
-
+//* Funciones de liberacion de memoria
 void liberarHeap(Heap* mainHeap)
 {
-    if (mainHeap == null)
+    for (int i = 0 ; i < mainHeap->cantidadNodos ; i++)
     {
-        return;
+        free(mainHeap->nodos[i]->documento->nombre);
+        free(mainHeap->nodos[i]->documento);
+        free(mainHeap->nodos[i]);
     }
-    liberarNodos(mainHeap->raiz);
-    free(mainHeap);
-    mainHeap = null;
+
+    mainHeap->cantidadNodos = 0;
+    mainHeap->raiz = null;
 
     return;
 }
+/*
+void liberarNodos(Nodo* raiz);
+void freeNodo(Nodo* node);
+*/
+
+
+

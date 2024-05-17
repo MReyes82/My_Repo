@@ -18,10 +18,11 @@ int main (int argc, char* argv[])
         return 1;
     }
 
-    int i, opcion; // la prioridad por defecto es para los elementos de mayor cantidad de paginas
+    //int i; 
+    int opcion;
 
     bool corre = true;
-    //ColaImpresion colaPrincipal = crearColaImpresion(prioridadActual);
+    Heap* colaImpresion = crearHeap(100, prioridadActual);
     Archivo* nuevo = null;
 
     while (corre)
@@ -42,22 +43,23 @@ int main (int argc, char* argv[])
             case 0:
                 printf("\n\n-----Cambiando prioridad------\n\n");
 
-                //cambiarPrioridad(&colaPrincipal, &prioridadActual);
+                prioridadActual = (prioridadActual == HEAP_MINIMO) ? HEAP_MAXIMO : HEAP_MINIMO;
+                cambiarPrioridad(colaImpresion, prioridadActual);
 
-                printf("Nueva prioridad: %s\n", prioridadActual == HEAP_MAXIMO ?  "Mayor" : "Menor");
+                //printf("Nueva prioridad: %s\n", prioridadActual == HEAP_MAXIMO ?  "Mayor" : "Menor");
 
                 break;
             
             case 1:
                 printf("\n\n-----Mostrando cola de impresion------\n\n");
 
-                //imprimirColaImpresion(&colaPrincipal);
+                imprimirColaImpresion(colaImpresion);
 
                 break;
                 
             case 2:
                 printf("\n\n-----Agregando archivo------\n\n");
-                /*
+                
                 char* nombre = malloc(12 * sizeof(char));
                 int paginas;
 
@@ -67,53 +69,35 @@ int main (int argc, char* argv[])
                 scanf("%d", &paginas);
                 
                 nuevo = crearDocumento(nombre, paginas);
-                //encolarArchivoPrioridad(&colaPrincipal, nuevo, prioridadActual);
-                */
+                
+                insertarNodo(colaImpresion, nuevo);
+
                 break;
 
             case 3:
                 printf("\n\n-----Eliminando archivo------\n\n");
                 /*
-                if (colaPrincipal.cantidadColas == 0)
+                if (estaVacioHeap(colaImpresion))
                 {
+                    printf("Cola de impresion vacia.\n");
                     break;
                 }
-                imprimirColaImpresion(&colaPrincipal);
-                printf("\nElige el archivo a eliminar > ");
-                scanf("%d", &i);
 
-                eliminarArchivoPos(&colaPrincipal, i);
+                imprimirColaImpresion(colaImpresion);
                 */
                 break;
 
             case 4:
                 printf("\n\n-----Eliminando todos los archivos------\n\n");
-                /*
-                Archivo* tmp = procesarArchivoPrioridad(&colaPrincipal, prioridadActual);
+                
+                liberarHeap(colaImpresion);
 
-                if (tmp == null)
-                {
-                    break;
-                }
-
-                i = 1;
-                while (tmp != null)
-                {
-                    printf("Archivo eliminado: ");
-                    imprimirDocumento(tmp, i);
-                    free(tmp->nombre);
-                    free(tmp);
-                    i++;
-                    tmp = procesarArchivoPrioridad(&colaPrincipal, prioridadActual);
-                }
-                */
                 break;
 
             case 5:
                 printf("\n\n-----Procesando archivo------\n\n");
-                /*
-                printf("Archivo procesado: \n");
-                Archivo* archivo = procesarArchivoPrioridad(&colaPrincipal, prioridadActual);
+                
+                Archivo* archivo = extraerMaxMin(colaImpresion);
 
                 if (archivo == null) // evitar segfault
                 {
@@ -121,10 +105,11 @@ int main (int argc, char* argv[])
                     break;
                 }
 
-                imprimirDocumento(archivo, 0);
+                printf("Archivo procesado: \n");
+                imprimirDocumento(archivo, 69);
                 free(archivo->nombre);
                 free(archivo);
-                */
+                
                 break;
 
             case 6:
@@ -134,7 +119,9 @@ int main (int argc, char* argv[])
                 break;
         }
     }
-    //vaciarColaImpresion(&colaPrincipal);
+    
+    liberarHeap(colaImpresion);
+    //free(colaImpresion->nodos);
 
     printf("\nADIOS PAPU\n"); // solo para checar que el programa termina sin problemas
 

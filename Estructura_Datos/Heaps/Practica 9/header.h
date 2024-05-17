@@ -40,17 +40,34 @@ typedef struct Heap
 
 } Heap;
 
+//* Funciones para archivos
 Archivo* crearDocumento(char* nombre, int numeroPaginas);
 void imprimirDocumento(Archivo* doc, int iterador);
+
+//* Funciones para nodos y arboles
 Nodo* crearNodo(Archivo* doc);
-Heap* crearHeap(int tamMaximo, TipoDeHeap tipoDeHeap);
 void recorridoEnOrden(Nodo* raiz, int* iterador);
-void imprimirColaImpresion(Heap* mainHeap);
-int nodoPadre(Heap* heap, int indice);
-void realojarMemoria(Heap* heap);
-void filtrar(Heap* mainHeap, int indice);
+void insertarEnArbol(Nodo** raiz, Nodo* nuevo, TipoDeHeap prioridadActual);
+
+//* Funciones para el heap
+Heap* crearHeap(int tamMaximo, TipoDeHeap tipoDeHeap);
+void insertarNodo(Heap* mainHeap, Archivo* doc);
+bool estaVacioHeap(Heap* h);
+void heapifyArriba(Heap* mainHeap, int indice);
+void heapifyAbajo(Heap* mainHeap, int indice);
+//void realojarMemoria(Heap* heap);
 void insertar(Heap* mainHeap, Archivo* doc);
-Nodo* extraer(Heap* mainHeap);
-void liberarNodos(Nodo* raiz);
+Archivo* extraerMaxMin(Heap* mainHeap);
+
+//* Funciones auxiliares
+int padre(int i);
+int izquierdo(int i);
+int derecho(int i);
+void swapNodos(Nodo** nodoA, Nodo** nodoB);
+void cambiarPrioridad(Heap* heap, TipoDeHeap nuevoTipo);
+void imprimirColaImpresion(Heap* mainHeap);
+
+//* Funciones de liberacion de memoria
 void liberarHeap(Heap* mainHeap);
-void construirHeap(Heap* mainHeap);
+//void liberarNodos(Nodo* raiz);
+//void freeNodo(Nodo* node);
