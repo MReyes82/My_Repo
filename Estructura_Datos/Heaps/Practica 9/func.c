@@ -74,7 +74,7 @@ void insertarEnArbol(Nodo** raiz, Archivo* doc, TipoDeHeap prioridadActual)
     {   
         Nodo* actual = *raiz;
         if (prioridadActual == HEAP_MINIMO) 
-        {   // * Algoritmo de insersion normal. Se ordena en base a la cantidad de paginas.
+        {   // * Algoritmo de inserción normal. Se ordena en base a la cantidad de paginas.
             if (doc->paginas < actual->documento->paginas)
             {   
                 insertarEnArbol(&actual->izquierda, doc, prioridadActual);
@@ -266,6 +266,8 @@ void eliminarEnPosicion(Heap* mainHeap)
     heapifyAbajo(mainHeap, posicion); //* ajustamos el heap hacia abajo
     reconstruirArbol(mainHeap);
 
+    printf("Archivo eliminado: \n");
+    imprimirDocumento(raiz->documento, 0);
     free(raiz->documento->nombre); //* liberamos la memoria del documento
     free(raiz->documento);
 
@@ -352,13 +354,16 @@ void liberarHeap(Heap* mainHeap)
     for (int i = 0 ; i < mainHeap->cantidadNodos ; i++)
     {
         free(mainHeap->nodos[i]->documento->nombre);
+        //printf("String %d liberado\n", i);
         free(mainHeap->nodos[i]->documento);
+        //printf("Apuntador documento %d liberado\n", i);
         free(mainHeap->nodos[i]);
+        //printf("Apuntador nodo %d liberado\n", i);
     }
-
-    mainHeap->cantidadNodos = 0;
+    
     liberarMemoriaArbol(mainHeap->raiz);
     mainHeap->raiz = null;
+    mainHeap->cantidadNodos = 0;
 
     return;
 }
@@ -383,7 +388,7 @@ void liberarMemoriaArbol(Nodo* raiz)
         liberarMemoriaArbol(raiz->derecha);
         free(raiz->documento->nombre);
         free(raiz->documento);
-        free(raiz);
+        //free(raiz);
     }
 
     return;

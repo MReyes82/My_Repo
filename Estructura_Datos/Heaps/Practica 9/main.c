@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include "header.h"
 
-// TODO: revisar funcion "liberarMemoriaArbol"
-// * Todas las funciones ya estan listas.
+// TODO: Arreglar indice de eliminarEnPosicion
+// TODO: Actualmente, toma el indice del arreglo en vez del arbol.
 
 void test(Heap* colaImpresion) // * Funcion de prueba para no escribir tanto
 {
