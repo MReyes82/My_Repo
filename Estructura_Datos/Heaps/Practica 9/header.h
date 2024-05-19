@@ -3,8 +3,6 @@
 #include <stdbool.h>
 
 #define null NULL
-#define _MIN_ 0
-#define _MAX_ 1
 
 typedef enum
 {
@@ -71,4 +69,3 @@ void imprimirColaImpresion(Heap* mainHeap);
 //* Funciones de liberacion de memoria
 void liberarHeap(Heap* mainHeap);
 void borrarArbol(Nodo* raiz);
-void liberarMemoriaArbol(Nodo* raiz); //* PENDIENTE: REVISAR SEGFAULT

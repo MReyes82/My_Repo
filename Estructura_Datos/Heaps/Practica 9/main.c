@@ -6,8 +6,13 @@
 // TODO: Arreglar indice de eliminarEnPosicion
 // TODO: Actualmente, toma el indice del arreglo en vez del arbol.
 
+/*
 void test(Heap* colaImpresion) // * Funcion de prueba para no escribir tanto
-{
+{   
+    * NOTA: ESTA FUNCION NO DEBE SER UTILIZADA EN EL ESTADO FINAL DEL PROGRAMA
+    * DEBIDO A QUE EL STRING PASADO COMO ARGUMENTO ES ESTATICO, 
+    * OCASIONARA ERROR DE DOBLE FREE.
+    
     insertarNodo(colaImpresion, crearDocumento("Archivo1", 1));
     insertarNodo(colaImpresion, crearDocumento("Archivo2", 2));
     insertarNodo(colaImpresion, crearDocumento("Archivo3", 3));
@@ -19,33 +24,31 @@ void test(Heap* colaImpresion) // * Funcion de prueba para no escribir tanto
     printf("Insertados.\n");
 
     return;
-} 
+}
+*/
 
-int main (void)//(int argc, char* argv[])
+int main (int argc, char* argv[])
 {
-    /*
     if (argc != 2)
     {
         return 1;
     }
 
-    TipoDeHeap prioridadActual = atoi(argv[1]);
+    const short int HEAP_SIZE = atoi(argv[1]);
 
-    if (prioridadActual != HEAP_MINIMO && prioridadActual != HEAP_MINIMO)
+    if (HEAP_SIZE < 1 || HEAP_SIZE > 128) //* 128 es el maximo por temas practicos.
     {
         return 1;
     }
-    */
 
-    TipoDeHeap prioridadActual = HEAP_MINIMO;
-    //int i; 
     int opcion;
+    TipoDeHeap prioridadActual = HEAP_MINIMO; //* Por default, el heap es del tipo minimo.
 
     bool corre = true;
     Heap* colaImpresion = crearHeap(25, prioridadActual);
     Archivo* nuevo = null;
 
-    test(colaImpresion);
+    //test(colaImpresion);
  
     while (corre)
     {
@@ -125,7 +128,16 @@ int main (void)//(int argc, char* argv[])
     }
     
     liberarHeap(colaImpresion);
-    //free(colaImpresion->nodos);
+    
+    /*if (nuevo != null)
+    {
+        free(nuevo);
+    }
+    */
+    if (colaImpresion != null)
+    {
+        free(colaImpresion);
+    }
 
     printf("\nADIOS PAPU\n"); // solo para checar que el programa termina sin problemas
 

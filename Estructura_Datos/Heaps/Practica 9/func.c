@@ -33,7 +33,7 @@ void procesarArchivo(Heap* mainHeap)
     printf("Archivo procesado: \n");
     imprimirDocumento(archivo, 0);
 
-    free(archivo->nombre);
+    free(archivo->nombre); //* liberamos la memoria del string alojada en main.c
     free(archivo);
 
     return;
@@ -268,8 +268,9 @@ void eliminarEnPosicion(Heap* mainHeap)
 
     printf("Archivo eliminado: \n");
     imprimirDocumento(raiz->documento, 0);
-    //free(raiz->documento->nombre); //* liberamos la memoria del documento
+    free(raiz->documento->nombre); //* liberamos la memoria del string alojada en main.c
     free(raiz->documento);
+    free(raiz);
 
     return;
 }
@@ -313,9 +314,7 @@ void cambiarPrioridad(Heap* heap, TipoDeHeap nuevoTipo)
     {
         heapifyAbajo(heap, i);
     }
-    printf("Reconstruyendo arbol\n");
     reconstruirArbol(heap);
-    printf("Arbol reconstruido\n");
 
     return;
 }
@@ -353,16 +352,12 @@ void liberarHeap(Heap* mainHeap)
 {
     for (int i = 0 ; i < mainHeap->cantidadNodos ; i++)
     {
-        //free(mainHeap->nodos[i]->documento->nombre);
-        //printf("String %d liberado\n", i);
-        free(mainHeap->nodos[i]->documento);
-        //printf("Apuntador documento %d liberado\n", i);
+        free(mainHeap->nodos[i]->documento->nombre); //* NOTA: Solo se libera el apuntador al nombre del documento aqui.
+        free(mainHeap->nodos[i]->documento);        
         free(mainHeap->nodos[i]);
-        //printf("Apuntador nodo %d liberado\n", i);
     }
-    //printf("Memoria liberada\n");
+    free(mainHeap->nodos);
 
-    //liberarMemoriaArbol(mainHeap->raiz);
     borrarArbol(mainHeap->raiz);
     mainHeap->raiz = null;
     mainHeap->cantidadNodos = 0;
@@ -371,7 +366,8 @@ void liberarHeap(Heap* mainHeap)
 }
 
 void borrarArbol(Nodo* raiz)
-{
+{   //* No se libera la memoria de los documentos, solo de los nodos.
+    //* Por lo tanto, se asume que se libera la memoria de los documentos fuera del scope de esta funcion.
     if (raiz != null)
     {
         borrarArbol(raiz->izquierda);
@@ -382,7 +378,7 @@ void borrarArbol(Nodo* raiz)
     return;
 }
 
-void liberarMemoriaArbol(Nodo* raiz)
+/*void liberarMemoriaArbol(Nodo* raiz)
 {
     if (raiz != null)
     {
@@ -394,6 +390,6 @@ void liberarMemoriaArbol(Nodo* raiz)
     }
 
     return;
-}
+}*/
 
 
