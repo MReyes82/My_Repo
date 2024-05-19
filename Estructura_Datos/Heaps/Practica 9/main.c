@@ -4,7 +4,7 @@
 #include "header.h"
 
 // TODO: Arreglar indice de eliminarEnPosicion
-// TODO: Actualmente, toma el indice del arreglo en vez del arbol.
+// & Arreglado, se imprime el array desorneado al eliminar en posicon.
 
 /*
 void test(Heap* colaImpresion) // * Funcion de prueba para no escribir tanto
@@ -45,7 +45,7 @@ int main (int argc, char* argv[])
     TipoDeHeap prioridadActual = HEAP_MINIMO; //* Por default, el heap es del tipo minimo.
 
     bool corre = true;
-    Heap* colaImpresion = crearHeap(25, prioridadActual);
+    Heap* colaImpresion = crearHeap(HEAP_SIZE, prioridadActual);
     Archivo* nuevo = null;
 
     //test(colaImpresion);
@@ -71,14 +71,12 @@ int main (int argc, char* argv[])
                 prioridadActual = (prioridadActual == HEAP_MINIMO) ? HEAP_MAXIMO : HEAP_MINIMO;
                 cambiarPrioridad(colaImpresion, prioridadActual);
 
-                //printf("Nueva prioridad: %s\n", prioridadActual == HEAP_MAXIMO ?  "Mayor" : "Menor");
-
                 break;
             
             case 1:
                 printf("\n\n-----Mostrando cola de impresion------\n\n");
 
-                imprimirColaImpresion(colaImpresion);
+                imprimirColaImpresion(colaImpresion, true);
 
                 break;
                 

@@ -248,7 +248,7 @@ void eliminarEnPosicion(Heap* mainHeap)
     }
 
     int posicion;
-    imprimirColaImpresion(mainHeap);
+    imprimirColaImpresion(mainHeap, false);
     printf("\nElige el archivo a eliminar > ");
     scanf("%d", &posicion);
 
@@ -319,17 +319,23 @@ void cambiarPrioridad(Heap* heap, TipoDeHeap nuevoTipo)
     return;
 }
 
-void imprimirColaImpresion(Heap* mainHeap)
+void imprimirColaImpresion(Heap* mainHeap, bool imprimirArbol)
 {
     int i;
+
+    if (imprimirArbol)
+    {
+        //printf("\n------Heap binario------\n");
+        printf("\n");
+        i = 0;
+        recorridoEnOrden(mainHeap->raiz, &i);
+        return;
+    }
+
     for (i = 0 ; i < mainHeap->cantidadNodos ; i++)
     {
         imprimirDocumento(mainHeap->nodos[i]->documento, i);
     }
-    
-    printf("\n------Heap binario------\n");
-    i = 0;
-    recorridoEnOrden(mainHeap->raiz, &i);
     
     return;
 }

@@ -21,7 +21,7 @@ typedef struct Archivo
 typedef struct Nodo // ahora es un nodo de arbol binario
 {
     Archivo* documento;
-    //struct Nodo* siguiente;
+    short int indice; // 
     struct Nodo* izquierda;
     struct Nodo* derecha;
 
@@ -31,7 +31,6 @@ typedef struct Heap
 {
     Nodo* raiz; // referencia al nodo raiz para funciones como recorridos
     Nodo** nodos; // arreglo de referencias de nodos para funciones como heapify
-
     int cantidadNodos;
     short int capacidad; // tamaño maximo del heap, si es -1 no tiene limite
     TipoDeHeap tipo;
@@ -42,6 +41,7 @@ typedef struct Heap
 Archivo* crearDocumento(char* nombre, int numeroPaginas);
 void imprimirDocumento(Archivo* doc, int iterador);
 void procesarArchivo(Heap* mainHeap);
+void imprimirColaImpresion(Heap* mainHeap, bool imprimirArbol);
 
 //* Funciones para nodos y arboles
 Nodo* crearNodo(Archivo* doc);
@@ -64,7 +64,6 @@ int izquierdo(int i);
 int derecho(int i);
 void swapNodos(Nodo** nodoA, Nodo** nodoB);
 void cambiarPrioridad(Heap* heap, TipoDeHeap nuevoTipo);
-void imprimirColaImpresion(Heap* mainHeap);
 
 //* Funciones de liberacion de memoria
 void liberarHeap(Heap* mainHeap);
