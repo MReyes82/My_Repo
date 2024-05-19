@@ -3,6 +3,23 @@
 #include <stdbool.h>
 #include "header.h"
 
+// TODO: revisar funcion "liberarMemoriaArbol"
+// * Todas las funciones ya estan listas.
+
+void test(Heap* colaImpresion) // * Funcion de prueba para no escribir tanto
+{
+    insertarNodo(colaImpresion, crearDocumento("Archivo1", 1));
+    insertarNodo(colaImpresion, crearDocumento("Archivo2", 2));
+    insertarNodo(colaImpresion, crearDocumento("Archivo3", 3));
+    insertarNodo(colaImpresion, crearDocumento("Archivo11", 1));
+    insertarNodo(colaImpresion, crearDocumento("Archivo5", 5));
+    insertarNodo(colaImpresion, crearDocumento("Archivo33", 3));
+    insertarNodo(colaImpresion, crearDocumento("Archivo22", 2));
+    
+    printf("Insertados.\n");
+
+    return;
+} 
 
 int main (int argc, char* argv[])
 {
@@ -24,6 +41,8 @@ int main (int argc, char* argv[])
     bool corre = true;
     Heap* colaImpresion = crearHeap(25, prioridadActual);
     Archivo* nuevo = null;
+
+    test(colaImpresion);
  
     while (corre)
     {
@@ -75,15 +94,9 @@ int main (int argc, char* argv[])
 
             case 3:
                 printf("\n\n-----Eliminando archivo------\n\n");
-                /*
-                if (estaVacioHeap(colaImpresion))
-                {
-                    printf("Cola de impresion vacia.\n");
-                    break;
-                }
+                
+                eliminarEnPosicion(colaImpresion);
 
-                imprimirColaImpresion(colaImpresion);
-                */
                 break;
 
             case 4:
@@ -96,18 +109,7 @@ int main (int argc, char* argv[])
             case 5:
                 printf("\n\n-----Procesando archivo------\n\n");
                 
-                Archivo* archivo = extraerMaxMin(colaImpresion);
-
-                if (archivo == null) // evitar segfault
-                {
-                    printf("No hay archivos para procesar.\n");
-                    break;
-                }
-
-                printf("Archivo procesado: \n");
-                imprimirDocumento(archivo, -1);
-                free(archivo->nombre);
-                free(archivo);
+                procesarArchivo(colaImpresion);
                 
                 break;
 

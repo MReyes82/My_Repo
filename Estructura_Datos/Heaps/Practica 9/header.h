@@ -43,11 +43,13 @@ typedef struct Heap
 //* Funciones para archivos
 Archivo* crearDocumento(char* nombre, int numeroPaginas);
 void imprimirDocumento(Archivo* doc, int iterador);
+void procesarArchivo(Heap* mainHeap);
 
 //* Funciones para nodos y arboles
 Nodo* crearNodo(Archivo* doc);
 void recorridoEnOrden(Nodo* raiz, int* iterador);
-void insertarEnArbol(Nodo** raiz, Nodo* nuevo, TipoDeHeap prioridadActual);
+void insertarEnArbol(Nodo** raiz, Archivo* doc, TipoDeHeap prioridadActual);
+void reconstruirArbol(Heap* mainHeap);
 
 //* Funciones para el heap
 Heap* crearHeap(int tamMaximo, TipoDeHeap tipoDeHeap);
@@ -56,6 +58,7 @@ bool estaVacioHeap(Heap* h);
 void heapifyArriba(Heap* mainHeap, int indice);
 void heapifyAbajo(Heap* mainHeap, int indice);
 Archivo* extraerMaxMin(Heap* mainHeap);
+void eliminarEnPosicion(Heap* mainHeap);
 
 //* Funciones auxiliares
 int padre(int i);
@@ -67,3 +70,5 @@ void imprimirColaImpresion(Heap* mainHeap);
 
 //* Funciones de liberacion de memoria
 void liberarHeap(Heap* mainHeap);
+void borrarArbol(Nodo* raiz);
+void liberarMemoriaArbol(Nodo* raiz); //* PENDIENTE: REVISAR SEGFAULT
