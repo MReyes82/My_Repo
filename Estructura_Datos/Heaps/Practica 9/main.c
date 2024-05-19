@@ -21,8 +21,9 @@ void test(Heap* colaImpresion) // * Funcion de prueba para no escribir tanto
     return;
 } 
 
-int main (int argc, char* argv[])
+int main (void)//(int argc, char* argv[])
 {
+    /*
     if (argc != 2)
     {
         return 1;
@@ -34,7 +35,9 @@ int main (int argc, char* argv[])
     {
         return 1;
     }
+    */
 
+    TipoDeHeap prioridadActual = HEAP_MINIMO;
     //int i; 
     int opcion;
 

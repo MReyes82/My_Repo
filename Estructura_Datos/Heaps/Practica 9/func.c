@@ -268,7 +268,7 @@ void eliminarEnPosicion(Heap* mainHeap)
 
     printf("Archivo eliminado: \n");
     imprimirDocumento(raiz->documento, 0);
-    free(raiz->documento->nombre); //* liberamos la memoria del documento
+    //free(raiz->documento->nombre); //* liberamos la memoria del documento
     free(raiz->documento);
 
     return;
@@ -353,15 +353,17 @@ void liberarHeap(Heap* mainHeap)
 {
     for (int i = 0 ; i < mainHeap->cantidadNodos ; i++)
     {
-        free(mainHeap->nodos[i]->documento->nombre);
+        //free(mainHeap->nodos[i]->documento->nombre);
         //printf("String %d liberado\n", i);
         free(mainHeap->nodos[i]->documento);
         //printf("Apuntador documento %d liberado\n", i);
         free(mainHeap->nodos[i]);
         //printf("Apuntador nodo %d liberado\n", i);
     }
-    
-    liberarMemoriaArbol(mainHeap->raiz);
+    //printf("Memoria liberada\n");
+
+    //liberarMemoriaArbol(mainHeap->raiz);
+    borrarArbol(mainHeap->raiz);
     mainHeap->raiz = null;
     mainHeap->cantidadNodos = 0;
 
@@ -387,7 +389,7 @@ void liberarMemoriaArbol(Nodo* raiz)
         liberarMemoriaArbol(raiz->izquierda);
         liberarMemoriaArbol(raiz->derecha);
         free(raiz->documento->nombre);
-        free(raiz->documento);
+        //free(raiz->documento);
         //free(raiz);
     }
 
