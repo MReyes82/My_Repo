@@ -70,4 +70,4 @@ void cambiarPrioridad(Heap* heap, TipoDeHeap nuevoTipo);
 
 //* Funciones de liberacion de memoria
 void liberarHeap(Heap* mainHeap);
-void borrarArbol(Nodo* raiz);
+//void borrarArbol(Nodo* raiz);

@@ -155,7 +155,12 @@ int main (int argc, char* argv[])
         }
     }
     
-    liberarHeap(colaImpresion);
+
+    if (colaImpresion->cantidadNodos != 0)
+    {
+        liberarHeap(colaImpresion);
+    }
+    
     if (colaImpresion != null)
     {
         free(colaImpresion);

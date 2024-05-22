@@ -404,7 +404,7 @@ void imprimirColaImpresion(Heap* mainHeap, bool imprimirArbol)
 
 void reconstruirArbol(Heap* mainHeap)
 {
-    borrarArbol(mainHeap->raiz);
+    //borrarArbol(mainHeap->raiz);
     mainHeap->raiz = null;
     /*
     for (int i = 0 ; i < mainHeap->cantidadNodos ; i++)
@@ -457,16 +457,16 @@ void liberarHeap(Heap* mainHeap)
     }
     free(mainHeap->nodos);
 
-    borrarArbol(mainHeap->raiz);
+    //borrarArbol(mainHeap->raiz);
     mainHeap->raiz = null;
     mainHeap->cantidadNodos = 0;
 
     return;
 }
 
-void borrarArbol(Nodo* raiz)
-{   //* No se libera la memoria de los documentos, solo de los nodos.
-    //* Por lo tanto, se asume que se libera la memoria de los documentos fuera del scope de esta funcion.
+/*void borrarArbol(Nodo* raiz)
+//! ---------------IMPLEMENTACION ANTERIOR----------------
+{
     if (raiz != null)
     {
         borrarArbol(raiz->izquierda);
@@ -475,6 +475,6 @@ void borrarArbol(Nodo* raiz)
     }
 
     return;
-}
+}*/
 
 
