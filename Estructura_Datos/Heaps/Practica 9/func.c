@@ -55,11 +55,9 @@ void recorridoEnOrden(Nodo* raiz, int* iterador)
 {   // * asume que se le pasa "0" como parametro incial del iterador.
     if (raiz != null)
     {
-        recorridoEnOrden(raiz->izquierda, iterador);
-
         imprimirDocumento(raiz->documento, *iterador);
         (*iterador)++;
-
+        recorridoEnOrden(raiz->izquierda, iterador);
         recorridoEnOrden(raiz->derecha, iterador);
     }
 }
@@ -75,7 +73,7 @@ void insertarEnArbol(Nodo** raiz, Archivo* doc, TipoDeHeap prioridadActual)
         Nodo* actual = *raiz;
         if (prioridadActual == HEAP_MINIMO) 
         {   // * Algoritmo de inserción normal. Se ordena en base a la cantidad de paginas.
-            if (doc->paginas < actual->documento->paginas)
+            if (doc->paginas <= actual->documento->paginas)
             {   
                 insertarEnArbol(&actual->izquierda, doc, prioridadActual);
             }
@@ -86,7 +84,7 @@ void insertarEnArbol(Nodo** raiz, Archivo* doc, TipoDeHeap prioridadActual)
         }
         else if (prioridadActual == HEAP_MAXIMO)
         {
-            if (doc->paginas > actual->documento->paginas)
+            if (doc->paginas >= actual->documento->paginas)
             {
                 insertarEnArbol(&actual->izquierda, doc, prioridadActual);
             }
@@ -125,9 +123,9 @@ void insertarNodo(Heap* mainHeap, Archivo* doc)
     mainHeap->nodos[mainHeap->cantidadNodos] = nuevo; //* la ultima posicion sera el nuevo nodo.
     //* re-ordenar
     heapifyArriba(mainHeap, mainHeap->cantidadNodos);
-    insertarEnArbol(&mainHeap->raiz, nuevo->documento, mainHeap->tipo);
-
     mainHeap->cantidadNodos++;
+    //insertarEnArbol(&mainHeap->raiz, nuevo->documento, mainHeap->tipo);
+    reconstruirArbol(mainHeap);
 
     return;   
 }
@@ -383,19 +381,5 @@ void borrarArbol(Nodo* raiz)
 
     return;
 }
-
-/*void liberarMemoriaArbol(Nodo* raiz)
-{
-    if (raiz != null)
-    {
-        liberarMemoriaArbol(raiz->izquierda);
-        liberarMemoriaArbol(raiz->derecha);
-        free(raiz->documento->nombre);
-        //free(raiz->documento);
-        //free(raiz);
-    }
-
-    return;
-}*/
 
 

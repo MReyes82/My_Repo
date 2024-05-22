@@ -6,26 +6,49 @@
 // TODO: Arreglar indice de eliminarEnPosicion
 // & Arreglado, se imprime el array desorneado al eliminar en posicon.
 
-/*
-void test(Heap* colaImpresion) // * Funcion de prueba para no escribir tanto
-{   
-    * NOTA: ESTA FUNCION NO DEBE SER UTILIZADA EN EL ESTADO FINAL DEL PROGRAMA
-    * DEBIDO A QUE EL STRING PASADO COMO ARGUMENTO ES ESTATICO, 
-    * OCASIONARA ERROR DE DOBLE FREE.
-    
-    insertarNodo(colaImpresion, crearDocumento("Archivo1", 1));
-    insertarNodo(colaImpresion, crearDocumento("Archivo2", 2));
-    insertarNodo(colaImpresion, crearDocumento("Archivo3", 3));
-    insertarNodo(colaImpresion, crearDocumento("Archivo11", 1));
-    insertarNodo(colaImpresion, crearDocumento("Archivo5", 5));
-    insertarNodo(colaImpresion, crearDocumento("Archivo33", 3));
-    insertarNodo(colaImpresion, crearDocumento("Archivo22", 2));
-    
-    printf("Insertados.\n");
+void imprimirArbol(Nodo* nodo, int nivel)
+{
+    int i;
 
-    return;
+    if (nodo != null)
+    {
+        printf(" %s", nodo->documento->nombre); 
+
+        if(nodo->derecha != null)
+        {
+            printf("\n");
+
+            for (i = 0 ; i < nivel + 1 ; i++)
+            {
+                if (i == nivel) { printf(" |____R "); }
+
+                else { printf(" |      ");}
+            }
+            imprimirArbol(nodo->derecha, nivel + 1);
+        }
+
+        if(nodo->izquierda != null)
+        {
+            printf("\n");
+
+            for (i = 0; i < nivel+1; i++)
+            {
+                printf(" |      ");
+            }
+
+            printf("\n");
+
+            for (i = 0 ; i < nivel + 1 ; i++)
+            {
+                if(i == nivel) { printf(" |____L "); }
+
+                else { printf(" |      "); }
+            }
+
+            imprimirArbol(nodo->izquierda, nivel + 1);
+        }
+    }
 }
-*/
 
 int main (int argc, char* argv[])
 {
@@ -47,8 +70,6 @@ int main (int argc, char* argv[])
     bool corre = true;
     Heap* colaImpresion = crearHeap(HEAP_SIZE, prioridadActual);
     Archivo* nuevo = null;
-
-    //test(colaImpresion);
  
     while (corre)
     {
@@ -59,7 +80,8 @@ int main (int argc, char* argv[])
         printf("[3] ELIMINAR ARCHIVO.\n");
         printf("[4] ELIMINAR TODOS LOS ARCHIVOS.\n");
         printf("[5] PROCESAR/IMPRIMIR ARCHIVO.\n");
-        printf("[6] TERMINAR PROGRAMA.\n");
+        printf("[6] MOSTRAR ARBOL.\n");
+        printf("[7] TERMINAR PROGRAMA.\n");
         printf("\nIngrese una opcion > ");
         scanf("%d", &opcion);
 
@@ -118,20 +140,22 @@ int main (int argc, char* argv[])
                 break;
 
             case 6:
+                printf("\n\n-----Mostrando arbol------\n\n");
+                imprimirArbol(colaImpresion->raiz, 0);
+                printf("\n\n\n");
+
+                break;
+
+            case 7:
                 corre = false;
                 break;
+
             default:
                 break;
         }
     }
     
     liberarHeap(colaImpresion);
-    
-    /*if (nuevo != null)
-    {
-        free(nuevo);
-    }
-    */
     if (colaImpresion != null)
     {
         free(colaImpresion);
