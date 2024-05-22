@@ -6,7 +6,7 @@
 // TODO: Arreglar indice de eliminarEnPosicion
 // & Arreglado, se imprime el array desorneado al eliminar en posicon.
 
-void imprimirArbol(Nodo* nodo, int nivel)
+void mostrarHeapBinario(Nodo* nodo, int nivel)
 {
     int i;
 
@@ -24,7 +24,7 @@ void imprimirArbol(Nodo* nodo, int nivel)
 
                 else { printf(" |      ");}
             }
-            imprimirArbol(nodo->derecha, nivel + 1);
+            mostrarHeapBinario(nodo->derecha, nivel + 1);
         }
 
         if(nodo->izquierda != null)
@@ -45,7 +45,7 @@ void imprimirArbol(Nodo* nodo, int nivel)
                 else { printf(" |      "); }
             }
 
-            imprimirArbol(nodo->izquierda, nivel + 1);
+            mostrarHeapBinario(nodo->izquierda, nivel + 1);
         }
     }
 }
@@ -141,7 +141,7 @@ int main (int argc, char* argv[])
 
             case 6:
                 printf("\n\n-----Mostrando arbol------\n\n");
-                imprimirArbol(colaImpresion->raiz, 0);
+                mostrarHeapBinario(colaImpresion->raiz, 0);
                 printf("\n\n\n");
 
                 break;

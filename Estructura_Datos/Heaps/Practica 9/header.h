@@ -45,8 +45,11 @@ void imprimirColaImpresion(Heap* mainHeap, bool imprimirArbol);
 
 //* Funciones para nodos y arboles
 Nodo* crearNodo(Archivo* doc);
-void recorridoEnOrden(Nodo* raiz, int* iterador);
-void insertarEnArbol(Nodo** raiz, Archivo* doc, TipoDeHeap prioridadActual);
+//~int getAltura(Nodo* raiz);
+//~void imprimirNivelActual(Nodo* raiz, int nivel, int* iterador);
+//~void imprimirArbol(Nodo* raiz);
+void recorridoPreOrden(Nodo* raiz, int* iterador);
+//!void insertarEnArbol(Nodo** raiz, Archivo* doc, TipoDeHeap prioridadActual);
 void reconstruirArbol(Heap* mainHeap);
 
 //* Funciones para el heap

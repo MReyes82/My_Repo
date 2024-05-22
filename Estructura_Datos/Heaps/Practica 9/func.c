@@ -51,19 +51,79 @@ Nodo* crearNodo(Archivo* doc)
     return nuevo;
 }
 
-void recorridoEnOrden(Nodo* raiz, int* iterador)
-{   // * asume que se le pasa "0" como parametro incial del iterador.
+/* // ~ POSIBLE IMPLEMENTACION: RECORRIDO POR ANCHURA
+int getAltura(Nodo* raiz)
+{
+    if (raiz == null)
+    {
+        return 0;
+    }
+
+    int alturaIzquierda = getAltura(raiz->izquierda);
+    int alturaDerecha = getAltura(raiz->derecha);
+
+    if (alturaIzquierda > alturaDerecha)
+    {
+        return alturaIzquierda + 1;
+    }
+    else
+    {
+        return alturaDerecha + 1;
+    }
+
+}
+
+void imprimirNivelActual(Nodo* raiz, int nivel, int* iterador)
+{
+    if (raiz == null)
+    {
+        return;
+    }
+
+    if (nivel == 0)
+    {
+        imprimirDocumento(raiz->documento, *iterador);
+        (*iterador)++;
+    }
+    else if (nivel > 0)
+    {
+        imprimirNivelActual(raiz->izquierda, nivel - 1, iterador);
+        imprimirNivelActual(raiz->derecha, nivel - 1, iterador);
+    }
+
+    return;
+
+}
+
+void imprimirArbol(Nodo* raiz)
+{
+    int altura = getAltura(raiz);
+    int i;
+    int iterador = 0;
+
+    for (i = 1 ; i <= altura ; i++)
+    {
+        imprimirNivelActual(raiz, i, &iterador);
+    }
+
+    return;
+
+}*/
+
+void recorridoPreOrden(Nodo* raiz, int* iterador)
+    
+{   // asume que se le pasa "0" como parametro incial del iterador.
     if (raiz != null)
     {
         imprimirDocumento(raiz->documento, *iterador);
         (*iterador)++;
-        recorridoEnOrden(raiz->izquierda, iterador);
-        recorridoEnOrden(raiz->derecha, iterador);
+        recorridoPreOrden(raiz->izquierda, iterador);
+        recorridoPreOrden(raiz->derecha, iterador);
     }
 }
 
-void insertarEnArbol(Nodo** raiz, Archivo* doc, TipoDeHeap prioridadActual)
-{
+/*void insertarEnArbol(Nodo** raiz, Archivo* doc, TipoDeHeap prioridadActual)
+{   //! ---------------IMPLEMENTACION ANTERIOR----------------
     if (*raiz == null)
     {
         *raiz = crearNodo(doc);
@@ -93,8 +153,8 @@ void insertarEnArbol(Nodo** raiz, Archivo* doc, TipoDeHeap prioridadActual)
                 insertarEnArbol(&actual->derecha, doc, prioridadActual);
             }
         }
-    }
-}
+    } //! ---------------
+}*/
 
 //* Funciones para el heap
 Heap* crearHeap(int tamMaximo, TipoDeHeap tipoDeHeap)
@@ -324,9 +384,13 @@ void imprimirColaImpresion(Heap* mainHeap, bool imprimirArbol)
     if (imprimirArbol)
     {
         //printf("\n------Heap binario------\n");
+        // ~ POSIBLE IMPLEMENTACION: RECORRIDO POR ANCHURA
+        //sin iterador
+        // imprimirArbol(mainHeap->raiz);
         printf("\n");
         i = 0;
-        recorridoEnOrden(mainHeap->raiz, &i);
+        recorridoPreOrden(mainHeap->raiz, &i);
+        
         return;
     }
 
@@ -342,10 +406,41 @@ void reconstruirArbol(Heap* mainHeap)
 {
     borrarArbol(mainHeap->raiz);
     mainHeap->raiz = null;
-
+    /*
     for (int i = 0 ; i < mainHeap->cantidadNodos ; i++)
     {
         insertarEnArbol(&mainHeap->raiz, mainHeap->nodos[i]->documento, mainHeap->tipo);
+    }
+    */
+    if (mainHeap->cantidadNodos < 1)
+    {
+        //^ printf("No hay nodos para reconstruir el arbol.\n");
+        return;
+    }
+
+    //* Reiniciar raiz.
+    mainHeap->raiz = mainHeap->nodos[0];
+
+    for (int actual = 0 ; actual < mainHeap->cantidadNodos ; actual++)
+    {
+        int hijoIzquierdo = izquierdo(actual);
+        int hijoDerecho = derecho(actual);
+
+        if (hijoIzquierdo < mainHeap->cantidadNodos)
+        {
+            mainHeap->nodos[actual]->izquierda = mainHeap->nodos[hijoIzquierdo];
+
+        }else{
+            mainHeap->nodos[actual]->izquierda = null;
+        }
+
+        if (hijoDerecho < mainHeap->cantidadNodos)
+        {
+            mainHeap->nodos[actual]->derecha = mainHeap->nodos[hijoDerecho];
+
+        }else{
+            mainHeap->nodos[actual]->derecha = null;
+        }
     }
 
     return;
