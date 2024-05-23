@@ -34,12 +34,12 @@ void liberarTabla(HashTable* hash);
 //* Operaciones de tabla hash
 void insertarPeliculaNombre(HashTable* hash, Movie* pelicula);
 void insertarPeliculaID(HashTable* hash, Movie* pelicula);
-void eliminarPeliculaNombre(HashTable* hash, const char* nombre);
+void eliminarPeliculaNombre(HashTable* hash, char* nombre);
 void eliminarPeliculaID(HashTable* hash, int id);
 void imprimirTabla(HashTable* hash);
 
 //* Funciones de busqueda
-Movie* buscarPeliculaNombre(HashTable* hash, const char* nombre);
+Movie* buscarPeliculaNombre(HashTable* hash, char* nombre);
 Movie* buscarPeliculaID(HashTable* hash, int id);
 void remapearTabla(HashTable* hash, int newSize);
 

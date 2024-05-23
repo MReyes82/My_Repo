@@ -121,9 +121,9 @@ void insertarPeliculaNombre(HashTable* hash, Movie* pelicula)
 
 void insertarPeliculaID(HashTable* hash, Movie* pelicula)
 {
-    if (hash->amount_data >= (hash->size * 0.75) )
-    {
-        remapearTabla(hash, hash->size * 2); //* Mantenemos el factor de carga en 0.75
+    if (pelicula->id >= hash->size)
+    {   
+        remapearTabla(hash, pelicula->id * 2);
     }
 
     int indice = rehashing(hash, pelicula, hash->table);
@@ -133,7 +133,7 @@ void insertarPeliculaID(HashTable* hash, Movie* pelicula)
     return;
 }
 
-void eliminarPeliculaNombre(HashTable* hash, const char* nombre)
+void eliminarPeliculaNombre(HashTable* hash, char* nombre)
 {
     int llave = generarLlave(nombre);
     int indice = funcionHash(hash, llave);
@@ -166,6 +166,7 @@ void eliminarPeliculaNombre(HashTable* hash, const char* nombre)
 
 void eliminarPeliculaID(HashTable* hash, int id)
 {
+    printf("Enters function\n");
     int llave = id;
     int indice = funcionHash(hash, llave);
     int nuevoIndice = indice;
@@ -174,9 +175,12 @@ void eliminarPeliculaID(HashTable* hash, int id)
     int j = 0;
     while (hash->table[nuevoIndice] != null)
     {
+        //printf("Entra en while\n");
         if (hash->table[nuevoIndice]->id == id)
         {
+            printf("Pelicula encontrada.\n");
             free(hash->table[nuevoIndice]);
+            printf("Memoria eliminada.\n");
             hash->table[nuevoIndice] = null;
             hash->amount_data--;
 
@@ -215,7 +219,7 @@ void imprimirTabla(HashTable* hash)
 ^ ----------------------
 */
 
-Movie* buscarPeliculaNombre(HashTable* hash, const char* nombre)
+Movie* buscarPeliculaNombre(HashTable* hash, char* nombre)
 {
     int llave = generarLlave(nombre);
     int indice = funcionHash(hash, llave);
