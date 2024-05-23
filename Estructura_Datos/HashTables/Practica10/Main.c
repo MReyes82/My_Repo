@@ -26,29 +26,25 @@ void imprimirArreglo(Movie **movies)
 
 void liberarArreglo(Movie **movies)
 {
-    Movie *dataTemp = null;
     int i;
 
     for(i = 0 ; i < SIZE_DATA ; i++)
     {
-        dataTemp = getMovie(movies,i);
-
-        if(dataTemp)
+        if (movies[i] != null)
         {
-            free(dataTemp);
-            movies[i] = null;
+            free(movies[i]);
         }
     }
-
-    //free(movies);
+    free(movies);
 
     return;
 }
 
+// TODO: Arreglar bug de identificador duplicado.
+// ^ No Memry leaks
+
 int main(void)
 {
-    printf("It runs?\n");
-
     int i, opcion, subopcion;
     bool runs = true;
     char nombre[50];
@@ -62,8 +58,26 @@ int main(void)
     initHashTable(&tablaHashIdentificadores, SIZE_DATA, getID);
     initHashTable(&tablaHashNombres, SIZE_DATA, calcularLlaveString);
 
-    vaciarArregloEstatico(&tablaHashIdentificadores, arregloPeliculas);
-    vaciarArregloEstatico(&tablaHashNombres, arregloPeliculas);
+    //vaciarArregloEstatico(&tablaHashIdentificadores, arregloPeliculas);
+    //vaciarArregloEstatico(&tablaHashNombres, arregloPeliculas);
+
+    for (i = 0 ; i < SIZE_DATA ; i++)
+    {
+        Movie *pelicula = getMovie(arregloPeliculas, i);
+
+        if (pelicula == null)
+        {
+            continue;
+        }
+
+        Movie* aTabla1 = initMovie(pelicula->id, pelicula->name, pelicula->release_date, pelicula->rating);
+        Movie* aTabla2 = initMovie(pelicula->id, pelicula->name, pelicula->release_date, pelicula->rating);
+
+        insertarPeliculaID(&tablaHashIdentificadores, aTabla1);
+        insertarPeliculaNombre(&tablaHashNombres, aTabla2);
+
+        pelicula = null;
+    }                   
 
     liberarArreglo(arregloPeliculas);
 
@@ -75,7 +89,7 @@ int main(void)
         printf("[2] BUSCAR PELICULA ID\n");
         printf("[3] BUSCAR PELICULA NOMBRE\n");
         printf("[4] AGREGAR PELICULA\n");
-        printf("[5] ELIMINAR PELICULA ID\n");
+        printf("[5] ELIMINAR PELICULA\n");
         printf("[6] TERMINAR PROGRAMA\n");
 
         printf("Eliga una opcion > ");
@@ -107,6 +121,7 @@ int main(void)
             {
                 printMovie(pelicula);
                 printf("\n");
+
                 break;
             }
 
@@ -126,7 +141,6 @@ int main(void)
             {
                 printMovie(peliculaNombre);
                 printf("\n");
-                //free(nombre);
 
                 break;
             }
@@ -148,10 +162,13 @@ int main(void)
             scanf("%d", &calificacion);
 
             id = tablaHashIdentificadores.amount_data + 1;
+            // ^^^: This is a bug. The ID should be the next available ID, not the amount of data + 1.
             Movie *peliculaNueva = initMovie(id, nombre, fecha, calificacion);
+            Movie *peliculaNueva1 = initMovie(id, nombre, fecha, calificacion);
+
 
             insertarPeliculaID(&tablaHashIdentificadores, peliculaNueva);
-            insertarPeliculaNombre(&tablaHashNombres, peliculaNueva);
+            insertarPeliculaNombre(&tablaHashNombres, peliculaNueva1);
 
 
             break;
@@ -168,26 +185,39 @@ int main(void)
             if (subopcion == 0)
             {
                 printf("\nIngrese el ID de la pelicula > ");
-                scanf("\n%d",&i);
+                scanf("\n%d", &i);
+
+                Movie* peliculaEliminar = buscarPeliculaID(&tablaHashIdentificadores, i);
+
+                if (peliculaEliminar == NULL)
+                {
+                    printf("Pelicula no encontrada\n");
+                    break;
+                }
+                char* nombre = peliculaEliminar->name;
 
                 eliminarPeliculaID(&tablaHashIdentificadores, i);
-                eliminarPeliculaID(&tablaHashNombres, i);
-
-                break;
+                eliminarPeliculaNombre(&tablaHashNombres, nombre);
             }
-
-            if (subopcion == 1)
+            else if (subopcion == 1)
             {
                 printf("\nIngrese el nombre de la pelicula > ");
                 scanf("\n%[^\n]s", nombre);
 
-                eliminarPeliculaNombre(&tablaHashIdentificadores, nombre);
+                Movie* peliculaEliminar = buscarPeliculaNombre(&tablaHashNombres, nombre);
+
+                if (peliculaEliminar == NULL)
+                {
+                    printf("Pelicula no encontrada\n");
+                    break;
+                }
+                int idTemp = peliculaEliminar->id;
+
                 eliminarPeliculaNombre(&tablaHashNombres, nombre);
-
-                break;
+                printf("Borra en tabla 1\n");
+                eliminarPeliculaID(&tablaHashIdentificadores, idTemp);
+                printf("Borra en tabla 2\n");
             }
-
-            printf("Opcion no valida\n");
 
             break;
 
@@ -200,7 +230,6 @@ int main(void)
         }
     }
 
-    //liberarArreglo(arregloPeliculas);
     liberarTabla(&tablaHashIdentificadores);
     liberarTabla(&tablaHashNombres);
 

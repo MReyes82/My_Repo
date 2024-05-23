@@ -138,7 +138,7 @@ void eliminarPeliculaNombre(HashTable* hash, char* nombre)
     int llave = generarLlave(nombre);
     int indice = funcionHash(hash, llave);
     int nuevoIndice = indice;
-    //bool encontrado = false;
+    bool encontrado = false;
 
     int j = 0;
     while (hash->table[nuevoIndice] != null)
@@ -149,52 +149,67 @@ void eliminarPeliculaNombre(HashTable* hash, char* nombre)
             hash->table[nuevoIndice] = null;
             hash->amount_data--;
 
-            //encontrado = true;
+            encontrado = true;
             return;
         }
         j++;
         nuevoIndice = sondeoCuadratico(hash, indice, j);
     }
     
-    /*if (!encontrado)
+    if (!encontrado)
     {
-        printf("Pelicula no encontrada\n");
-    }*/
+        printf("Pelicula no encontrada (FUNCION ELIMINAR POR ID)\n");
+    }
     
     return;
 }
 
 void eliminarPeliculaID(HashTable* hash, int id)
 {
-    printf("Enters function\n");
     int llave = id;
     int indice = funcionHash(hash, llave);
     int nuevoIndice = indice;
-    //bool encontrado = false;
+    bool encontrado = false;
+
+    bool seBorroUltimoElemento = false;
+    
+    printf("size: %d, count: %d, id: %d\n", hash->size, hash->amount_data, id);
+    //* Ouput: size: 210, count: 105, id: 105
+    // * Falta encontar un modo de registrar el ultimo ID insertado.
+    //* Y el mayor ID actual.
+
+    if (hash->size == id)
+    {
+        printf("Bandera ultimo elemento activada\n");
+        seBorroUltimoElemento = true;
+    }
 
     int j = 0;
     while (hash->table[nuevoIndice] != null)
     {
-        //printf("Entra en while\n");
         if (hash->table[nuevoIndice]->id == id)
         {
-            printf("Pelicula encontrada.\n");
             free(hash->table[nuevoIndice]);
-            printf("Memoria eliminada.\n");
             hash->table[nuevoIndice] = null;
             hash->amount_data--;
 
-            //encontrado = true;
+            encontrado = true;
             return;
         }
         j++;
         nuevoIndice = sondeoCuadratico(hash, indice, j);
     }
 
-    /*if (!encontrado)
+    if (seBorroUltimoElemento)
     {
-        printf("Pelicula no encontrada\n");
-    }*/
+        hash->size = hash->amount_data;
+        remapearTabla(hash, hash->size);
+    }
+
+    if (!encontrado)
+    {
+        printf("Pelicula no encontrada (FUNCION ELIMINAR POR ID)\n");
+    }
 
     return;
 }
