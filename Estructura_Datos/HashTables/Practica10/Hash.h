@@ -14,7 +14,7 @@ typedef int (*FunctionFolding)(Movie*); //POINTER A FUNCION
 
 typedef struct hashtable
 {
-    int _size;          //DATOS QUE PUEDE CONTENER
+    int size;          //DATOS QUE PUEDE CONTENER
     int amount_data; //DATOS CONTENIDOS
     Movie** table; //ALMACENAMIENTO
     FunctionFolding folding; //POINTER A FUNCION FOLDING
@@ -43,5 +43,8 @@ Movie* buscarPeliculaNombre(HashTable* hash, const char* nombre);
 Movie* buscarPeliculaID(HashTable* hash, int id);
 void remapearTabla(HashTable* hash, int newSize);
 
+//* Funciones auxiliares
+void vaciarArregloEstatico(HashTable* hash, Movie** arregloPeliculas);
+Movie* initMovie(int id, char* nombre, short int fecha, short int calificacion);
 
 #endif //HASH_H

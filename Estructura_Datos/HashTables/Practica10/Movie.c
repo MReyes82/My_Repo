@@ -123,7 +123,7 @@ Movie** create_movies(void)
     return Pmovies;
 }
 
-Movie* getMovie(Movie **movies,int index)
+Movie* getMovie(Movie **movies, int index)
 {
     if (index >= 0 && index <= (SIZE_DATA - 1))
     {

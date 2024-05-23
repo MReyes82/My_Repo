@@ -6,57 +6,29 @@
 #include "Movie.h"
 #include "Hash.h"
 
-void imprimirArreglo(Movie **movies)
-{
-    Movie *dataTemp = null;
-    int i;
-    for(i = 0 ; i < SIZE_DATA ; i++)
-    {
-        dataTemp = getMovie(movies,i);
-
-        if(dataTemp)
-        {
-            printMovie(movies[i]);
-            printf("\n");
-        }
-    }
-
-    return;
-}
-
-void liberarArreglo(Movie **movies)
-{
-    Movie *dataTemp = null;
-    int i;
-
-    for(i = 0 ; i < SIZE_DATA ; i++)
-    {
-        dataTemp = getMovie(movies,i);
-
-        if(dataTemp)
-        {
-            free(dataTemp);
-            movies[i] = null;
-        }
-    }
-
-    free(movies);
-
-    return;
-}
+void imprimirArreglo(Movie **movies);
+void liberarArreglo(Movie **movies);
 
 int main(void)
 {
+    printf("It runs?\n");
+
     int i, opcion, subopcion;
     bool runs = true;
+
     HashTable tablaHashIdentificadores;
     HashTable tablaHashNombres;
+
     Movie **arregloPeliculas = NULL;
+    arregloPeliculas = create_movies();
 
     initHashTable(&tablaHashIdentificadores, SIZE_DATA, getID);
     initHashTable(&tablaHashNombres, SIZE_DATA, calcularLlaveString);
 
-    arregloPeliculas = create_movies();
+    vaciarArregloEstatico(&tablaHashIdentificadores, arregloPeliculas);
+    vaciarArregloEstatico(&tablaHashNombres, arregloPeliculas);
+
+    liberarArreglo(arregloPeliculas);
 
     while (runs)
     {
@@ -92,7 +64,7 @@ int main(void)
             printf("Ingrese el ID de la pelicula > ");
             scanf("%d",&i);
 
-            Movie *pelicula = buscarPeliculaID(&tablaHashIdentificadores,i);
+            Movie *pelicula = buscarPeliculaID(&tablaHashIdentificadores, i);
 
             if (pelicula != null)
             {
@@ -107,18 +79,19 @@ int main(void)
 
         case 3:
             printf("\n----Buscando pelicula por nombre---\n");
-            char* nombre = malloc(50 * sizeof(char));
+            //char* nombre = malloc(50 * sizeof(char));
+            char nombre[50];
 
             printf("Ingrese el nombre de la pelicula > ");
             scanf("\n%[^\n]s",nombre);
 
-            Movie *peliculaNombre = buscarPeliculaNombre(&tablaHashNombres, nombre);
+            Movie* peliculaNombre = buscarPeliculaNombre(&tablaHashNombres, nombre);
 
             if (peliculaNombre != null)
             {
                 printMovie(peliculaNombre);
                 printf("\n");
-                free(nombre);
+                //free(nombre);
 
                 break;
             }
@@ -130,23 +103,7 @@ int main(void)
         case 4:
             printf("\n----Agregando pelicula---\n");
 
-            printf("PELICULAS DISPONIBLES\n");
-            imprimirArreglo(arregloPeliculas);
-            printf("Eliga una pelicula > ");
-            scanf("\n%d",&i);
-
-            Movie *peliculaTemp = getMovie(arregloPeliculas, i - 1);
-
-            if (peliculaTemp != null)
-            {
-                insertarPeliculaID(&tablaHashIdentificadores, peliculaTemp);
-                insertarPeliculaNombre(&tablaHashNombres, peliculaTemp);
-                printf("Pelicula agregada\n");
-
-                break;
-            }
-
-            printf("Indice no valido.\n");
+            
 
 
             break;
@@ -173,15 +130,15 @@ int main(void)
 
             if (subopcion == 1)
             {
-                char* nombre = malloc(50 * sizeof(char));
+                //char* nombre = malloc(50 * sizeof(char));
+                char nombre[50];
 
                 printf("Ingrese el nombre de la pelicula > ");
-                scanf("\n%[^\n]s",nombre);
+                scanf("\n%[^\n]s", nombre);
 
                 eliminarPeliculaNombre(&tablaHashIdentificadores, nombre);
                 eliminarPeliculaNombre(&tablaHashNombres, nombre);
 
-                free(nombre);
                 break;
             }
 
@@ -207,3 +164,41 @@ int main(void)
     return 0;
 }
 
+void imprimirArreglo(Movie **movies)
+{
+    Movie *dataTemp = null;
+    int i;
+    for(i = 0 ; i < SIZE_DATA ; i++)
+    {
+        dataTemp = getMovie(movies,i);
+
+        if(dataTemp)
+        {
+            printMovie(movies[i]);
+            printf("\n");
+        }
+    }
+
+    return;
+}
+
+void liberarArreglo(Movie **movies)
+{
+    Movie *dataTemp = null;
+    int i;
+
+    for(i = 0 ; i < SIZE_DATA ; i++)
+    {
+        dataTemp = getMovie(movies,i);
+
+        if(dataTemp)
+        {
+            free(dataTemp);
+            movies[i] = null;
+        }
+    }
+
+    //free(movies);
+
+    return;
+}

@@ -1,5 +1,5 @@
-#include "hash.h"
-#include "movie.h"
+#include "Hash.h"
+#include "Movie.h"
 #include "stdbool.h"
 
 /*
@@ -9,7 +9,7 @@
 */
 void initHashTable(HashTable* hash, int size, FunctionFolding folding)
 {
-    hash->_size = size;
+    hash->size = size;
     hash->amount_data = 0;
     hash->table = malloc(sizeof(Movie*) * size);
     hash->folding = folding;
@@ -24,12 +24,12 @@ void initHashTable(HashTable* hash, int size, FunctionFolding folding)
 
 int funcionHash(HashTable* hash, int llave)
 {
-    return llave % hash->_size;
+    return llave % hash->size;
 }
 
 int sondeoCuadratico(HashTable* hash, int indice, int k)
 {
-    return (indice + (k * k)) % hash->_size;
+    return (indice + (k * k)) % hash->size;
 }
 
 int generarLlave(const char* nombre)
@@ -84,7 +84,7 @@ int rehashing(HashTable* hash, Movie* pelicula, Movie** Peliculas)
 
 void liberarTabla(HashTable* hash)
 {
-    for (int i = 0 ; i < hash->_size ; i++)
+    for (int i = 0 ; i < hash->size ; i++)
     {
         if (hash->table[i] != null)
         {
@@ -94,7 +94,7 @@ void liberarTabla(HashTable* hash)
 
     free(hash->table);
     //hash->table = null;
-    free(hash);
+    //free(hash);
 
     return;
 }
@@ -107,9 +107,9 @@ void liberarTabla(HashTable* hash)
 
 void insertarPeliculaNombre(HashTable* hash, Movie* pelicula)
 {
-    if (hash->amount_data >= (hash->_size * 0.25) )
+    if (hash->amount_data >= (hash->size * 0.25) )
     {
-        remapearTabla(hash, hash->_size * 2); //* Mantenemos el factor de carga en 0.25
+        remapearTabla(hash, hash->size * 2); //* Mantenemos el factor de carga en 0.25
     }
 
     int indice = rehashing(hash, pelicula, hash->table);
@@ -121,9 +121,9 @@ void insertarPeliculaNombre(HashTable* hash, Movie* pelicula)
 
 void insertarPeliculaID(HashTable* hash, Movie* pelicula)
 {
-    if (hash->amount_data >= (hash->_size * 0.75) )
+    if (hash->amount_data >= (hash->size * 0.75) )
     {
-        remapearTabla(hash, hash->_size * 2); //* Mantenemos el factor de carga en 0.75
+        remapearTabla(hash, hash->size * 2); //* Mantenemos el factor de carga en 0.75
     }
 
     int indice = rehashing(hash, pelicula, hash->table);
@@ -197,7 +197,7 @@ void eliminarPeliculaID(HashTable* hash, int id)
 
 void imprimirTabla(HashTable* hash)
 {
-    for (int i = 0 ; i < hash->_size ; i++)
+    for (int i = 0 ; i < hash->size ; i++)
     {
         if (hash->table[i] != null)
         {
@@ -259,7 +259,7 @@ void remapearTabla(HashTable* hash, int newSize)
 {
     Movie** nuevasPeliculas = calloc(newSize, sizeof(Movie*));
 
-    for (int i = 0 ; i < hash->_size ; i++)
+    for (int i = 0 ; i < hash->size ; i++)
     {
         if (hash->table[i] != null)
         {
@@ -272,7 +272,42 @@ void remapearTabla(HashTable* hash, int newSize)
 
     free(hash->table);
     hash->table = nuevasPeliculas;
-    hash->_size = newSize;
+    hash->size = newSize;
     
     return;
+}
+
+//* Funciones auxiliares
+void vaciarArregloEstatico(HashTable* hash, Movie** arregloPeliculas)
+{
+    for (int i = 0 ; i < hash->size ; i++)
+    {
+        Movie* temp = getMovie(arregloPeliculas, i);
+
+        if (temp == null)
+        {
+            continue;
+        }
+        
+        hash->table[i] = malloc(sizeof(Movie));
+        memcpy(hash->table[i], temp, sizeof(Movie));
+
+        //free(temp);
+        temp = null;
+
+        hash->amount_data++;
+    }
+
+    return;
+}
+
+Movie* initMovie(int id, char* nombre, short int fecha, short int calificacion)
+{
+    Movie* pelicula = malloc(sizeof(Movie));
+    pelicula->id = id;
+    pelicula->name = nombre;
+    pelicula->release_date = fecha;
+    pelicula->rating = calificacion;
+
+    return pelicula;
 }
