@@ -58,9 +58,6 @@ int main(void)
     initHashTable(&tablaHashIdentificadores, SIZE_DATA, getID);
     initHashTable(&tablaHashNombres, SIZE_DATA, calcularLlaveString);
 
-    //vaciarArregloEstatico(&tablaHashIdentificadores, arregloPeliculas);
-    //vaciarArregloEstatico(&tablaHashNombres, arregloPeliculas);
-
     for (i = 0 ; i < SIZE_DATA ; i++)
     {
         Movie *pelicula = getMovie(arregloPeliculas, i);
@@ -99,12 +96,14 @@ int main(void)
         {
         case 0:
             printf("\n----Mostrando tabla hash 1----\n");
+            imprimirDatosTabla(&tablaHashIdentificadores);
             imprimirTabla(&tablaHashIdentificadores);
 
             break;
 
         case 1:
             printf("\n----Mostrando tabla hash 2----\n");
+            imprimirDatosTabla(&tablaHashNombres);
             imprimirTabla(&tablaHashNombres);
 
             break;
@@ -169,7 +168,6 @@ int main(void)
 
             insertarPeliculaID(&tablaHashIdentificadores, peliculaNueva);
             insertarPeliculaNombre(&tablaHashNombres, peliculaNueva1);
-
 
             break;
 

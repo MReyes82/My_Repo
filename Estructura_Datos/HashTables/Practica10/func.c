@@ -297,29 +297,6 @@ void remapearTabla(HashTable* hash, int newSize)
 }
 
 //* Funciones auxiliares
-void vaciarArregloEstatico(HashTable* hash, Movie** arregloPeliculas)
-{
-    for (int i = 0 ; i < hash->size ; i++)
-    {
-        Movie* temp = getMovie(arregloPeliculas, i);
-
-        if (temp == null)
-        {
-            continue;
-        }
-        
-        hash->table[i] = malloc(sizeof(Movie));
-        memcpy(hash->table[i], temp, sizeof(Movie));
-
-        //free(temp);
-        temp = null;
-
-        hash->amount_data++;
-    }
-
-    return;
-}
-
 Movie* initMovie(int id, char* nombre, short int fecha, short int calificacion)
 {
     Movie* pelicula = malloc(sizeof(Movie));
@@ -329,4 +306,11 @@ Movie* initMovie(int id, char* nombre, short int fecha, short int calificacion)
     pelicula->rating = calificacion;
 
     return pelicula;
+}
+
+void imprimirDatosTabla(HashTable* hash)
+{
+    printf("Size: %d | Cantidad Elementos: %d\n", hash->size, hash->amount_data);
+
+    return;
 }

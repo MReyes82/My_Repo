@@ -44,7 +44,7 @@ Movie* buscarPeliculaID(HashTable* hash, int id);
 void remapearTabla(HashTable* hash, int newSize);
 
 //* Funciones auxiliares
-void vaciarArregloEstatico(HashTable* hash, Movie** arregloPeliculas);
 Movie* initMovie(int id, char* nombre, short int fecha, short int calificacion);
+void imprimirDatosTabla(HashTable* hash);
 
 #endif //HASH_H
