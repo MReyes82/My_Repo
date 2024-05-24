@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include "Movie.h"
 #include "Hash.h"
@@ -45,6 +46,7 @@ void liberarArreglo(Movie **movies)
 
 int main(void)
 {
+    //srand(time(NULL));
     int i, opcion, subopcion;
     bool runs = true;
     char nombre[50];
@@ -74,7 +76,9 @@ int main(void)
         insertarPeliculaNombre(&tablaHashNombres, aTabla2);
 
         pelicula = null;
-    }                   
+    }             
+    //tablaHashIdentificadores.max_id = SIZE_DATA;      
+    //tablaHashNombres.max_id = SIZE_DATA;
 
     liberarArreglo(arregloPeliculas);
 
@@ -134,17 +138,15 @@ int main(void)
             printf("\nIngrese el nombre de la pelicula > ");
             scanf("\n%[^\n]s", nombre);
 
-            Movie* peliculaNombre = buscarPeliculaNombre(&tablaHashNombres, nombre);
+            //Movie* peliculaNombre = buscarPeliculaNombre(&tablaHashNombres, nombre);
+            Movie** peliculas = buscarPeliculasNombre(&tablaHashNombres, nombre, &i);
 
-            if (peliculaNombre != null)
+            if (peliculas[0] == null)
             {
-                printMovie(peliculaNombre);
-                printf("\n");
-
+                printf("Pelicula no encontrada\n");
                 break;
             }
-
-            printf("Pelicula no encontrada\n");
+            mostrarPeliculasNombre(peliculas, i);
 
             break;
 
@@ -161,7 +163,14 @@ int main(void)
             scanf("%d", &calificacion);
 
             id = tablaHashIdentificadores.amount_data + 1;
-            // ^^^: This is a bug. The ID should be the next available ID, not the amount of data + 1.
+            /*
+            * Posible implementacion, generar un ID random.
+            int valorMaximo = tablaHashIdentificadores.amount_data;
+            int valorMinimo = tablaHashIdentificadores.size;
+            id = (valorMinimo) + ( (float)rand() / (float)RAND_MAX ) * (valorMaximo - valorMinimo);
+            printf("ID generado: %d\n", id);
+            */
+
             Movie *peliculaNueva = initMovie(id, nombre, fecha, calificacion);
             Movie *peliculaNueva1 = initMovie(id, nombre, fecha, calificacion);
 
@@ -192,29 +201,35 @@ int main(void)
                     printf("Pelicula no encontrada\n");
                     break;
                 }
-                char* nombre = peliculaEliminar->name;
+                //char* nombre = peliculaEliminar->name;
 
                 eliminarPeliculaID(&tablaHashIdentificadores, i);
-                eliminarPeliculaNombre(&tablaHashNombres, nombre);
+                eliminarPeliculaID(&tablaHashNombres, i);
+                //eliminarPeliculaNombre(&tablaHashNombres, nombre);
             }
             else if (subopcion == 1)
             {
                 printf("\nIngrese el nombre de la pelicula > ");
                 scanf("\n%[^\n]s", nombre);
 
-                Movie* peliculaEliminar = buscarPeliculaNombre(&tablaHashNombres, nombre);
+                //Movie* peliculaEliminar = buscarPeliculaNombre(&tablaHashNombres, nombre);
+                Movie** peliculasEliminar = buscarPeliculasNombre(&tablaHashNombres, nombre, &i);
 
-                if (peliculaEliminar == NULL)
+                if (peliculasEliminar[0] == NULL)
                 {
                     printf("Pelicula no encontrada\n");
                     break;
                 }
-                int idTemp = peliculaEliminar->id;
+                
+                mostrarPeliculasNombre(peliculasEliminar, i);
+                printf("Inserte el ID de la pelicula que desea eliminar > ");
+                int op;
+                scanf("\n%d", &op);
 
-                eliminarPeliculaNombre(&tablaHashNombres, nombre);
-                printf("Borra en tabla 1\n");
-                eliminarPeliculaID(&tablaHashIdentificadores, idTemp);
-                printf("Borra en tabla 2\n");
+                eliminarPeliculaID(&tablaHashIdentificadores, op);
+                eliminarPeliculaID(&tablaHashNombres, op);
+                //eliminarPeliculaNombre(&tablaHashNombres, nombre);
+                //eliminarPeliculaID(&tablaHashIdentificadores, idTemp);
             }
 
             break;

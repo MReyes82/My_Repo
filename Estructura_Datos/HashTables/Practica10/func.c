@@ -13,6 +13,8 @@ void initHashTable(HashTable* hash, int size, FunctionFolding folding)
     hash->amount_data = 0;
     hash->table = malloc(sizeof(Movie*) * size);
     hash->folding = folding;
+    hash->last_id_deleted = -1;
+    //hash->max_id = 0;
 
     for (int i = 0; i < size; i++)
     {
@@ -89,6 +91,7 @@ void liberarTabla(HashTable* hash)
         if (hash->table[i] != null)
         {
             free(hash->table[i]);
+            free(hash->table[i]->name);
         }
     }
 
@@ -121,19 +124,32 @@ void insertarPeliculaNombre(HashTable* hash, Movie* pelicula)
 
 void insertarPeliculaID(HashTable* hash, Movie* pelicula)
 {
-    if (pelicula->id >= hash->size)
-    {   
-        remapearTabla(hash, pelicula->id * 2);
+    if (buscarPeliculaID(hash, pelicula->id) != null)
+    {
+        printf("ID duplicado detectado. Reasignando ID\n");
+        if (hash->last_id_deleted == -1)
+        {
+            printf("Error faltal:INSERCION FALLIDA.\n");
+            return;
+        }
+
+        pelicula->id = hash->last_id_deleted;
+        hash->last_id_deleted = -1;
     }
 
     int indice = rehashing(hash, pelicula, hash->table);
     hash->table[indice] = pelicula;
     hash->amount_data++;
 
+    if (hash->amount_data > hash->size / 2)
+    {   
+        remapearTabla(hash, hash->size * 2);
+    }
+
     return;
 }
 
-void eliminarPeliculaNombre(HashTable* hash, char* nombre)
+/*void eliminarPeliculaNombre(HashTable* hash, char* nombre)
 {
     int llave = generarLlave(nombre);
     int indice = funcionHash(hash, llave);
@@ -145,7 +161,9 @@ void eliminarPeliculaNombre(HashTable* hash, char* nombre)
     {
         if (strcmp(hash->table[nuevoIndice]->name, nombre) == 0)
         {
+            hash->last_id_deleted = hash->table[nuevoIndice]->id;
             free(hash->table[nuevoIndice]);
+            free(hash->table[nuevoIndice]->name);
             hash->table[nuevoIndice] = null;
             hash->amount_data--;
 
@@ -162,10 +180,11 @@ void eliminarPeliculaNombre(HashTable* hash, char* nombre)
     }
     
     return;
-}
+}*/
 
 void eliminarPeliculaID(HashTable* hash, int id)
 {
+    /*
     int llave = id;
     int indice = funcionHash(hash, llave);
     int nuevoIndice = indice;
@@ -173,10 +192,10 @@ void eliminarPeliculaID(HashTable* hash, int id)
 
     bool seBorroUltimoElemento = false;
     
-    printf("size: %d, count: %d, id: %d\n", hash->size, hash->amount_data, id);
-    //* Ouput: size: 210, count: 105, id: 105
+    //printf("size: %d, count: %d, id: %d\n", hash->size, hash->amount_data, id);
+    * Ouput: size: 210, count: 105, id: 105
     // * Falta encontar un modo de registrar el ultimo ID insertado.
-    //* Y el mayor ID actual.
+    * Y el mayor ID actual.
 
     if (hash->size == id)
     {
@@ -189,7 +208,9 @@ void eliminarPeliculaID(HashTable* hash, int id)
     {
         if (hash->table[nuevoIndice]->id == id)
         {
+            hash->last_id_deleted = hash->table[nuevoIndice]->id;
             free(hash->table[nuevoIndice]);
+            free(hash->table[nuevoIndice]->name);
             hash->table[nuevoIndice] = null;
             hash->amount_data--;
 
@@ -210,6 +231,21 @@ void eliminarPeliculaID(HashTable* hash, int id)
     {
         printf("Pelicula no encontrada (FUNCION ELIMINAR POR ID)\n");
     }
+    */
+    for (int i = 0 ; i < hash->size ; i++)
+    {
+        if (hash->table[i] != null && hash->table[i]->id == id)
+        {
+            hash->last_id_deleted = hash->table[i]->id;
+            free(hash->table[i]);
+            free(hash->table[i]->name);
+            hash->table[i] = null;
+            hash->amount_data--;
+
+            return;
+        }
+    }
+    printf("Pelicula no encontrada (FUNCION ELIMINAR POR ID)\n");
 
     return;
 }
@@ -220,6 +256,7 @@ void imprimirTabla(HashTable* hash)
     {
         if (hash->table[i] != null)
         {
+            printf("%d - ", i); //* Indice
             printMovie(hash->table[i]);
             printf("\n");
         }
@@ -234,7 +271,7 @@ void imprimirTabla(HashTable* hash)
 ^ ----------------------
 */
 
-Movie* buscarPeliculaNombre(HashTable* hash, char* nombre)
+/*Movie* buscarPeliculaNombre(HashTable* hash, char* nombre)
 {
     int llave = generarLlave(nombre);
     int indice = funcionHash(hash, llave);
@@ -252,10 +289,58 @@ Movie* buscarPeliculaNombre(HashTable* hash, char* nombre)
     }
 
     return null;
+}*/
+Movie** buscarPeliculasNombre(HashTable* hash, char* nombre, int* cantidadPeliculas)
+{
+    int llave = generarLlave(nombre);
+    int indice = funcionHash(hash, llave);
+    int nuevoIndice = indice;
+
+    int j = 0;
+    
+    Movie** resultados = calloc(1, sizeof(Movie*)); //* asumimos al menos una coincidencia.
+    resultados[0] = null; //* Inicializamos el primer elemento como null, en caso de que no encuentre.
+    *cantidadPeliculas = 0;
+
+    while (hash->table[nuevoIndice] != null)
+    {
+        if (strcmp(hash->table[nuevoIndice]->name, nombre) == 0)
+        {
+            (*cantidadPeliculas)++;
+            resultados = realloc(resultados, sizeof(Movie*) * ( (*cantidadPeliculas)));
+            resultados[(*cantidadPeliculas) - 1] = hash->table[nuevoIndice];
+        }
+        j++;
+        nuevoIndice = sondeoCuadratico(hash, indice, j);
+    }
+
+    return resultados;
+}
+
+void mostrarPeliculasNombre(Movie** peliculas, int cantidadPeliculas)
+{
+    if (peliculas[0] == null)
+    {
+        printf("Pelicula no encontrada\n");
+        return;
+    }
+
+    printf("Peliculas encontradas con el nombre: %s\n", peliculas[0]->name);
+    for (int i = 0 ; i < cantidadPeliculas ; i++)
+    {
+        printMovie(peliculas[i]);
+        printf("\n");
+    }
+    
+    return;
+
 }
 
 Movie* buscarPeliculaID(HashTable* hash, int id)
 {
+    /*
+    * Pendiente de evaluar implementacion.
+    * Esta tabla hash simplemente es un arreglo de punteros (?)
     int llave = id;
     int indice = funcionHash(hash, llave);
     int nuevoIndice = indice;
@@ -270,6 +355,16 @@ Movie* buscarPeliculaID(HashTable* hash, int id)
         j++;
         nuevoIndice = sondeoCuadratico(hash, indice, j);
     }
+    */
+    for (int i = 0 ; i < hash->size ; i++)
+    {
+        if (hash->table[i] != null && hash->table[i]->id == id)
+        {
+            //printf("Pelicula encontrada(Funcion).\n"); //* Debug
+            return hash->table[i];
+        }
+    }
+
 
     return null;
 }
@@ -301,7 +396,8 @@ Movie* initMovie(int id, char* nombre, short int fecha, short int calificacion)
 {
     Movie* pelicula = malloc(sizeof(Movie));
     pelicula->id = id;
-    pelicula->name = nombre;
+    pelicula->name = malloc(strlen(nombre) + 1);
+    strcpy(pelicula->name, nombre);
     pelicula->release_date = fecha;
     pelicula->rating = calificacion;
 

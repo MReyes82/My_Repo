@@ -19,6 +19,11 @@ typedef struct hashtable
     Movie** table; //ALMACENAMIENTO
     FunctionFolding folding; //POINTER A FUNCION FOLDING
 
+    int last_id_deleted; // ID DE LA ULTIMA PELICULA ELIMINADA
+                         // UTILIZADO COMO METODO PARA EVITAR
+                        // ID DUPLICADOS
+    //int max_id;
+
 } HashTable;
 
 //* Funciones tabla hash
@@ -39,7 +44,10 @@ void eliminarPeliculaID(HashTable* hash, int id);
 void imprimirTabla(HashTable* hash);
 
 //* Funciones de busqueda
-Movie* buscarPeliculaNombre(HashTable* hash, char* nombre);
+// ^ Antigua funcion de buscar por nombre, ahora se acepta mas de un elemento con el mismo nombre.
+//Movie* buscarPeliculaNombre(HashTable* hash, char* nombre);
+Movie** buscarPeliculasNombre(HashTable* hash, char* nombre, int* cantidadPeliculas);
+void mostrarPeliculasNombre(Movie** peliculas, int cantidadPeliculas);
 Movie* buscarPeliculaID(HashTable* hash, int id);
 void remapearTabla(HashTable* hash, int newSize);
 
