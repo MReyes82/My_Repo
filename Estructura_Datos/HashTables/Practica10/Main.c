@@ -7,23 +7,6 @@
 #include "Movie.h"
 #include "Hash.h"
 
-void imprimirArreglo(Movie **movies)
-{
-    Movie *dataTemp = null;
-    int i;
-    for(i = 0 ; i < SIZE_DATA ; i++)
-    {
-        dataTemp = getMovie(movies,i);
-
-        if(dataTemp)
-        {
-            printMovie(movies[i]);
-            printf("\n");
-        }
-    }
-
-    return;
-}
 
 void liberarArreglo(Movie **movies)
 {
@@ -34,6 +17,7 @@ void liberarArreglo(Movie **movies)
         if (movies[i] != null)
         {
             free(movies[i]);
+            printf("Liberacion %d\n", i);
         }
     }
     free(movies);
@@ -41,15 +25,18 @@ void liberarArreglo(Movie **movies)
     return;
 }
 
-// TODO: Arreglar bug de identificador duplicado.
+// TODO: Undefined behavior pending
 // ^ No Memry leaks
 
 int main(void)
 {
     //srand(time(NULL));
+    int idTemp = SIZE_DATA;
     int i, opcion, subopcion;
     bool runs = true;
-    char nombre[50];
+    char nombre[64];
+
+    int tam = SIZE_DATA;
 
     HashTable tablaHashIdentificadores;
     HashTable tablaHashNombres;
@@ -57,8 +44,10 @@ int main(void)
     Movie **arregloPeliculas = NULL;
     arregloPeliculas = create_movies();
 
-    initHashTable(&tablaHashIdentificadores, SIZE_DATA, getID);
-    initHashTable(&tablaHashNombres, SIZE_DATA, calcularLlaveString);
+    initHashTable(&tablaHashIdentificadores, tam, getID);
+    printf("Tabla 1 inicializada\n");
+    initHashTable(&tablaHashNombres, (tam * 4), calcularLlaveString);
+    printf("Tabla 2 inicializada\n");
 
     for (i = 0 ; i < SIZE_DATA ; i++)
     {
@@ -73,14 +62,18 @@ int main(void)
         Movie* aTabla2 = initMovie(pelicula->id, pelicula->name, pelicula->release_date, pelicula->rating);
 
         insertarPeliculaID(&tablaHashIdentificadores, aTabla1);
+        printf("%d Primera insercion & ", i);
         insertarPeliculaNombre(&tablaHashNombres, aTabla2);
+        printf("Segunda insercion\n");
 
         pelicula = null;
     }             
-    //tablaHashIdentificadores.max_id = SIZE_DATA;      
-    //tablaHashNombres.max_id = SIZE_DATA;
 
+    printf("Peliculas insertadas\n");
+
+    printf("Crashea aqui");
     liberarArreglo(arregloPeliculas);
+
 
     while (runs)
     {
@@ -100,14 +93,12 @@ int main(void)
         {
         case 0:
             printf("\n----Mostrando tabla hash 1----\n");
-            imprimirDatosTabla(&tablaHashIdentificadores);
             imprimirTabla(&tablaHashIdentificadores);
 
             break;
 
         case 1:
             printf("\n----Mostrando tabla hash 2----\n");
-            imprimirDatosTabla(&tablaHashNombres);
             imprimirTabla(&tablaHashNombres);
 
             break;
@@ -116,7 +107,7 @@ int main(void)
             printf("\n----Buscando pelicula por ID---\n");
 
             printf("Ingrese el ID de la pelicula > ");
-            scanf("%d",&i);
+            scanf("%d", &i);
 
             Movie *pelicula = buscarPeliculaID(&tablaHashIdentificadores, i);
 
@@ -146,6 +137,7 @@ int main(void)
                 printf("Pelicula no encontrada\n");
                 break;
             }
+
             mostrarPeliculasNombre(peliculas, i);
 
             break;
@@ -162,21 +154,13 @@ int main(void)
             printf("Ingrese la calificacion de la pelicula > ");
             scanf("%d", &calificacion);
 
-            id = tablaHashIdentificadores.amount_data + 1;
-            /*
-            * Posible implementacion, generar un ID random.
-            int valorMaximo = tablaHashIdentificadores.amount_data;
-            int valorMinimo = tablaHashIdentificadores.size;
-            id = (valorMinimo) + ( (float)rand() / (float)RAND_MAX ) * (valorMaximo - valorMinimo);
-            printf("ID generado: %d\n", id);
-            */
+            id = idTemp++;
 
             Movie *peliculaNueva = initMovie(id, nombre, fecha, calificacion);
             Movie *peliculaNueva1 = initMovie(id, nombre, fecha, calificacion);
 
-
             insertarPeliculaID(&tablaHashIdentificadores, peliculaNueva);
-            insertarPeliculaNombre(&tablaHashNombres, peliculaNueva1);
+            insertarPeliculaID(&tablaHashNombres, peliculaNueva1);
 
             break;
 
@@ -201,18 +185,15 @@ int main(void)
                     printf("Pelicula no encontrada\n");
                     break;
                 }
-                //char* nombre = peliculaEliminar->name;
 
                 eliminarPeliculaID(&tablaHashIdentificadores, i);
                 eliminarPeliculaID(&tablaHashNombres, i);
-                //eliminarPeliculaNombre(&tablaHashNombres, nombre);
             }
             else if (subopcion == 1)
             {
                 printf("\nIngrese el nombre de la pelicula > ");
                 scanf("\n%[^\n]s", nombre);
 
-                //Movie* peliculaEliminar = buscarPeliculaNombre(&tablaHashNombres, nombre);
                 Movie** peliculasEliminar = buscarPeliculasNombre(&tablaHashNombres, nombre, &i);
 
                 if (peliculasEliminar[0] == NULL)
@@ -228,8 +209,6 @@ int main(void)
 
                 eliminarPeliculaID(&tablaHashIdentificadores, op);
                 eliminarPeliculaID(&tablaHashNombres, op);
-                //eliminarPeliculaNombre(&tablaHashNombres, nombre);
-                //eliminarPeliculaID(&tablaHashIdentificadores, idTemp);
             }
 
             break;

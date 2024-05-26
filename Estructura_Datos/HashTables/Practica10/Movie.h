@@ -7,12 +7,14 @@
 
 #define SIZE_DATA 105
 
-typedef struct 
+typedef struct Movie
 {
     int id;
     char* name;
     short int release_date;
     short int rating;
+
+    struct Movie* siguiente; // Puntero a la siguiente pelicula, para el caso de colisiones
 
 } Movie;
 

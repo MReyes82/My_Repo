@@ -28,17 +28,17 @@ typedef struct hashtable
 
 //* Funciones tabla hash
 void initHashTable(HashTable* hash, int size, FunctionFolding folding);
-int sondeoCuadratico(HashTable* hash, int indice, int i);
-int funcionHash(HashTable* hash, int llave);
+int funcionHash(int llave, int tam);
 int generarLlave(const char* nombre);
 int calcularLlaveString(Movie* pelicula);
 int getID(Movie* pelicula);
-int rehashing(HashTable* hash, Movie* pelicula, Movie** nuevasPeliculas);
+//void rehashing(HashTable* hash, Movie* pelicula, Movie** Peliculas, int size);
 void liberarTabla(HashTable* hash);
 
 //* Operaciones de tabla hash
 void insertarPeliculaNombre(HashTable* hash, Movie* pelicula);
 void insertarPeliculaID(HashTable* hash, Movie* pelicula);
+
 void eliminarPeliculaNombre(HashTable* hash, char* nombre);
 void eliminarPeliculaID(HashTable* hash, int id);
 void imprimirTabla(HashTable* hash);
