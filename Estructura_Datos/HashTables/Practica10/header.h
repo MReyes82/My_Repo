@@ -24,21 +24,30 @@ typedef struct
     int size;
     int dataAmount;
 
+    int lastIDdeleted;
+
 } HashTable;
 
 
+//* FUNCIONES TABLA HASH
 HashTable* initHashTable(int size);
 void liberarTablaHash(HashTable* table);
+void insertarEnTablas(HashTable* hashID, HashTable* hashNombre, int id, char* name, int year, int rating);
 unsigned int funcionHash(int id, int size);
 unsigned int generarLlaveString(char* name, int size);
-void insertarEnTablas(HashTable* id_table, HashTable* name_table, int id, char* name, int year, int rating);
-void eliminarPorID(HashTable* id_table, HashTable* name_table, int id);
-void eliminarPorNombre(HashTable* hashNombres, HashTable* hashID, char* name);
-bool buscarPeliculasNombre(HashTable* name_table, char* name);
-Movie* buscarPeliculaPorID(HashTable* id_table, int id);
 void imprimirTablaHash(HashTable* table);
 
+//* OPERACIONES TABLA HASH
+void posicionarPunteroActual(Movie* apuntadorActual, Movie* apuntadorAnterior, int idBusqueda);
+void moverPunteroEliminar(HashTable* hash, Movie* actual, Movie* anterior, int index);
+void eliminarPorID(HashTable* hashID, HashTable* hashNombre, int id);
+void eliminarPorNombre(HashTable* hashNombres, HashTable* hashID, char* name);
+bool buscarPeliculasNombre(HashTable* hashNombre, char* name);
+Movie* buscarPeliculaPorID(HashTable* hashID, int id);
+void remapearTablaNombre(HashTable* hashNombre, int newSize);
+void remapearTablaID(HashTable* hashID, int newSize);
+
 //* FUNCIONES MOVIE
-void create_movies(HashTable* id_table, HashTable* name_table);
+void create_movies(HashTable* hashID, HashTable* hashNombre);
 void printMovie(Movie* movie);
 Movie* initMovie(int id, char* name, int year, int rating);

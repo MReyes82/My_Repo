@@ -7,9 +7,7 @@
 
 /*
 ! ULTIMA VERSION: REFACTOR TOTAL
-TODO: Agregar comments, separar las funciones del header.h
-TODO: Revisar leaks de memoria
-TODO: y revisar posibles refactors finales
+TODO: bug actual, en peliculas con nombre repetido se elimina la primera que encuentra
 */
 
 int main(void) 
@@ -39,7 +37,7 @@ int main(void)
         printf("[6] TERMINAR PROGRAMA\n");
 
         printf("\nElija una opcion > ");
-        scanf("%d", &opcion);
+        scanf("\n%d", &opcion);
 
         switch (opcion) 
         {
@@ -76,7 +74,7 @@ int main(void)
             case 3:
                 printf("\n----Buscando pelicula por nombre---\n");
                 printf("Ingrese el nombre de la pelicula: ");
-                scanf("%[^\n]s", nombre);
+                scanf("\n%[^\n]s", nombre);
 
                 bool seEncontro = buscarPeliculasNombre(tablaHashNombres, nombre);
 
@@ -90,12 +88,22 @@ int main(void)
             case 4:
                 printf("\n----Agregando pelicula---\n");
                 printf("Ingrese el nombre de la pelicula: ");
-                scanf("%[^\n]s", nombre);
+                scanf("\n%[^\n]s", nombre);
                 printf("Ingrese el año de la pelicula: ");
-                scanf("%d", &year);
+                scanf("\n%d", &year);
                 printf("Ingrese la calificación de la pelicula: ");
-                scanf("%d", &rating);
-                insertarEnTablas(tablaHashIdentificadores, tablaHashNombres, ++id_counter, nombre, year, rating);
+                scanf("\n%d", &rating);
+
+                if (tablaHashNombres->lastIDdeleted == -1 && tablaHashIdentificadores->lastIDdeleted == -1)
+                {
+                    id = ++id_counter;
+
+                } else {
+                    if (tablaHashNombres->lastIDdeleted != -1)
+                        id = tablaHashIdentificadores->lastIDdeleted;
+                }
+
+                insertarEnTablas(tablaHashIdentificadores, tablaHashNombres, id, nombre, year, rating);
 
                 break;
 
@@ -107,19 +115,19 @@ int main(void)
                 printf("[1] Eliminar por nombre\n");
                 printf("Eliga una opcion > ");
                 
-                scanf("%d", &subOpcion);
+                scanf("\n%d", &subOpcion);
 
-                if (subOpcion == 1) 
+                if (subOpcion == 0) 
                 {
                     printf("\nIngrese el ID de la pelicula > ");
-                    scanf("%d", &id);
+                    scanf("\n%d", &id);
                     eliminarPorID(tablaHashIdentificadores, tablaHashNombres, id);
 
                 } 
-                else if (subOpcion == 2) 
+                else if (subOpcion == 1) 
                 {
                     printf("\nIngrese el nombre de la pelicula > ");
-                    scanf("%[^\n]s", nombre);
+                    scanf("\n%[^\n]s", nombre);
                     eliminarPorNombre(tablaHashNombres, tablaHashIdentificadores, nombre);
                 }
                 break;
