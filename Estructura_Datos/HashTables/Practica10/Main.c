@@ -7,7 +7,7 @@
 
 /*
 ! ULTIMA VERSION: REFACTOR TOTAL
-TODO: bug actual, en peliculas con nombre repetido se elimina la primera que encuentra
+TODO: 1 leak pendiente
 */
 
 int main(void) 

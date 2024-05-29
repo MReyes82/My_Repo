@@ -38,8 +38,11 @@ unsigned int generarLlaveString(char* name, int size);
 void imprimirTablaHash(HashTable* table);
 
 //* OPERACIONES TABLA HASH
-void posicionarPunteroActual(Movie* apuntadorActual, Movie* apuntadorAnterior, int idBusqueda);
-void moverPunteroEliminar(HashTable* hash, Movie* actual, Movie* anterior, int index);
+
+// * aux
+//void posicionarPunteroActual(Movie** apuntadorActual, Movie** apuntadorAnterior, int idBusqueda);
+//void moverPunteroEliminar(HashTable* hash, Movie** actual, Movie** anterior, int index);
+// * aux
 void eliminarPorID(HashTable* hashID, HashTable* hashNombre, int id);
 void eliminarPorNombre(HashTable* hashNombres, HashTable* hashID, char* name);
 bool buscarPeliculasNombre(HashTable* hashNombre, char* name);

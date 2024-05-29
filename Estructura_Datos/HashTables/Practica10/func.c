@@ -65,21 +65,23 @@ unsigned int generarLlaveString(char* name, int size)
     return llave % size;
 }
 
-void posicionarPunteroActual(Movie* apuntadorActual, Movie* apuntadorAnterior, int idBusqueda)
+/*void posicionarPunteroActual(Movie** apuntadorActual, Movie** apuntadorAnterior, int idBusqueda)
 {
-    //* Esta funcion se encarga recorrer la lista enlazada
-    while (apuntadorActual != null && apuntadorActual->id != idBusqueda)
+    //printf("Segfault en posicionar puntero\n");
+    // Esta funcion se encarga recorrer la lista enlazada
+    while (*apuntadorActual != null && (*apuntadorActual)->id != idBusqueda)
     {
-        apuntadorAnterior = apuntadorActual;
-        apuntadorActual = apuntadorActual->siguiente;
+        *apuntadorAnterior = *apuntadorActual;
+        *apuntadorActual = (*apuntadorActual)->siguiente;
     }
-
+    
     return;
 }
 
-void moverPunteroEliminar(HashTable* hash, Movie* actual, Movie* anterior, int index)
+void moverPunteroEliminar(HashTable* hash, Movie** actual, Movie** anterior, int index)
 {
-    if (actual == null)
+    printf("Segfault en mover puntro eliminar\n");
+    if (*actual == null)
     {
         printf("Pelicula no encontrada.\n");
         return;
@@ -87,16 +89,23 @@ void moverPunteroEliminar(HashTable* hash, Movie* actual, Movie* anterior, int i
 
     if (anterior != null)
     {
-        anterior->siguiente = actual->siguiente;
+        printf("Asigna caso 1\n");
+
+        if ((*actual)->siguiente == null)
+        {
+            printf("Fatal error.\n");
+        }
+
+        (*anterior)->siguiente = (*actual)->siguiente;
 
     } else  {
-        hash->table[index] = actual->siguiente;
+        printf("Fails to assign\n");
+        hash->table[index] = (*actual)->siguiente;
     }
-
-    hash->dataAmount--;
+    printf("Segfault en posicionar puntero\n");
 
     return;
-}
+}*/
 
 void insertarEnTablas(HashTable* hashID, HashTable* hashNombres, int id, char* name, int year, int rating) 
 {
@@ -142,29 +151,67 @@ void eliminarPorID(HashTable* hashID, HashTable* hashNombres, int id)
     Movie* anterior = null;
 
     //* Buscar la película en la tabla de ID
-    posicionarPunteroActual(actual, anterior, id);
 
-    //* Movemos el apuntador de la peliucla para eliminarla 
-    moverPunteroEliminar(hashID, actual, anterior, indice);
+    //* Movemos el apuntador de la pelicula para eliminarla 
+    while (actual != null && actual->id != id)
+    {
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+
+    if (actual == null)
+    {
+        printf("Pelicula con ID %d no encontrada.\n", id);
+        return;
+    }
+
+    //* Si la película fue encontrada, eliminarla
+    if (anterior != null) {
+        anterior->siguiente = actual->siguiente;
+
+    } else {
+        hashID->table[indice] = actual->siguiente;
+    }
+
     hashID->lastIDdeleted = id;
 
     //* Ahora, buscamos la pelicula en la tabla de nombres
 
-    // * colocamos el indice el elemento a buscar
+    // * colocamos el indice del elemento a buscar
     indice = generarLlaveString(actual->name, hashNombres->size);
     actual = hashNombres->table[indice];
     anterior = null;
 
     //* Recorremos la lista enlazada
-    posicionarPunteroActual(actual, anterior, id);
 
-    //* Eliminamos la pelicula si fue encontrada
-    moverPunteroEliminar(hashNombres, actual, anterior, indice);
-    hashNombres -> lastIDdeleted = id;
+    //* Movemos el apuntador de la pelicula para eliminarla 
+    while (actual != null && actual->id != id)
+    {
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+
+    
+    if (actual == null)
+    {
+        return;
+    }
+
+    //* Si se encontro, la eliminamos
+    if (anterior !=  null) {
+        anterior->siguiente = actual->siguiente;
+
+    } else {
+        hashNombres->table[indice] = actual->siguiente;
+    }
+
+    hashNombres->lastIDdeleted = id;
 
     free(actual);
 
     printf("Pelicula con ID %d eliminada.\n", id);
+
+    return;
 }
 
 void eliminarPorNombre(HashTable* hashNombres, HashTable* hashID, char* name) 
@@ -204,22 +251,50 @@ void eliminarPorNombre(HashTable* hashNombres, HashTable* hashID, char* name)
     anterior = null;
 
     //* Buscamos en la tabla de nombres
-    posicionarPunteroActual(actual, anterior, idAeliminar);
+    while (actual != null && actual->id != idAeliminar)
+    {
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+
+    if (actual == null) 
+    {
+        printf("ID de pelicula invalido. La pelicula no fue encontrada.\n");
+        return;
+    }
 
     /// * Eliminamos la pelicula si fue encontrada
-    moverPunteroEliminar(hashNombres, actual, anterior, indice);
-    hashNombres->lastIDdeleted = idAeliminar;
 
-    //* Buscamos la pelicula en la tabla de ID's
+    if (anterior != null) {
+        anterior->siguiente = actual->siguiente;
+
+    } else {
+        hashNombres->table[indice] = actual->siguiente;
+    }
+
+    hashNombres->lastIDdeleted = idAeliminar;
 
     indice = funcionHash(actual->id, hashID->size);
     Movie* peliculaID = hashID->table[indice];
     anterior = null;
 
-    posicionarPunteroActual(peliculaID, anterior, actual->id);
+    //* Posicionamos los apuntadores en la posicion correcta
+    while (peliculaID != null && peliculaID->id != actual->id)
+    {
+        anterior = peliculaID;
+        peliculaID = peliculaID->siguiente;
+    }
 
     // * La eliminamos si fue encontrada
-    moverPunteroEliminar(hashID, peliculaID, anterior, indice);
+    if (peliculaID != null)
+    {
+        if (anterior != null) {
+            anterior->siguiente = peliculaID->siguiente;
+        } else {
+            hashID->table[indice] = peliculaID->siguiente;
+        }
+    }
+
     hashID->lastIDdeleted = actual->id;
     
     free(peliculaID);
