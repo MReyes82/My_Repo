@@ -20,6 +20,16 @@ public class Grupo
         cantidadAlumnos = 0;
         alumnos = new Alumno[cantidadMaxAlumnos];
     }
+    
+    public void setAlumnos(Alumno[] alumnos)
+    {
+    	this.alumnos = alumnos;
+    }
+    
+    public Alumno[] getAlumnos()
+    {
+    	return this.alumnos;
+    }
 
     public int getCantidadAlumnnos()
     {
