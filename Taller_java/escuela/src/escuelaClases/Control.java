@@ -107,6 +107,13 @@ public class Control {
         return grupos.removeIf(grupo -> grupo.getNumeroDeGrupo() == numero);
     }
 
+    public static Grupo buscarGrupoPorNumero(int numero) {
+        return grupos.stream()
+                .filter(grupo -> grupo.getNumeroDeGrupo() == numero)
+                .findFirst()
+                .orElse(null);
+    }
+
     public static Alumno buscarAlumnoPorNombre(String nombre) {
         return estudiantes.stream()
                 .filter(alumno -> alumno.getNombre().equalsIgnoreCase(nombre))

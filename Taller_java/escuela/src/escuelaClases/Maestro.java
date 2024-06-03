@@ -18,6 +18,11 @@ public class Maestro extends Persona
         return tituloAcademico;
     }
 
+    public void setTituloAcademico(String tituloAcademico)
+    {
+    	this.tituloAcademico = tituloAcademico;
+    }
+
     public void imprimirDatos()
     {
         JOptionPane.showMessageDialog(null, "Nombre: " + this.getNombre() + "\nEdad: " + this.getEdad() +
