@@ -1,46 +1,54 @@
 #pragma once
 
-typedef struct Libro
+#include <stdbool.h>
+
+#define BOX_SIZE 44
+
+typedef struct book 
 {
-    char *nombre;
-    char *genero;
-    int releaseDate;
+    char title[64];
+    char genre[32];
+    int release_date;   
+    
+} Book;
 
-} Libro;
-
-typedef struct Elemento
+typedef struct node
 {
-    Libro *elementoLibro;
-    struct Elemento *sig;
+    Book* element_book;
+    struct Node* next;
 
-} Elemento;
+} Node;
 
-typedef struct Pila
+typedef struct stack
 {
-    Elemento *cima;
-    int longitud;
-    int numElementos;
+    Node* st_top;
+    int stack_lenth;
+    int node_count;
 
-} Pila;
+} Stack;
 
-typedef struct StackArray
+typedef struct Stack_Array
 {
-    Pila *stackLibros;
-    int numStacks;
+    Stack book_stack;
+    int stack_count;
 
-} StackArray;
+} Stack_array;
 
-Elemento *alojarElemento(Libro *input);
-Pila* inicializarCaja(void);
-void inicializarPila(Pila *stackLibro,int longitud);
-void imprimirPila(Pila *stackLibro);
-int llena(Pila stackLibro);
-int vacia(Pila stackLibro);
-void push(Pila *stackLibro, Libro *nuevo);
-Libro *pop(Pila *stackLibro);
-void vaciarPila(Pila *stackLibro);
-void apilarPorGenero(StackArray *elementoArray, Libro *elementoLibro);
-void apilarPorFecha(StackArray *elementoArray, Libro *elementoLibro);
-int subMenu(char *textoPrint);
-//void printGeneros(StackArray *elementoArray);
-//void printDates(StackArray *elementoArray);
+Book* init_book(char* title, char* genre, int year);
+Node* init_node(Book* book_node);
+Stack* init_book_box(void);
+Stack* init_stack(int length);
+void print_stack(Stack* book_stack);
+bool isFull(Stack* st);
+bool isEmpty(Stack* st);
+void push(Stack* book_stack, Book* new_book);
+Book* pop(Stack* book_stack);
+void push_stack(Stack_array* st_arr, Stack* st);
+Book* pop_stack(Stack_array* st_arr);
+void empty_stack(Stack* stack);
+void genre_stackify(Stack_array* st_arr, Book* new_book);
+void date_stackify(Stack_array* st_arr, Book* new_book);
+int sub_menu(char* print_text);
+
+void free_stack(Stack* st);
+void free_node(Node* node);

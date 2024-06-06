@@ -3,6 +3,175 @@
 #include <stdio.h>
 #include <string.h>
 
+Book* init_book(char* title, char* genre, int year)
+{
+    Book* new_book = malloc(sizeof(Book));
+    strcpy(new_book->title, title);
+    strcpy(new_book->genre, genre);
+    new_book->release_date = year;
+
+    return new_book;
+}
+
+Node* init_node(Book* book_node)
+{
+    Node* new_node = malloc(sizeof(Node));
+    new_node->element_book = book_node;
+    new_node->next = NULL;
+
+    return new_node;
+
+}
+
+Stack* init_book_box(void)
+{
+    Stack* box;
+    static Book books[BOX_SIZE] = 
+    {
+        {"Cell","Horror",2006},
+        {"The Street Lawyer","Thriller",1998},
+        {"Nineteen Minutes","Thriller",2007},
+        {"Harry Potter y la piedra filosofal","Fantasy",1997},
+        {"Armageddon","Post-apocalyptic fiction",2003},
+        {"The Jester","Historical fiction",2003},
+        {"Harry Potter y el prisionero de Azkaban","Fantasy",1999},
+        {"Star Wars: Episode I The Phantom Menace","Science fiction",1999},
+        {"Dreamcatcher","Fantasy",2001},
+        {"Rainbow Six","Thriller",1998},
+        {"Hannibal","Horror",1999},
+        {"Twelve Sharp","Crime",2006},
+        {"The Bear and the Dragon","Thriller",2000},
+        {"The Testament","Adventure Story",1999},
+        {"Red Rabbit","Historical fiction",2002},
+        {"Anansi Boys","Fantasy",2005},
+        {"Airframe","Thriller",1997},
+        {"Harry Potter y la camara secreta","Fantasy",1998},
+        {"The King of Torts","Thriller",2003},
+        {"The Da Vinci Code","Mystery",2003},
+        {"Harry Potter y la Orden del Fenix","Fantasy",2003},
+        {"Mary, Mary","Crime",2005},
+        {"The Summons","Thriller",2002},
+        {"Bag of Bones","Horror",1998},
+        {"The 5th Horseman","Thriller",2006},
+        {"Step on a Crack","Thriller",2007},
+        {"Winter's Heart","Fantasy",2000},
+        {"Plum Island","Fiction",1997},
+        {"Eleven on Top","Crime",2005},
+        {"Harry Potter y el misterio del principe","Fantasy",2005},
+        {"The Closers","Crime",2005},
+        {"Glorious Appearing","Post-apocalyptic fiction",2004},
+        {"Prey ","Science fiction",2002},
+        {"The Last Juror","Thriller",2004},
+        {"'S' Is for Silence","Mystery",2005},
+        {"4th of July","Mystery",2005},
+        {"Harry Potter y las reliquias de la Muerte","Fantasy",2007},
+        {"The Shelters of Stone","Historical fiction",2002},
+        {"Harry Potter y el caliz de fuego","Fantasy",2000},
+        {"The Dark Tower VII: The Dark Tower","Fantasy",2004},
+        {"Book of the Dead ","Crime",2007},
+        {"The Dark Tower VI: Song of Susannah","Fantasy",2004},
+        {"Cold Mountain","Historical novel",1997},
+        {"A Feast for Crows","Fantasy",2005},
+    };
+
+    box = init_stack(BOX_SIZE);
+    
+    for (int i = 0 ; i < BOX_SIZE ; i++)
+    {
+        Book* tmp = init_book(
+            books[i].title, 
+            books[i].genre, 
+            books[i].release_date);
+
+        push(box, tmp);
+    }
+    
+    return box;
+}
+
+Stack* init_stack(int length)
+{
+    Stack* new_stack = malloc(sizeof(Stack));
+    new_stack->st_top = NULL;
+    new_stack->stack_lenth = length;
+    new_stack->node_count = 0;
+
+    return new_stack;
+
+}
+
+void print_stack(Stack* book_stack);
+
+bool isFull(Stack* st)
+{
+    if (st->stack_lenth == 0 || st->node_count < st->stack_lenth)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool isEmpty(Stack* st)
+{
+    return (st->st_top);
+}
+
+//* Push a book into a struct of type "Stack"
+void push(Stack* book_stack, Book* new_book)
+{
+    if (isFull(book_stack))
+     return;
+
+    if (book_stack->st_top == NULL) 
+    {
+        book_stack->st_top = init_node(new_book);
+
+    } else {
+        Node* new_node = init_node(new_book);
+        new_node->next = book_stack->st_top;
+        book_stack->st_top = new_node;
+    
+    }
+    book_stack->node_count++;
+
+    return;
+}
+
+//* Pop a book from a struct of type "Stack"
+Book* pop(Stack* book_stack)
+{
+    if (isEmpty(book_stack))
+    {
+        return NULL;
+    }
+
+    Node* current = book_stack->st_top;
+    Book* popBuffer = current->element_book;
+    book_stack->st_top = current->next;
+    free(current);
+
+    book_stack->node_count--;
+
+    return popBuffer;
+
+}
+
+//* Pushes a struct of type stack into a struct of type "Stack_array"
+void push_stack(Stack_array* st_arr, Stack* st);
+
+//* Pops a struct of type stack from a struct of type "Stack_array"
+Book* pop_stack(Stack_array* st_arr);
+
+void empty_stack(Stack* stack);
+void genre_stackify(Stack_array* st_arr, Book* new_book);
+void date_stackify(Stack_array* st_arr, Book* new_book);
+int sub_menu(char* print_text);
+
+void free_stack(Stack* st);
+void free_node(Node* node);
+
+
+/*
 Pila *inicializarCaja(void)
 {
     Pila *caja;
@@ -195,10 +364,6 @@ void apilarPorGenero(StackArray *elementoArray, Libro *elementoLibro)
             return;
         }
     }
-
-    /* 
-    realojamos el tamaño en caso que el genero no sea el deseado
-    */
     Pila *auxiliar = NULL;
     while(auxiliar == NULL)
     {
@@ -254,4 +419,7 @@ int subMenu(char *textoPrint)
 
     return output;
 }
+*/
+
+
 
