@@ -191,62 +191,9 @@ void encolarColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaActual,
         *colaPrincipal = auxiliar; // actualizamos la cola principal con la cola auxiliar
     }
 
-    colaPrincipal->cantidadColas++; 
-    /*
-    if (colaPrincipal->inicio == null)
-    {
-        colaPrincipal->inicio = colaActual;
-        colaPrincipal->fin = colaActual;
-    }
-    else
-    {
-        if (prioridad == _MIN_)
-        {
-            ColaArchivos* actual = colaPrincipal->inicio;
-            ColaArchivos* anterior = null;
+    colaPrincipal->cantidadColas++;
 
-            while (actual != null && actual->paginasDeLosArchivos < colaActual->paginasDeLosArchivos)
-            {
-                anterior = actual;
-                actual = actual->siguiente;
-            }
-
-            if (anterior == null)
-            {
-                colaActual->siguiente = colaPrincipal->inicio;
-                colaPrincipal->inicio = colaActual;
-            }
-            else
-            {
-                colaActual->siguiente = anterior->siguiente;
-                anterior->siguiente = colaActual;
-            }
-        }
-        else if (prioridad == _MAX_)
-        {
-            ColaArchivos* actual = colaPrincipal->inicio;
-            ColaArchivos* anterior = null;
-
-            while (actual != null && actual->paginasDeLosArchivos > colaActual->paginasDeLosArchivos)
-            {
-                anterior = actual;
-                actual = actual->siguiente;
-            }
-
-            if (anterior == null)
-            {
-                colaActual->siguiente = colaPrincipal->inicio;
-                colaPrincipal->inicio = colaActual;
-            }
-            else
-            {
-                colaActual->siguiente = anterior->siguiente;
-                anterior->siguiente = colaActual;
-            }
-        }
-    }
-    
-    colaPrincipal->cantidadColas++;*/
+    return;
 }
 
 void enqueueColaArchivos(ColaImpresion* colaPrincipal, ColaArchivos* colaNueva)
@@ -327,22 +274,6 @@ ColaArchivos* encontrarColaArchivos(ColaImpresion* colaImpresion, int paginas)
     *colaImpresion = auxiliar;
 
     return colaEncontrada;
-
-    /*
-    ColaArchivos* colaActual = colaImpresion->inicio;
-
-    while (colaActual != null)
-    {
-        if (!estaVacio(colaActual) && colaActual->paginasDeLosArchivos == paginas)
-        {
-            return colaActual;
-        }
-
-        colaActual = colaActual->siguiente;
-    }
-    
-    return null;
-    */
 }
 
 void encolarArchivoPrioridad(ColaImpresion* colaPrincipal, Archivo* doc, int prioridad)

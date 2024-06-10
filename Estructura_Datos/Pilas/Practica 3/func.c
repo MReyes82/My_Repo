@@ -27,7 +27,7 @@ Node* init_node(Book* book_node)
 Stack* init_book_box(void)
 {
     Stack* box;
-    static Book books[BOX_SIZE] = 
+    Book books[BOX_SIZE] = 
     {
         {"Cell","Horror",2006},
         {"The Street Lawyer","Thriller",1998},
@@ -85,6 +85,7 @@ Stack* init_book_box(void)
             books[i].release_date);
 
         push(box, tmp);
+        //push(box, &books[i]);
     }
     
     return box;
@@ -104,12 +105,12 @@ Stack* init_stack(int length)
 
 }
 
-Stack_array* init_stack_array(void)
+Stack_array init_stack_array(void)
 {
-    Stack_array* new_stack_array = malloc(sizeof(Stack_array));
+    Stack_array new_stack_array;
 
-    new_stack_array->top_book_stack = NULL;
-    new_stack_array->stack_count = 0;
+    new_stack_array.top_book_stack = NULL;
+    new_stack_array.stack_count = 0;
 
     return new_stack_array;
 }
@@ -184,7 +185,7 @@ Book* pop(Stack* book_stack)
 
     Node* current = book_stack->st_top;
     Book* popBuffer = current->element_book;
-    book_stack->st_top = current->next;
+    book_stack->st_top = book_stack->st_top->next;
     free(current);
 
     book_stack->node_count--;
@@ -232,8 +233,7 @@ Stack* pop_stack(Stack_array* st_arr)
 
     Stack* current = st_arr->top_book_stack;
     Stack* popBuffer = current;
-    st_arr->top_book_stack = current->next;
-    //free(current);
+    st_arr->top_book_stack = st_arr->top_book_stack->next;
 
     st_arr->stack_count--;
 
@@ -269,7 +269,6 @@ void genre_stackify(Stack_array* st_arr, Book* new_book)
     {
         return;
     }
-
     //* We check if the stack array is empty
     //* If so, we create a new stack and push the book
     //* into it and push the stack into the stack array
@@ -279,13 +278,9 @@ void genre_stackify(Stack_array* st_arr, Book* new_book)
         push(new_stack, new_book);
         push_stack(st_arr, new_stack);
 
-        st_arr->stack_count++;
-
-        return;
-
     } else {
         bool found = false;
-        Stack_array* aux = init_stack_array();
+        Stack_array aux = init_stack_array();
         Stack* tmp_stack = NULL;
 
         //* We look for a stack with the same genre as the new book
@@ -300,12 +295,10 @@ void genre_stackify(Stack_array* st_arr, Book* new_book)
             {
                 found = true;
                 push(tmp_stack, new_book);
-                push_stack(aux, tmp_stack);
-                break;
             }
             //* if it doesn't return 0 we push the stack into the aux stack array
             //* and keep looking
-            push_stack(aux, tmp_stack);
+            push_stack(&aux, tmp_stack);
         }
         //* If we didn't find a stack with the same genre
         //* we create a new stack and push the book into it
@@ -313,20 +306,14 @@ void genre_stackify(Stack_array* st_arr, Book* new_book)
         {
             Stack* new_stack = init_stack(0);
             push(new_stack, new_book);
-            push_stack(aux, new_stack);
-
-            st_arr->stack_count++;
+            push_stack(&aux, new_stack);
         }
 
-        //* We push the stacks from the aux stack array back into the original stack array
-        while (aux->top_book_stack != NULL)
-        {
-            tmp_stack = pop_stack(aux);
-            push_stack(st_arr, tmp_stack);
-        }
-
-        return;
+        //* We update the pointer of the stack array to the aux stack array
+        *st_arr = aux;
     }
+    
+    return;
 }
 
 void date_stackify(Stack_array* st_arr, Book* new_book)
@@ -347,13 +334,9 @@ void date_stackify(Stack_array* st_arr, Book* new_book)
         push(new_stack, new_book);
         push_stack(st_arr, new_stack);
 
-        st_arr->stack_count++;
-
-        return;
-
     } else {
         bool found = false;
-        Stack_array* aux = init_stack_array();
+        Stack_array aux = init_stack_array();
         Stack* tmp_stack = NULL;
 
         //* We look for a stack with the same genre as the new book
@@ -368,12 +351,10 @@ void date_stackify(Stack_array* st_arr, Book* new_book)
             {
                 found = true;
                 push(tmp_stack, new_book);
-                push_stack(aux, tmp_stack);
-                break;
             }
             //* if it doesn't equal we push the stack into the aux stack array
             //* and keep looking
-            push_stack(aux, tmp_stack);
+            push_stack(&aux, tmp_stack);
         }
         //* If we didn't find a stack with the same date
         //* we create a new stack and push the book into it
@@ -381,20 +362,21 @@ void date_stackify(Stack_array* st_arr, Book* new_book)
         {
             Stack* new_stack = init_stack(0);
             push(new_stack, new_book);
-            push_stack(aux, new_stack);
-
-            st_arr->stack_count++;
+            push_stack(&aux, new_stack);
         }
 
+        //* We update the pointer of the stack array to the aux stack array
+        *st_arr = aux;
+
         //* We push the stacks from the aux stack array back into the original stack array
-        while (aux->top_book_stack != NULL)
+        /*while (aux->top_book_stack != NULL)
         {
             tmp_stack = pop_stack(aux);
             push_stack(st_arr, tmp_stack);
-        }
-
-        return;
+        }*/
     }
+
+    return;
 }
 
 int sub_menu(char* print_text)
@@ -431,12 +413,13 @@ void print_stack_array(Stack_array* st_arr, Stacked_by stacked_by)
         return;
     }
 
-    Stack_array* aux = init_stack_array();
+    Stack_array aux = init_stack_array();
     Stack* tmp_stack = NULL;
     int iterator = 0;
 
     while (st_arr->top_book_stack != NULL)
     {
+        printf("It enters while cycle\n");
         tmp_stack = pop_stack(st_arr);
         
         if (stacked_by == GENRE)
@@ -448,14 +431,16 @@ void print_stack_array(Stack_array* st_arr, Stacked_by stacked_by)
         }
         iterator++;
 
-        push_stack(aux, tmp_stack);
+        push_stack(&aux, tmp_stack);
     }
 
-    while (aux->top_book_stack != NULL)
+    *st_arr = aux;
+
+    /*while (aux->top_book_stack != NULL)
     {
         tmp_stack = pop_stack(aux);
         push_stack(st_arr, tmp_stack);
-    }
+    }*/
 
     return;
 }
@@ -472,30 +457,28 @@ Stack* get_stack(Stack_array* st_arr, int choose)
     //* until we reach the selected stack
     int moved_positions = 0;
 
-    Stack_array* aux = init_stack_array();
+    Stack_array aux = init_stack_array();
     Stack* tmp_stack = NULL;
+    Stack* choosen_stack = NULL;
 
     //* We traverse the stack array until we reach the selected stack
     while (st_arr->top_book_stack != NULL)
     {
         tmp_stack = pop_stack(st_arr);
 
-        //* if we reach the selected stack we break the loop
+        //* if we reach the selected stack we save it
         if (moved_positions == choose)
         {
-            break;
+            choosen_stack = tmp_stack;
         }
 
         moved_positions++;
-        push_stack(aux, tmp_stack);
+        push_stack(&aux, tmp_stack);
     }
 
-    //* We push the stacks back into the original stack array
-    while (aux->top_book_stack != NULL)
-    {
-        push_stack(st_arr, pop_stack(aux));
-    }
+    //* We assign the stack array to the aux stack array
+    *st_arr = aux;
 
-    return tmp_stack;
+    return choosen_stack;
 }
 

@@ -3,11 +3,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-/*
-^ PROBLEMA ACTUAL "APARENTE": FREEZED OUT CUANDO MAS 
-^ DE UNA COLA DE ARCHIVOS TIENE 2 ELEMENTOS O MAS
-^ SI NO SE BORRA, SE BORRA LA COLA DE ARCHIVOS
-*/
 
 int main (int argc, char* argv[])
 {

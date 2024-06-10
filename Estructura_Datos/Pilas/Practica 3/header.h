@@ -47,7 +47,7 @@ Book* init_book(char* title, char* genre, int year);
 Node* init_node(Book* book_node);
 Stack* init_book_box(void);
 Stack* init_stack(int length);
-Stack_array* init_stack_array(void);
+Stack_array init_stack_array(void);
 
 void print_stack(Stack* book_stack);
 bool isFull(Stack* st);

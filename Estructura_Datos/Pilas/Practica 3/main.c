@@ -4,6 +4,9 @@
 #include <string.h>
 #include <stdbool.h>
 
+// TODO: change implementation of a stack array. instead of being a pointer to struct
+// TODO: now it will be a regular struct.
+
 int main (void)
 {
     int option, selection;
@@ -12,8 +15,8 @@ int main (void)
 
     Stack* selected_stack;
     
-    Stack_array* box_stacked_by_genre = init_stack_array();
-    Stack_array* box_stacked_by_year = init_stack_array();
+    Stack_array box_stacked_by_genre = init_stack_array();
+    Stack_array box_stacked_by_year = init_stack_array();
 
     while (runs)
     {
@@ -38,22 +41,32 @@ int main (void)
             while (!isEmpty(box))
             {
                 Book* aux = pop(box);
-                printf("Pops\n");
-                genre_stackify(box_stacked_by_genre, aux);
+                printf("Popped book: \n");
+                print_book(aux);
+                genre_stackify(&box_stacked_by_genre, aux);
             }
 
-            // mostramos generos
-            print_stack_array(box_stacked_by_genre, GENRE);
+            //* We show the genres and ask the user to select one
+            print_stack_array(&box_stacked_by_genre, GENRE);
+            selection = sub_menu("\nElige una opcion > ");
 
-            selection = sub_menu("\nElige una opcion > \n");
+            selected_stack = get_stack(&box_stacked_by_genre, selection);
 
-            selected_stack = get_stack(box_stacked_by_genre, selection);
-            print_stack(selected_stack);
-
-            // regresamos los libros a la caja
-            while (box_stacked_by_genre->top_book_stack != NULL)
+            //* Selected stack is NULL if the user selects an invalid option
+            if (selected_stack == NULL)
             {
-                Stack* aux = pop_stack(box_stacked_by_genre);
+                printf("\nOpcion no valida\n");
+            } else {
+                print_stack(selected_stack);
+            }
+
+            //* We return the choosen stack back to the stack array
+            push_stack(&box_stacked_by_genre, selected_stack);
+
+            //* We return the books back to the box
+            while (box_stacked_by_genre.top_book_stack != NULL)
+            {
+                Stack* aux = pop_stack(&box_stacked_by_genre);
 
                 while (!isEmpty(aux))
                 {
@@ -70,21 +83,27 @@ int main (void)
             while (!isEmpty(box))
             {
                 Book* aux = pop(box);
-                date_stackify(box_stacked_by_year, aux);
+                date_stackify(&box_stacked_by_year, aux);
             }
 
             // mostramos fechas
-            print_stack_array(box_stacked_by_year, YEAR);
+            print_stack_array(&box_stacked_by_year, YEAR);
 
             selection = sub_menu("\nElige una opcion > \n");
 
-            selected_stack = get_stack(box_stacked_by_year, selection);
-            print_stack(selected_stack);
+            selected_stack = get_stack(&box_stacked_by_year, selection);
+
+            if (selected_stack == NULL)
+            {
+                printf("\nOpcion no valida\n");
+            } else {
+                print_stack(selected_stack);
+            }
 
             // regresamos los libros a la caja
-            while (box_stacked_by_year->top_book_stack != NULL)
+            while (box_stacked_by_year.top_book_stack != NULL)
             {
-                Stack* aux = pop_stack(box_stacked_by_year);
+                Stack* aux = pop_stack(&box_stacked_by_year);
 
                 while (!isEmpty(aux))
                 {
@@ -107,8 +126,8 @@ int main (void)
 
     }
     
-    free_stack_arr(box_stacked_by_genre);
-    free_stack_arr(box_stacked_by_year);
+    free_stack_arr(&box_stacked_by_genre);
+    free_stack_arr(&box_stacked_by_year);
 
     empty_stack(box);
     free(box);
