@@ -2,104 +2,102 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 int main (void)
 {
-    int opcion, i, seleccion;
-    Pila *caja;
-    caja = inicializarCaja();
-    int runs = 1;
+    int option, selection;
+    Stack* box = init_book_box();
+    bool runs = true;
 
-    StackArray pilaLibros[2];
-    // incializamos el array de stacks
-    for (i = 0 ; i < 2 ; i++)
-    {
-        pilaLibros[i].stackLibros = malloc(sizeof(Pila));
-        pilaLibros[i].numStacks = 0;
-        inicializarPila(pilaLibros[i].stackLibros, 0); // sin limite
-    }
+    Stack* selected_stack;
+    
+    Stack_array* box_stacked_by_genre = init_stack_array();
+    Stack_array* box_stacked_by_year = init_stack_array();
 
     while (runs)
     {
-        
         printf("\n[1] Mostrar contenido de la caja.");
         printf("\n[2] Apilar por genero.");
         printf("\n[3] Apilar por fecha.");
         printf("\n[4] Terminar programa.");
-        printf("\nElige una opcion > ");
-        scanf("\n%d", &opcion);
+        printf("\n> ");
+        scanf("\n%d", &option);
 
-        switch (opcion)
+        switch (option)
         {
         case 1:
-            printf("\n[1] Mostrar contenido de la caja.\n");
-            imprimirPila(caja);
+            printf("\n[1] MOSTRAR CONTENIDO DE LA CAJA\n");
+            print_stack(box);
+
             break;
         
         case 2:
-            printf("\n");
+            printf("\n[2] APILAR POR GENERO\n");
             
-            while (!vacia(*caja))
+            while (!isEmpty(box))
             {
-                Libro *auxiliar = pop(caja);
-                apilarPorGenero(&pilaLibros[0], auxiliar);
+                Book* aux = pop(box);
+                printf("Pops\n");
+                genre_stackify(box_stacked_by_genre, aux);
             }
 
             // mostramos generos
-            for (int i = 0 ; i < pilaLibros[0].numStacks ; i++)
-            {
-                printf("\n[%d] %s", i, pilaLibros[0].stackLibros[i].cima->elementoLibro->genero);
-            }
-            seleccion = subMenu("\nElige una opcion > \n");
+            print_stack_array(box_stacked_by_genre, GENRE);
 
-            imprimirPila(&pilaLibros[0].stackLibros[seleccion]);
+            selection = sub_menu("\nElige una opcion > \n");
+
+            selected_stack = get_stack(box_stacked_by_genre, selection);
+            print_stack(selected_stack);
 
             // regresamos los libros a la caja
-            for (i = 0 ; i < pilaLibros[0].numStacks ; i++)
+            while (box_stacked_by_genre->top_book_stack != NULL)
             {
-                while (!vacia(pilaLibros[0].stackLibros[i]))
+                Stack* aux = pop_stack(box_stacked_by_genre);
+
+                while (!isEmpty(aux))
                 {
-                    push(caja, pop(&pilaLibros[0].stackLibros[i]));
+                    Book* tmp = pop(aux);
+                    push(box, tmp);
                 }
             }
-            pilaLibros->numStacks = 0;
             
             break;
 
         case 3:
-            printf("\n");
+            printf("\n[3] APILAR POR AÑO\n");
 
-            while (!vacia(*caja))
+            while (!isEmpty(box))
             {
-                Libro *auxiliar = pop(caja);
-                apilarPorFecha(&pilaLibros[1], auxiliar);
+                Book* aux = pop(box);
+                date_stackify(box_stacked_by_year, aux);
             }
 
-            // mostrando fechas
-            for(i = 0 ; i < pilaLibros[1].numStacks ; i++)
-            {
-                printf("\n[%d] %d", i, pilaLibros[1].stackLibros[i].cima->elementoLibro->releaseDate);
-            }
+            // mostramos fechas
+            print_stack_array(box_stacked_by_year, YEAR);
 
-            seleccion = subMenu("\nElige una opcion > \n");
+            selection = sub_menu("\nElige una opcion > \n");
 
-            imprimirPila(&pilaLibros[1].stackLibros[seleccion]);
+            selected_stack = get_stack(box_stacked_by_year, selection);
+            print_stack(selected_stack);
 
             // regresamos los libros a la caja
-            for (i = 0 ; i < pilaLibros[1].numStacks ; i++)
+            while (box_stacked_by_year->top_book_stack != NULL)
             {
-                while (!vacia(pilaLibros[1].stackLibros[i]))
+                Stack* aux = pop_stack(box_stacked_by_year);
+
+                while (!isEmpty(aux))
                 {
-                    push(caja, pop(&pilaLibros[1].stackLibros[i]));
+                    Book* tmp = pop(aux);
+                    push(box, tmp);
                 }
             }
-            pilaLibros->numStacks = 0;
 
             break;
         
         case 4:
             printf("Hasta luego tilin\n");
-            runs = 0;
+            runs = false;
             break;
 
         default:
@@ -109,13 +107,11 @@ int main (void)
 
     }
     
-    for (i = 0 ; i < 2 ; i++)
-    {
-        free(pilaLibros[i].stackLibros);
-    }
+    free_stack_arr(box_stacked_by_genre);
+    free_stack_arr(box_stacked_by_year);
 
-    vaciarPila(caja);
-    free(caja);
+    empty_stack(box);
+    free(box);
 
     return 0;
 }
