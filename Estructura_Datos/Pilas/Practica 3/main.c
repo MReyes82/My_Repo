@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-// TODO: change implementation of a stack array. instead of being a pointer to struct
-// TODO: now it will be a regular struct.
+// TODO: check bug, it only pops 3 books in case 2. then it freezes
+// TODO: probably an undefined behavior.
 
 int main (void)
 {

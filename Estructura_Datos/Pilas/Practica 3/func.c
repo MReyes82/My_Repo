@@ -244,7 +244,7 @@ Stack* pop_stack(Stack_array* st_arr)
 void print_book(Book* book)
 {
     printf("(%d) | ", book->release_date);
-    printf("%s,  ", book->title);
+    printf("%s, ", book->title);
     printf("%s\n", book->genre);
     
     return;
@@ -274,6 +274,7 @@ void genre_stackify(Stack_array* st_arr, Book* new_book)
     //* into it and push the stack into the stack array
     if (st_arr->top_book_stack == NULL)
     {
+        printf("Creates first stack in the array\n");
         Stack* new_stack = init_stack(0);
         push(new_stack, new_book);
         push_stack(st_arr, new_stack);
@@ -346,7 +347,7 @@ void date_stackify(Stack_array* st_arr, Book* new_book)
 
             //* if the release date is the same as the new book
             //* means we found the correct stack
-            //* so we push the book into it
+            //* so, we push the book into it
             if (tmp_stack->st_top->element_book->release_date == new_book->release_date)
             {
                 found = true;
@@ -366,14 +367,14 @@ void date_stackify(Stack_array* st_arr, Book* new_book)
         }
 
         //* We update the pointer of the stack array to the aux stack array
-        *st_arr = aux;
+        //*st_arr = aux;
 
         //* We push the stacks from the aux stack array back into the original stack array
-        /*while (aux->top_book_stack != NULL)
+        while (aux.top_book_stack != NULL)
         {
-            tmp_stack = pop_stack(aux);
+            tmp_stack = pop_stack(&aux);
             push_stack(st_arr, tmp_stack);
-        }*/
+        }
     }
 
     return;
@@ -459,7 +460,7 @@ Stack* get_stack(Stack_array* st_arr, int choose)
 
     Stack_array aux = init_stack_array();
     Stack* tmp_stack = NULL;
-    Stack* choosen_stack = NULL;
+    Stack* chosen_stack = NULL;
 
     //* We traverse the stack array until we reach the selected stack
     while (st_arr->top_book_stack != NULL)
@@ -469,7 +470,7 @@ Stack* get_stack(Stack_array* st_arr, int choose)
         //* if we reach the selected stack we save it
         if (moved_positions == choose)
         {
-            choosen_stack = tmp_stack;
+            chosen_stack = tmp_stack;
         }
 
         moved_positions++;
@@ -479,6 +480,6 @@ Stack* get_stack(Stack_array* st_arr, int choose)
     //* We assign the stack array to the aux stack array
     *st_arr = aux;
 
-    return choosen_stack;
+    return chosen_stack;
 }
 
