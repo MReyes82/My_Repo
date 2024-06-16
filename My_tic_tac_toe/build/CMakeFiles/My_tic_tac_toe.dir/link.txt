@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/My_tic_tac_toe.dir/src/cpu.c.o CMakeFiles/My_tic_tac_toe.dir/src/game.c.o CMakeFiles/My_tic_tac_toe.dir/src/grid.c.o CMakeFiles/My_tic_tac_toe.dir/src/main.c.o CMakeFiles/My_tic_tac_toe.dir/src/player.c.o CMakeFiles/My_tic_tac_toe.dir/src/util.c.o  -o bin/My_tic_tac_toe 

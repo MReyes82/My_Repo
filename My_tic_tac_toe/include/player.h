@@ -9,6 +9,9 @@ typedef struct Player
     char symbol;
 
     bool is_winner;
-}
+
+} Player;
+
+Player init_player(char* name, char symbol);
 
 #endif // PLAYER_H

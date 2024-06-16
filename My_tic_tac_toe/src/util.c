@@ -37,7 +37,9 @@ void clear_terminal(void)
             break;
 
         default:
+            // stop the program if the OS is unknown
             printf("Unknown OS\n");
+            exit(EXIT_FAILURE);
             break;
     }
 
