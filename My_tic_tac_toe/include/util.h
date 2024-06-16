@@ -5,7 +5,8 @@ typedef enum os_type
 {
     WINDOWS,
     LINUX,
-    MAC
+    MAC,
+    UNKNOWN,
 
 } OS_Type;
 

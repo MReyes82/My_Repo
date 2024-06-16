@@ -15,7 +15,7 @@ OS_Type get_os(void)
         return MAC;
 
     #else
-        return -1;
+        return UNKNOWN;
 
     #endif
 }
@@ -31,7 +31,7 @@ void clear_terminal(void)
             break;
 
         case LINUX:
-        
+
         case MAC:
             system("clear");
             break;
